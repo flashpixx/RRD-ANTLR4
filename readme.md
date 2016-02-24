@@ -16,3 +16,8 @@ Inspired the project [rrd-antlr4](https://github.com/bkiers/rrd-antlr4) this pro
 * [Doxygen](http://www.doxygen.org/) with [GraphViz](http://www.graphviz.org/)
 * [Bower](http://bower.io/)
 * [Source code documentation](http://flashpixx.github.io/RRD-AntLR4/)
+
+
+## <a name="download">Current Developer Download</a>
+
+* [Native Jar](https://github.com/flashpixx/RRD-AntLR4/raw/binary-master/RRD-AntLR4-0.1.jar)
