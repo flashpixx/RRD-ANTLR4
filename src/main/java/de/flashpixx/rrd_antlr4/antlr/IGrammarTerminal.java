@@ -44,6 +44,6 @@ public interface IGrammarTerminal extends IGrammarElement
      *
      * @return collection of string alternatives
      */
-    Collection<String> alternatives();
+    Collection<Collection<String>> alternatives();
 
 }

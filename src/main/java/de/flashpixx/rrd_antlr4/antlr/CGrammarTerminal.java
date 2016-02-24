@@ -27,7 +27,7 @@ public class CGrammarTerminal implements IGrammarTerminal
     /**
      * alternatives
      */
-    private final Collection<String> m_alternatives;
+    private final Collection<Collection<String>> m_alternatives;
 
     /**
      * ctor
@@ -37,12 +37,12 @@ public class CGrammarTerminal implements IGrammarTerminal
      * @param p_documentation documentation
      * @param p_alternatives alternatives
      */
-    public CGrammarTerminal( final String p_id, final boolean p_isfragment, final String p_documentation, final Collection<String> p_alternatives )
+    public CGrammarTerminal( final String p_id, final boolean p_isfragment, final String p_documentation, final Collection<Collection<String>> p_alternatives )
     {
         m_id = p_id;
         m_isfragment = p_isfragment;
         m_documentation = p_documentation == null ? "" : p_documentation;
-        m_alternatives = p_alternatives == null ? Collections.<String>emptyList() : p_alternatives;
+        m_alternatives = p_alternatives == null ? Collections.<Collection<String>>emptyList() : p_alternatives;
     }
 
 
@@ -53,7 +53,7 @@ public class CGrammarTerminal implements IGrammarTerminal
     }
 
     @Override
-    public final Collection<String> alternatives()
+    public final Collection<Collection<String>> alternatives()
     {
         return m_alternatives;
     }

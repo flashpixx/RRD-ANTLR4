@@ -53,12 +53,6 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
     }
 
     @Override
-    public final Object visitGrammarSpec( final ANTLRv4Parser.GrammarSpecContext p_context )
-    {
-        return this.visitRules( p_context.rules() );
-    }
-
-    @Override
     public final Object visitParserRuleSpec( final ANTLRv4Parser.ParserRuleSpecContext p_context )
     {
         //System.out.println( "---> " + this.visitRuleBlock( p_context.ruleBlock() ) );
@@ -88,7 +82,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
                         p_context.TOKEN_REF().getText(),
                         p_context.FRAGMENT() != null,
                         p_context.DOC_COMMENT() == null ? "" : p_context.DOC_COMMENT().getText(),
-                        (Collection<String>) this.visitLexerRuleBlock( p_context.lexerRuleBlock() )
+                        (Collection<Collection<String>>) this.visitLexerRuleBlock( p_context.lexerRuleBlock() )
                 ) );
         return null;
     }
@@ -96,27 +90,26 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
     @Override
     public final Object visitLexerAltList( final ANTLRv4Parser.LexerAltListContext p_context )
     {
-        return p_context.lexerAlt() != null ? p_context.lexerAlt().stream().map( i -> this.visitChildren( i ) ).filter( i -> i != null ).collect(
-                Collectors.toList() ) : null;
+        return p_context.lexerAlt().stream().map( i -> this.visitLexerAlt( i ) ).filter( i -> i != null ).collect( Collectors.toList() );
     }
 
     @Override
     public final Object visitLexerAlt( final ANTLRv4Parser.LexerAltContext p_context )
     {
-        return this.visitChildren( p_context );
+        // ignoring lexer command rule
+        return this.visitLexerElements( p_context.lexerElements() );
     }
 
     @Override
     public final Object visitLexerElements( final ANTLRv4Parser.LexerElementsContext p_context )
     {
-        return p_context.lexerElement() != null ? p_context.lexerElement().stream().map( i -> this.visitLexerElement( i ) ).filter( i -> i != null ).collect(
-                Collectors.toList() ) : null;
+        return p_context.lexerElement().stream().map( i -> this.visitLexerElement( i ) ).filter( i -> i != null ).collect( Collectors.toList() );
     }
 
     @Override
     public final Object visitLexerElement( final ANTLRv4Parser.LexerElementContext p_context )
     {
-        return p_context != null ? p_context.getText() : null;
+        return p_context.getText();
     }
 
 }
