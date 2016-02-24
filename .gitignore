@@ -21,4 +21,5 @@
 !src/main/styleguide/**/*.md
 
 target/**
+dependency-reduced-pom.xml
 src/main/resources/template/html/lib/**
