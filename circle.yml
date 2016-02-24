@@ -1,0 +1,71 @@
+general:
+  branches:
+    only:
+      - master
+    ignore:
+      - /dev-.*/
+      - /gh-.*/
+      - /binary-.*/
+
+machine:
+    timezone:
+      Europe/Berlin
+
+    environment:
+      GIT_AUTHOR_NAME: CircleCI
+      GIT_AUTHOR_EMAIL: info@flashpixx.de
+      GIT_COMMITTER_NAME: CircleCI
+      GIT_COMMITTER_EMAIL: info@flashpixx.de
+
+    java:
+      version: oraclejdk8
+
+dependencies:
+    pre:
+      - sudo apt-get install doxygen
+
+test:
+    override:
+        - mvn install -Dbuild.number=${CIRCLE_BUILD_NUM} -Dbuild.commit=${CIRCLE_SHA1}
+
+    post:
+        # move build components
+        - git checkout master
+        - mv target/documentation/html /tmp
+        - mv target/RRD-AntLR4-0.1.jar /tmp
+        - mv target/RRD-AntLR4-0.1.exe /tmp
+        #- mv target/RRD-AntLR4-0.1.dmg /tmp
+
+        # create documentation branch
+        - git checkout gh-pages
+        - mv -f circle.yml /tmp
+        - mv -f .gitignore /tmp
+        - git checkout master
+        - git push origin :gh-pages
+        - git branch -D gh-pages
+        - git checkout --orphan gh-pages
+        - rm -Rf *
+        - mv /tmp/.gitignore .
+        - mv /tmp/circle.yml .
+        - mv /tmp/html/* .
+        - git add --all .
+        - git commit -m "current documentation"
+        - git push origin gh-pages
+
+        # build developer executables
+        - git checkout binary-master
+        - mv -f circle.yml /tmp
+        - mv -f .gitignore /tmp
+        - git checkout master
+        - git push origin :binary-master
+        - git branch -D binary-master
+        - git checkout --orphan binary-master
+        - rm -Rf *
+        - mv /tmp/.gitignore .
+        - mv /tmp/circle.yml .
+        - mv /tmp/RRD-AntLR4-0.1.jar .
+        - mv /tmp/RRD-AntLR4-0.1.exe .
+        #- mv /tmp/RRD-AntLR4-0.1.dmg .
+        - git add --all .
+        - git commit -m "binaries master branch"
+        - git push origin binary-master
