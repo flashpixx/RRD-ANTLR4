@@ -220,6 +220,40 @@
                 </configuration>
             </plugin>
 
+            <!-- executable Jar -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.4.3</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <manifestEntries>
+                                        <Main-Class>de.flashpixx.rrd_antlr4.CStandalone</Main-Class>
+                                        <!-- default items -->
+                                        <Project-Name>${project.name}</Project-Name>
+                                        <Project-URL>${project.url}</Project-URL>
+                                        <License>${project.licenses[0].name}</License>
+                                        <License-URL>${project.licenses[0].url}</License-URL>
+                                        <Built-By>${project.organization.name}</Built-By>
+                                        <Built-By-URL>${project.organization.url}</Built-By-URL>
+                                        <Build-Version>${project.version}</Build-Version>
+                                        <Build-Number>${build.number}</Build-Number>
+                                        <Build-Commit>${build.commit}</Build-Commit>
+                                    </manifestEntries>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <!-- checkstyle is performtemplate at compile / validation phase
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -34,7 +34,7 @@ test:
         - git checkout master
         - mv target/documentation/html /tmp
         - mv target/RRD-AntLR4-0.1.jar /tmp
-        - mv target/RRD-AntLR4-0.1.exe /tmp
+        #- mv target/RRD-AntLR4-0.1.exe /tmp
         #- mv target/RRD-AntLR4-0.1.dmg /tmp
 
         # create documentation branch
@@ -65,7 +65,7 @@ test:
         - mv /tmp/.gitignore .
         - mv /tmp/circle.yml .
         - mv /tmp/RRD-AntLR4-0.1.jar .
-        - mv /tmp/RRD-AntLR4-0.1.exe .
+        #- mv /tmp/RRD-AntLR4-0.1.exe .
         #- mv /tmp/RRD-AntLR4-0.1.dmg .
         - git add --all .
         - git commit -m "binaries master branch"
