@@ -54,6 +54,10 @@ public final class CMain extends AbstractMojo
      * engine instance
      */
     private static final CEngine ENGINE = new CEngine();
+    /**
+     *
+     */
+    private static final String DEFAULTOUTPUT = "rrd-output";
 
     /**
      * main
@@ -67,7 +71,7 @@ public final class CMain extends AbstractMojo
         l_clioptions.addOption( "help", false, CCommon.getLanguageString( CMain.class, "help" ) );
         l_clioptions.addOption( "grammar", true, CCommon.getLanguageString( CMain.class, "grammar" ) );
         l_clioptions.addOption( "template", true, CCommon.getLanguageString( CMain.class, "template", Arrays.asList( ETemplate.values() ) ) );
-        l_clioptions.addOption( "output", true, CCommon.getLanguageString( CMain.class, "output" ) );
+        l_clioptions.addOption( "output", true, CCommon.getLanguageString( CMain.class, "output", DEFAULTOUTPUT ) );
 
         CommandLine l_cli = null;
         try
@@ -143,7 +147,8 @@ public final class CMain extends AbstractMojo
                                 ENGINE.generate(
                                         p_grammar,
                                         ETemplate.valueOf( i.trim().toUpperCase() ).generate(),
-                                        p_outputdirectory != null ? p_outputdirectory : Paths.get( "rrd", i.trim().toLowerCase(), p_grammar.getName().toLowerCase() )
+                                        p_outputdirectory != null ? p_outputdirectory
+                                                                  : Paths.get( DEFAULTOUTPUT, i.trim().toLowerCase(), p_grammar.getName().toLowerCase() )
                                 );
                                 return null;
                             }
