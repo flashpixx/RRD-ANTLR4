@@ -21,11 +21,14 @@
  * @endcond
  */
 
-package de.flashpixx.rrd_antlr4.parser;
+package de.flashpixx.rrd_antlr4.antlr;
+
+import de.flashpixx.grammar.ANTLRv4ParserVisitor;
+
 
 /**
  * abstract-syntax-tree visitor
  */
-public interface IVisitor
+public interface IVisitor extends ANTLRv4ParserVisitor<Object>
 {
 }
