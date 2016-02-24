@@ -21,54 +21,24 @@
  * @endcond
  */
 
-
 package de.flashpixx.rrd_antlr4;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 
 
 /**
- * standalone program
+ * maven plugin
+ *
+ * @see https://maven.apache.org/guides/plugin/guide-java-plugin-development.html
  */
-public final class CStandalone
+public final class CPlugin extends AbstractMojo
 {
-
-    /**
-     * main
-     *
-     * @param p_args command-line arguments
-     */
-    public static void main( final String[] p_args )
+    @Override
+    public final void execute() throws MojoExecutionException, MojoFailureException
     {
-        // --- define CLI options --------------------------------------------------------------------------------------
-        final Options l_clioptions = new Options();
-        l_clioptions.addOption( "help", false, CCommon.getLanguageString( CStandalone.class, "help" ) );
-        l_clioptions.addOption( "type", true, CCommon.getLanguageString( CStandalone.class, "type" ) );
-        l_clioptions.addOption( "export", true, CCommon.getLanguageString( CStandalone.class, "export" ) );
 
-        CommandLine l_cli = null;
-        try
-        {
-            l_cli = new DefaultParser().parse( l_clioptions, p_args );
-        }
-        catch ( final Exception l_exception )
-        {
-            System.err.println( CCommon.getLanguageString( CStandalone.class, "parseerror", l_exception.getLocalizedMessage() ) );
-            System.exit( -1 );
-        }
-
-
-        // --- process CLI arguments and push configuration ------------------------------------------------------------
-        if ( l_cli.hasOption( "help" ) )
-        {
-            final HelpFormatter l_formatter = new HelpFormatter();
-            l_formatter.printHelp(
-                    ( new java.io.File( CStandalone.class.getProtectionDomain().getCodeSource().getLocation().getPath() ).getName() ), l_clioptions );
-            System.exit( 0 );
-        }
     }
 
 }
