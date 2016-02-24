@@ -26,7 +26,6 @@ package de.flashpixx.rrd_antlr4.engine;
 import de.flashpixx.grammar.ANTLRv4Lexer;
 import de.flashpixx.grammar.ANTLRv4Parser;
 import de.flashpixx.rrd_antlr4.antlr.CASTVisitor;
-import de.flashpixx.rrd_antlr4.antlr.IVisitor;
 import de.flashpixx.rrd_antlr4.engine.template.ITemplate;
 import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -59,9 +58,6 @@ public final class CEngine
      */
     public void generate( final File p_grammar, final ITemplate p_template, final Path p_outputdirectory ) throws IOException
     {
-        // create AST visitor, lexer and parser
-        final IVisitor l_visitor = new CASTVisitor( p_template );
-
         final ANTLRv4Lexer l_lexer = new ANTLRv4Lexer( new ANTLRInputStream( new FileInputStream( p_grammar ) ) );
         l_lexer.removeErrorListeners();
         l_lexer.addErrorListener( m_errorlistener );
@@ -74,9 +70,9 @@ public final class CEngine
         // create output directory of not exists
         Files.createDirectories( p_outputdirectory );
 
-        // run exporting process
+        // run exporting process with the visitor
         p_template.preprocess( p_outputdirectory, p_grammar.getName() );
-        l_visitor.visit( l_parser.grammarSpec() );
+        new CASTVisitor( p_template ).visit( l_parser.grammarSpec() );
         p_template.postprocess( p_outputdirectory, p_grammar.getName() );
     }
 
