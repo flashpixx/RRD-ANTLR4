@@ -5,10 +5,12 @@
 !circle.yml
 !pom.xml
 !.bowerrc
+!bower.json
 !*.java
 !*.g4
 !*.md
 !*.properties
+!*.tex
 
 !src/main/documentation/*.doxyfile
 !src/main/documentation/*.htm
@@ -19,3 +21,4 @@
 !src/main/styleguide/**/*.md
 
 target/**
+src/main/resources/template/html/lib/**
