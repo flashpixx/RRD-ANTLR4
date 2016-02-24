@@ -21,40 +21,29 @@
  * @endcond
  */
 
-package de.flashpixx.rrd_antlr4.engine.template;
+package de.flashpixx.rrd_antlr4.antlr;
 
-import de.flashpixx.rrd_antlr4.antlr.IGrammarRule;
-import de.flashpixx.rrd_antlr4.antlr.IGrammarTerminal;
-
-import java.nio.file.Path;
+import java.util.Collection;
 
 
 /**
- * template for HTML export
+ * interface of grammar terminal
  */
-public final class CHTML implements ITemplate
+public interface IGrammarTerminal extends IGrammarElement
 {
-    @Override
-    public final void preprocess( final Path p_outputdirectoryfinal, final String p_grammar )
-    {
 
-    }
+    /**
+     * flag to check if the terminal is a fragment
+     *
+     * @return fragment flag
+     */
+    boolean isFragment();
 
-    @Override
-    public final void postprocess( final Path p_outputdirectoryfinal, final String p_grammar )
-    {
+    /**
+     * terminal alternatives
+     *
+     * @return collection of string alternatives
+     */
+    Collection<String> alternatives();
 
-    }
-
-    @Override
-    public final void rule( final IGrammarRule p_rule )
-    {
-        //System.out.println( "-> " + p_rule );
-    }
-
-    @Override
-    public final void terminal( final IGrammarTerminal p_terminal )
-    {
-        System.out.println( "---> " + p_terminal );
-    }
 }

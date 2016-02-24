@@ -142,21 +142,21 @@ public final class CMain extends AbstractMojo
         return Arrays.stream( p_template )
                      .parallel()
                      .map( i -> {
-                            try
-                            {
-                                ENGINE.generate(
-                                        p_grammar,
-                                        ETemplate.valueOf( i.trim().toUpperCase() ).generate(),
-                                        p_outputdirectory != null ? p_outputdirectory
-                                                                  : Paths.get( DEFAULTOUTPUT, i.trim().toLowerCase(), p_grammar.getName().toLowerCase() )
-                                );
-                                return null;
-                            }
-                            catch ( final IOException p_exception )
-                            {
-                                return p_exception.getMessage();
-                            }
-                        }
+                               try
+                               {
+                                   ENGINE.generate(
+                                           p_grammar,
+                                           ETemplate.valueOf( i.trim().toUpperCase() ).generate(),
+                                           p_outputdirectory != null ? p_outputdirectory
+                                                                     : Paths.get( DEFAULTOUTPUT, i.trim().toLowerCase(), p_grammar.getName().toLowerCase() )
+                                   );
+                                   return null;
+                               }
+                               catch ( final IOException p_exception )
+                               {
+                                   return p_exception.getMessage();
+                               }
+                           }
                      )
                      .filter( i -> i != null )
                      .collect( Collectors.toSet() );

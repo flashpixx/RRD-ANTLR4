@@ -23,6 +23,9 @@
 
 package de.flashpixx.rrd_antlr4.engine.template;
 
+import de.flashpixx.rrd_antlr4.antlr.IGrammarRule;
+import de.flashpixx.rrd_antlr4.antlr.IGrammarTerminal;
+
 import java.nio.file.Path;
 
 
@@ -34,16 +37,32 @@ public interface ITemplate
 
     /**
      * preprocessing (before AST visiting)
-     *  @param p_outputdirectory output directory
+     *
+     * @param p_outputdirectory output directory
      * @param p_grammar grammar file name (without path)
      */
     void preprocess( final Path p_outputdirectory, final String p_grammar );
 
     /**
      * postprocessing (after AST visiting)
-     *  @param p_outputdirectory working directory
+     *
+     * @param p_outputdirectory working directory
      * @param p_grammar grammar file name (without path)
      */
     void postprocess( final Path p_outputdirectory, final String p_grammar );
+
+    /**
+     * is called if any grammar rule is created
+     *
+     * @param p_rule rule
+     */
+    void rule( final IGrammarRule p_rule );
+
+    /**
+     * is called if a terminal is created
+     *
+     * @param p_terminal terminal
+     */
+    void terminal( final IGrammarTerminal p_terminal );
 
 }
