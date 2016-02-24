@@ -72,7 +72,7 @@
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-plugin-api</artifactId>
-            <version>3.0</version>
+            <version>3.3.9</version>
             <scope>compile</scope>
         </dependency>
 
@@ -242,7 +242,7 @@
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <manifestEntries>
-                                        <Main-Class>de.flashpixx.rrd_antlr4.CStandalone</Main-Class>
+                                        <Main-Class>de.flashpixx.rrd_antlr4.CMain</Main-Class>
                                         <!-- default items -->
                                         <Project-Name>${project.name}</Project-Name>
                                         <Project-URL>${project.url}</Project-URL>

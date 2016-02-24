@@ -21,16 +21,25 @@
  * @endcond
  */
 
-package de.flashpixx.rrd_antlr4.antlr;
+package de.flashpixx.rrd_antlr4.engine.template;
 
-import de.flashpixx.grammar.ANTLRv4ParserVisitor;
+import java.nio.file.Path;
 
 
 /**
- * abstract-syntax-tree visitor based on AntLR grammar definition
- *
- * @see https://github.com/antlr/grammars-v4/tree/master/antlr4
+ * template for HTML export
  */
-public interface IVisitor extends ANTLRv4ParserVisitor<Object>
+public final class CHTML implements ITemplate
 {
+    @Override
+    public void preprocess( final Path p_outputdirectory )
+    {
+
+    }
+
+    @Override
+    public void postprocess( final Path p_outputdirectory )
+    {
+
+    }
 }

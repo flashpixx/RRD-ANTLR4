@@ -2,7 +2,7 @@
 
 ![Circle CI](https://circleci.com/gh/flashpixx/RRD-AntLR4.svg?style=shield)
 
-Inspired the project [rrd-antlr4](https://github.com/bkiers/rrd-antlr4) this project is a full refactored system to generate [railroad / syntax diagram](https://en.wikipedia.org/wiki/Syntax_diagram) of an [AntLR 4](http://www.antlr.org/) grammar.
+Inspired by the project [rrd-antlr4](https://github.com/bkiers/rrd-antlr4) this project is a full refactored system to generate [railroad / syntax diagram](https://en.wikipedia.org/wiki/Syntax_diagram) of an [AntLR 4](http://www.antlr.org/) grammar.
 
 
 ## Requirements

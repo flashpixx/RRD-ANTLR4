@@ -21,24 +21,25 @@
  * @endcond
  */
 
-package de.flashpixx.rrd_antlr4;
+package de.flashpixx.rrd_antlr4.engine.template;
 
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
+import java.nio.file.Path;
 
 
 /**
- * maven plugin
- *
- * @see https://maven.apache.org/guides/plugin/guide-java-plugin-development.html
+ * template for LaTeX export
  */
-public final class CPlugin extends AbstractMojo
+public class CLaTeX implements ITemplate
 {
     @Override
-    public final void execute() throws MojoExecutionException, MojoFailureException
+    public void preprocess( final Path p_outputdirectory )
     {
 
     }
 
+    @Override
+    public void postprocess( final Path p_outputdirectory )
+    {
+
+    }
 }

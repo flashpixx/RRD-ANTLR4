@@ -21,11 +21,29 @@
  * @endcond
  */
 
-package de.flashpixx.rrd_antlr4.engine;
+package de.flashpixx.rrd_antlr4.engine.template;
+
+import java.nio.file.Path;
+
 
 /**
  * interface of a template
  */
 public interface ITemplate
 {
+
+    /**
+     * preprocessing (before AST visiting)
+     *
+     * @param p_outputdirectory output directory
+     */
+    void preprocess( final Path p_outputdirectory );
+
+    /**
+     * postprocessing (after AST visiting)
+     *
+     * @param p_outputdirectory working directory
+     */
+    void postprocess( final Path p_outputdirectory );
+
 }

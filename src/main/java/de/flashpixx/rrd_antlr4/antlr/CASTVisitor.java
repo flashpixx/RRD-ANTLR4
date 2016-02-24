@@ -24,15 +24,31 @@
 package de.flashpixx.rrd_antlr4.antlr;
 
 import de.flashpixx.grammar.ANTLRv4Parser;
+import de.flashpixx.rrd_antlr4.engine.template.ITemplate;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
 
 /**
- * Created by pkraus on 24.02.16.
+ * AntLR 4 AST visitor
  */
 @SuppressWarnings( {"all", "warnings", "unchecked", "unused", "cast"} )
 public class CASTVisitor extends AbstractParseTreeVisitor<Object> implements IVisitor
 {
+    /**
+     * exporting template
+     */
+    private final ITemplate m_template;
+
+    /**
+     * exporting template
+     *
+     * @param p_template template
+     */
+    public CASTVisitor( final ITemplate p_template )
+    {
+        m_template = p_template;
+    }
+
     @Override
     public Object visitGrammarSpec( final ANTLRv4Parser.GrammarSpecContext p_context )
     {
