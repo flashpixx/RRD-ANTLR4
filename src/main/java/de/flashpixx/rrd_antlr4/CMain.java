@@ -35,11 +35,12 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 
 /**
@@ -49,6 +50,10 @@ import java.util.Arrays;
  */
 public final class CMain extends AbstractMojo
 {
+    /**
+     * engine instance
+     */
+    private static final CEngine ENGINE = new CEngine();
 
     /**
      * main
@@ -85,6 +90,32 @@ public final class CMain extends AbstractMojo
             System.exit( 0 );
         }
 
+
+        if ( !l_cli.hasOption( "grammar" ) )
+        {
+            System.err.println( CCommon.getLanguageString( CMain.class, "grammarnotset" ) );
+            System.exit( -1 );
+        }
+
+        if ( !l_cli.hasOption( "template" ) )
+        {
+            System.err.println( CCommon.getLanguageString( CMain.class, "templatenotset" ) );
+            System.exit( -1 );
+        }
+
+
+        final Path l_outputdirectory = l_cli.hasOption( "output" ) ? Paths.get( l_cli.getOptionValue( "output" ) ) : null;
+        final String[] l_templates = l_cli.getOptionValue( "template" ).split( "," );
+        final Collection<String> l_errors = Arrays.stream( l_cli.getOptionValue( "grammar" ).split( "," ) )
+                                                  .parallel()
+                                                  .flatMap( i -> generate( new File( i ), l_outputdirectory, l_templates ).stream() )
+                                                  .collect( Collectors.toList() );
+
+        if ( !l_errors.isEmpty() )
+        {
+            l_errors.stream().forEach( System.err::println );
+            System.exit( -1 );
+        }
     }
 
     @Override
@@ -99,26 +130,30 @@ public final class CMain extends AbstractMojo
      *
      * @param p_grammar path to grammar file
      * @param p_outputdirectory output directory
-     * @param p_exporttype string with export name
+     * @param p_template string with export name
+     * @return returns a collection with error messages
      */
-    private final void generate( final File p_grammar, final Path p_outputdirectory, final String... p_exporttype )
+    private static Collection<String> generate( final File p_grammar, final Path p_outputdirectory, final String... p_template )
     {
-        Arrays.stream( p_exporttype )
-              .parallel()
-              .forEach( i -> {
+        return Arrays.stream( p_template )
+                     .parallel()
+                     .map( i -> {
                             try
                             {
-                                new CEngine().generate(
-                                        new FileInputStream( p_grammar ),
+                                ENGINE.generate(
+                                        p_grammar,
                                         ETemplate.valueOf( i.trim().toUpperCase() ).generate(),
                                         p_outputdirectory != null ? p_outputdirectory : Paths.get( "rrd", i.trim().toLowerCase(), p_grammar.getName().toLowerCase() )
                                 );
+                                return null;
                             }
                             catch ( final IOException p_exception )
                             {
-                                System.err.println( p_exception );
+                                return p_exception.getMessage();
                             }
                         }
-              );
+                     )
+                     .filter( i -> i != null )
+                     .collect( Collectors.toSet() );
     }
 }

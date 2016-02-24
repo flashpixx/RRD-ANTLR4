@@ -34,16 +34,16 @@ public interface ITemplate
 
     /**
      * preprocessing (before AST visiting)
-     *
-     * @param p_outputdirectory output directory
+     *  @param p_outputdirectory output directory
+     * @param p_grammar grammar file name (without path)
      */
-    void preprocess( final Path p_outputdirectory );
+    void preprocess( final Path p_outputdirectory, final String p_grammar );
 
     /**
      * postprocessing (after AST visiting)
-     *
-     * @param p_outputdirectory working directory
+     *  @param p_outputdirectory working directory
+     * @param p_grammar grammar file name (without path)
      */
-    void postprocess( final Path p_outputdirectory );
+    void postprocess( final Path p_outputdirectory, final String p_grammar );
 
 }

@@ -32,8 +32,9 @@ import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -46,22 +47,22 @@ public final class CEngine
     /**
      * error handler
      */
-    private final ANTLRErrorListener m_errorlistener = null;
+    private final ANTLRErrorListener m_errorlistener = new CErrorListener();
 
     /**
      * generator call
      *
-     * @param p_stream grammar input stream
+     * @param p_grammar grammar input file
      * @param p_template exporting template
      * @param p_outputdirectory output direcotry
      * @throws IOException
      */
-    public void generate( final InputStream p_stream, final ITemplate p_template, final Path p_outputdirectory ) throws IOException
+    public void generate( final File p_grammar, final ITemplate p_template, final Path p_outputdirectory ) throws IOException
     {
         // create AST visitor, lexer and parser
         final IVisitor l_visitor = new CASTVisitor( p_template );
 
-        final ANTLRv4Lexer l_lexer = new ANTLRv4Lexer( new ANTLRInputStream( p_stream ) );
+        final ANTLRv4Lexer l_lexer = new ANTLRv4Lexer( new ANTLRInputStream( new FileInputStream( p_grammar ) ) );
         l_lexer.removeErrorListeners();
         l_lexer.addErrorListener( m_errorlistener );
 
@@ -74,9 +75,9 @@ public final class CEngine
         Files.createDirectories( p_outputdirectory );
 
         // run exporting process
-        p_template.preprocess( p_outputdirectory );
+        p_template.preprocess( p_outputdirectory, p_grammar.getName() );
         l_visitor.visit( l_parser.grammarSpec() );
-        p_template.postprocess( p_outputdirectory );
+        p_template.postprocess( p_outputdirectory, p_grammar.getName() );
     }
 
 }

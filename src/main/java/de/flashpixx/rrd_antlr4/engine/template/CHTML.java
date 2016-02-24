@@ -32,13 +32,13 @@ import java.nio.file.Path;
 public final class CHTML implements ITemplate
 {
     @Override
-    public void preprocess( final Path p_outputdirectory )
+    public void preprocess( final Path p_outputdirectoryfinal, final String p_grammar )
     {
 
     }
 
     @Override
-    public void postprocess( final Path p_outputdirectory )
+    public void postprocess( final Path p_outputdirectoryfinal, final String p_grammar )
     {
 
     }
