@@ -27,7 +27,10 @@ import de.flashpixx.grammar.ANTLRv4ParserVisitor;
 
 
 /**
- * abstract-syntax-tree visitor
+ * abstract-syntax-tree visitor based on AntLR grammar definition
+ *
+ * @see https://github.com/antlr/grammars-v4/tree/master/antlr4
+ *
  */
 public interface IVisitor extends ANTLRv4ParserVisitor<Object>
 {
