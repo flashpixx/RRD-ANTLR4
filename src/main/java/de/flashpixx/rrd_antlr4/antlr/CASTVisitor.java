@@ -26,6 +26,7 @@ package de.flashpixx.rrd_antlr4.antlr;
 import de.flashpixx.rrd_antlr4.engine.template.ITemplate;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 
@@ -55,13 +56,11 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
     @Override
     public final Object visitParserRuleSpec( final ANTLRv4Parser.ParserRuleSpecContext p_context )
     {
-        System.out.println( "-> " + this.visitRuleBlock( p_context.ruleBlock() ) );
-
         m_template.rule(
                 new CGrammarRule(
                         p_context.RULE_REF().getText(),
                         p_context.DOC_COMMENT() == null ? "" : p_context.DOC_COMMENT().getText(),
-                        null
+                        (List<List<IGrammarElement>>) this.visitRuleBlock( p_context.ruleBlock() )
                 )
         );
         return null;
@@ -74,7 +73,8 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
                ? p_context.labeledAlt().stream()
                           .map( i -> (String) this.visitChildren( i ) )
                           .filter( i -> i != null )
-                          .map( i -> i.startsWith( "'" ) && i.endsWith( "'" ) ? new CTerminalValue( i.substring( 1, i.length() - 1 ) ) : null )
+                          .map( i -> i.startsWith( "'" ) && i.endsWith( "'" ) ? new CTerminalValue( i.substring( 1, i.length() - 1 ) )
+                                                                              : new CTerminalValue( i ) )
                           .collect( Collectors.toList() )
                : null;
     }
