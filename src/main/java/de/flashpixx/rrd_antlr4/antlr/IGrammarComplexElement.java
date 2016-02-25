@@ -23,27 +23,24 @@
 
 package de.flashpixx.rrd_antlr4.antlr;
 
-import java.util.List;
-
-
 /**
- * interface of grammar terminal
+ * base interface of a complex grammar element
  */
-public interface IGrammarTerminal extends IGrammarComplexElement
+public interface IGrammarComplexElement extends IGrammarElement
 {
 
     /**
-     * flag to check if the terminal is a fragment
+     * ID of the element
      *
-     * @return fragment flag
+     * @return ID
      */
-    boolean isFragment();
+    String id();
 
     /**
-     * terminal alternatives
+     * documentation of the element
      *
-     * @return collection of string alternatives
+     * @return documentation
      */
-    List<List<CTerminalValue<?>>> alternatives();
+    String documentation();
 
 }

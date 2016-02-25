@@ -29,7 +29,7 @@ import java.util.Arrays;
 /**
  * stores any terminal value
  */
-public final class CTerminalValue<T>
+public final class CTerminalValue<T> implements IGrammarSimpleElement<T>
 {
     /**
      * terminal value
@@ -46,11 +46,7 @@ public final class CTerminalValue<T>
         m_value = p_value;
     }
 
-    /**
-     * return native value
-     *
-     * @return value
-     */
+    @Override
     public final T get()
     {
         return m_value;
@@ -74,12 +70,7 @@ public final class CTerminalValue<T>
         return m_value.toString();
     }
 
-    /**
-     * checkes assignable of the value
-     *
-     * @param p_class class
-     * @return assignable (on null always true)
-     */
+    @Override
     public final boolean isValueAssignableTo( final Class<?>... p_class )
     {
         return m_value == null ? true : Arrays.asList( p_class ).stream().map( i -> i.isAssignableFrom( m_value.getClass() ) ).anyMatch( i -> i );

@@ -24,23 +24,8 @@
 package de.flashpixx.rrd_antlr4.antlr;
 
 /**
- * base interface of any grammar element
+ * any grammar element
  */
 public interface IGrammarElement
 {
-
-    /**
-     * ID of the element
-     *
-     * @return ID
-     */
-    String id();
-
-    /**
-     * documentation of the element
-     *
-     * @return documentation
-     */
-    String documentation();
-
 }

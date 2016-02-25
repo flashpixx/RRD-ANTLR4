@@ -49,7 +49,7 @@ public final class CHTML implements ITemplate
     @Override
     public final void rule( final IGrammarRule p_rule )
     {
-        //System.out.println( "-> " + p_rule );
+        System.out.println( "---> " + p_rule );
     }
 
     @Override

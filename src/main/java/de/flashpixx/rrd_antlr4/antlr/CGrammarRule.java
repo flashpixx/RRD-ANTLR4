@@ -23,7 +23,7 @@ public final class CGrammarRule implements IGrammarRule
     /**
      * alternatives
      */
-    private final List<IGrammarElement> m_alternatives;
+    private final List<List<IGrammarElement>> m_alternatives;
 
     /**
      * ctor
@@ -32,11 +32,11 @@ public final class CGrammarRule implements IGrammarRule
      * @param p_documentation comment
      * @param p_alternatives alternatives
      */
-    public CGrammarRule( final String p_id, final String p_documentation, final List<IGrammarElement> p_alternatives )
+    public CGrammarRule( final String p_id, final String p_documentation, final List<List<IGrammarElement>> p_alternatives )
     {
         m_id = p_id;
         m_documentation = p_documentation == null ? "" : p_documentation;
-        m_alternatives = p_alternatives == null ? Collections.<IGrammarElement>emptyList() : p_alternatives;
+        m_alternatives = p_alternatives == null ? Collections.<List<IGrammarElement>>emptyList() : p_alternatives;
     }
 
 
@@ -53,7 +53,7 @@ public final class CGrammarRule implements IGrammarRule
     }
 
     @Override
-    public final List<IGrammarElement> alternatives()
+    public final List<List<IGrammarElement>> alternatives()
     {
         return m_alternatives;
     }

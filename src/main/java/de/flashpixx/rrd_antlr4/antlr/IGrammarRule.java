@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * interface for a grammar rule
  */
-public interface IGrammarRule extends IGrammarElement
+public interface IGrammarRule extends IGrammarComplexElement
 {
 
     /**
@@ -37,6 +37,6 @@ public interface IGrammarRule extends IGrammarElement
      *
      * @return alternative list
      */
-    List<IGrammarElement> alternatives();
+    List<List<IGrammarElement>> alternatives();
 
 }

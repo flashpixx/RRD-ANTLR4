@@ -50,10 +50,12 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
         m_template = p_template;
     }
 
+
+
     @Override
     public final Object visitParserRuleSpec( final ANTLRv4Parser.ParserRuleSpecContext p_context )
     {
-        //System.out.println( "---> " + this.visitRuleBlock( p_context.ruleBlock() ) );
+        System.out.println( "-> " + this.visitRuleBlock( p_context.ruleBlock() ) );
 
         m_template.rule(
                 new CGrammarRule(
@@ -68,9 +70,22 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
     @Override
     public final Object visitRuleAltList( final ANTLRv4Parser.RuleAltListContext p_context )
     {
-        return p_context.labeledAlt() != null ? p_context.labeledAlt().stream().map( i -> this.visitLabeledAlt( i ) ).filter( i -> i != null ).collect(
-                Collectors.toList() ) : null;
+        return p_context.labeledAlt() != null
+               ? p_context.labeledAlt().stream()
+                          .map( i -> (String) this.visitChildren( i ) )
+                          .filter( i -> i != null )
+                          .map( i -> i.startsWith( "'" ) && i.endsWith( "'" ) ? new CTerminalValue( i.substring( 1, i.length() - 1 ) ) : null )
+                          .collect( Collectors.toList() )
+               : null;
     }
+
+    @Override
+    public Object visitElement( final ANTLRv4Parser.ElementContext p_context )
+    {
+        return p_context.getText();
+    }
+
+
 
     @Override
     public final Object visitLexerRuleSpec( final ANTLRv4Parser.LexerRuleSpecContext p_context )
