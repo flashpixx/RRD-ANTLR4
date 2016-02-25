@@ -23,7 +23,7 @@
 
 package de.flashpixx.rrd_antlr4.antlr;
 
-import java.util.Collection;
+import java.util.List;
 
 
 /**
@@ -44,6 +44,6 @@ public interface IGrammarTerminal extends IGrammarElement
      *
      * @return collection of string alternatives
      */
-    Collection<Collection<String>> alternatives();
+    List<List<CTerminalValue<?>>> alternatives();
 
 }

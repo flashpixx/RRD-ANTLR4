@@ -23,20 +23,65 @@
 
 package de.flashpixx.rrd_antlr4.antlr;
 
-import java.util.List;
+import java.util.Arrays;
 
 
 /**
- * interface for a grammar rule
+ * stores any terminal value
  */
-public interface IGrammarRule extends IGrammarElement
+public final class CTerminalValue<T>
 {
+    /**
+     * terminal value
+     */
+    private final T m_value;
 
     /**
-     * returns a list of alternatives of the element
+     * ctor
      *
-     * @return alternative list
+     * @param p_value value
      */
-    List<IGrammarElement> alternatives();
+    public CTerminalValue( final T p_value )
+    {
+        m_value = p_value;
+    }
 
+    /**
+     * return native value
+     *
+     * @return value
+     */
+    public final T get()
+    {
+        return m_value;
+    }
+
+    @Override
+    public final int hashCode()
+    {
+        return m_value.hashCode();
+    }
+
+    @Override
+    public final boolean equals( final Object p_object )
+    {
+        return m_value.hashCode() == p_object.hashCode();
+    }
+
+    @Override
+    public final String toString()
+    {
+        return m_value.toString();
+    }
+
+    /**
+     * checkes assignable of the value
+     *
+     * @param p_class class
+     * @return assignable (on null always true)
+     */
+    public final boolean isValueAssignableTo( final Class<?>... p_class )
+    {
+        return m_value == null ? true : Arrays.asList( p_class ).stream().map( i -> i.isAssignableFrom( m_value.getClass() ) ).anyMatch( i -> i );
+    }
 }

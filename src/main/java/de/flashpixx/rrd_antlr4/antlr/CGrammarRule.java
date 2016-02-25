@@ -3,8 +3,8 @@ package de.flashpixx.rrd_antlr4.antlr;
 import org.apache.commons.lang3.StringUtils;
 
 import java.text.MessageFormat;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 
 /**
@@ -23,7 +23,7 @@ public final class CGrammarRule implements IGrammarRule
     /**
      * alternatives
      */
-    private final Collection<IGrammarElement> m_alternatives;
+    private final List<IGrammarElement> m_alternatives;
 
     /**
      * ctor
@@ -32,7 +32,7 @@ public final class CGrammarRule implements IGrammarRule
      * @param p_documentation comment
      * @param p_alternatives alternatives
      */
-    public CGrammarRule( final String p_id, final String p_documentation, final Collection<IGrammarElement> p_alternatives )
+    public CGrammarRule( final String p_id, final String p_documentation, final List<IGrammarElement> p_alternatives )
     {
         m_id = p_id;
         m_documentation = p_documentation == null ? "" : p_documentation;
@@ -53,7 +53,7 @@ public final class CGrammarRule implements IGrammarRule
     }
 
     @Override
-    public final Collection<IGrammarElement> alternatives()
+    public final List<IGrammarElement> alternatives()
     {
         return m_alternatives;
     }
