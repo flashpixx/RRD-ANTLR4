@@ -33,6 +33,7 @@ import org.apache.commons.cli.Options;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.File;
 import java.io.IOException;
@@ -55,9 +56,25 @@ public final class CMain extends AbstractMojo
      */
     private static final CEngine ENGINE = new CEngine();
     /**
-     *
+     * default output directory
      */
     private static final String DEFAULTOUTPUT = "rrd-output";
+    /**
+     * default export format
+     */
+    private static final String DEFAULTTEMPLATE = "HTML";
+
+    /**
+     * Maven plugin parameter for output
+     */
+    @Parameter( defaultValue = DEFAULTOUTPUT )
+    private String output;
+    /**
+     * Maven plugin used templates option
+     */
+    @Parameter( defaultValue = DEFAULTTEMPLATE )
+    private String[] template;
+
 
     /**
      * main
@@ -70,7 +87,7 @@ public final class CMain extends AbstractMojo
         final Options l_clioptions = new Options();
         l_clioptions.addOption( "help", false, CCommon.getLanguageString( CMain.class, "help" ) );
         l_clioptions.addOption( "grammar", true, CCommon.getLanguageString( CMain.class, "grammar" ) );
-        l_clioptions.addOption( "template", true, CCommon.getLanguageString( CMain.class, "template", Arrays.asList( ETemplate.values() ) ) );
+        l_clioptions.addOption( "template", true, CCommon.getLanguageString( CMain.class, "template", Arrays.asList( ETemplate.values() ), DEFAULTTEMPLATE ) );
         l_clioptions.addOption( "output", true, CCommon.getLanguageString( CMain.class, "output", DEFAULTOUTPUT ) );
 
         CommandLine l_cli = null;
@@ -101,15 +118,8 @@ public final class CMain extends AbstractMojo
             System.exit( -1 );
         }
 
-        if ( !l_cli.hasOption( "template" ) )
-        {
-            System.err.println( CCommon.getLanguageString( CMain.class, "templatenotset" ) );
-            System.exit( -1 );
-        }
-
-
+        final String[] l_templates = l_cli.hasOption( "template" ) ? l_cli.getOptionValue( "template" ).split( "," ) : new String[]{DEFAULTTEMPLATE};
         final Path l_outputdirectory = l_cli.hasOption( "output" ) ? Paths.get( l_cli.getOptionValue( "output" ) ) : null;
-        final String[] l_templates = l_cli.getOptionValue( "template" ).split( "," );
         final Collection<String> l_errors = Arrays.stream( l_cli.getOptionValue( "grammar" ).split( "," ) )
                                                   .parallel()
                                                   .flatMap( i -> generate( new File( i ), l_outputdirectory, l_templates ).stream() )
