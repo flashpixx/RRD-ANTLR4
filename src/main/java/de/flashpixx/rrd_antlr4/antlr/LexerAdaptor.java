@@ -1,6 +1,5 @@
 package de.flashpixx.rrd_antlr4.antlr;
 
-import de.flashpixx.grammar.ANTLRv4Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Token;

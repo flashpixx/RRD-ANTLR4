@@ -23,8 +23,8 @@
 
 package de.flashpixx.rrd_antlr4.engine;
 
-import de.flashpixx.grammar.ANTLRv4Lexer;
-import de.flashpixx.grammar.ANTLRv4Parser;
+import de.flashpixx.rrd_antlr4.antlr.ANTLRv4Lexer;
+import de.flashpixx.rrd_antlr4.antlr.ANTLRv4Parser;
 import de.flashpixx.rrd_antlr4.antlr.CASTVisitor;
 import de.flashpixx.rrd_antlr4.engine.template.ITemplate;
 import org.antlr.v4.runtime.ANTLRErrorListener;

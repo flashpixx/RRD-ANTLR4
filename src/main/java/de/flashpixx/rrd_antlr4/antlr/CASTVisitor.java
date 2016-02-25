@@ -23,8 +23,6 @@
 
 package de.flashpixx.rrd_antlr4.antlr;
 
-import de.flashpixx.grammar.ANTLRv4Parser;
-import de.flashpixx.grammar.ANTLRv4ParserBaseVisitor;
 import de.flashpixx.rrd_antlr4.engine.template.ITemplate;
 
 import java.util.Collection;
