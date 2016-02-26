@@ -81,12 +81,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
         return p_context.element() == null
                ? null
                : p_context.element().stream()
-                          .map( i -> (String) this.visitElement( i ) )
-                          .map( i -> {
-                              return i.startsWith( "'" ) && i.endsWith( "'" )
-                                     ? new CTerminalValue( i.substring( 1, i.length() - 1 ) )
-                                     : new CGrammarIdentifier( i );
-                          } )
+                          .map( i -> this.convert( (String) this.visitElement( i ) ) )
                           .filter( i -> i != null )
                           .collect( Collectors.toList() );
     }
@@ -129,25 +124,8 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
     public final Object visitLexerElements( final ANTLRv4Parser.LexerElementsContext p_context )
     {
         return p_context.lexerElement().stream()
-                        .map( i -> (String) this.visitLexerElement( i ) )
+                        .map( i -> this.convert( (String) this.visitLexerElement( i ) ) )
                         .filter( i -> i != null )
-                        .map( i -> {
-                            // string check
-                            if ( i.startsWith( "'" ) && ( i.endsWith( "'" ) ) )
-                                return new CTerminalValue<>( i.substring( 1, i.length() - 1 ) );
-
-                            // regular expression check
-                            try
-                            {
-                                return new CTerminalValue<>( Pattern.compile( i ) );
-                            }
-                            catch ( final PatternSyntaxException p_exception )
-                            {
-                            }
-
-                            // it is a string / identifier
-                            return new CGrammarIdentifier( i );
-                        } )
                         .collect( Collectors.toList() );
     }
 
@@ -155,6 +133,34 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
     public final Object visitLexerElement( final ANTLRv4Parser.LexerElementContext p_context )
     {
         return p_context.getText();
+    }
+
+    /**
+     * converts a string to a grammar element
+     *
+     * @param p_input string input
+     * @return grammar element or null
+     */
+    private IGrammarElement convert( final String p_input )
+    {
+        if ( ( p_input == null ) || ( p_input.isEmpty() ) )
+            return null;
+
+        // string check
+        if ( p_input.startsWith( "'" ) && ( p_input.endsWith( "'" ) ) )
+            return new CTerminalValue<>( p_input.substring( 1, p_input.length() - 1 ) );
+
+        // regular expression check
+        try
+        {
+            return new CTerminalValue<>( Pattern.compile( p_input ) );
+        }
+        catch ( final PatternSyntaxException p_exception )
+        {
+        }
+
+        // it is a string / identifier
+        return new CGrammarIdentifier( p_input );
     }
 
 }
