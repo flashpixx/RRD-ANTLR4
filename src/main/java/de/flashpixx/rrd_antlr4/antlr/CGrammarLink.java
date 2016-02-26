@@ -57,4 +57,22 @@ public final class CGrammarLink implements IGrammarSimpleElement<String>
     {
         return m_value == null ? true : Arrays.asList( p_class ).stream().map( i -> i.isAssignableFrom( m_value.getClass() ) ).anyMatch( i -> i );
     }
+
+    @Override
+    public final int hashCode()
+    {
+        return m_value.hashCode();
+    }
+
+    @Override
+    public final boolean equals( final Object p_object )
+    {
+        return this.hashCode() == p_object.hashCode();
+    }
+
+    @Override
+    public final String toString()
+    {
+        return m_value;
+    }
 }

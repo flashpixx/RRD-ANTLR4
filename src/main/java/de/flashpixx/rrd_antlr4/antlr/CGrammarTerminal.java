@@ -54,7 +54,7 @@ public class CGrammarTerminal implements IGrammarTerminal
     /**
      * alternatives
      */
-    private final List<List<CTerminalValue<?>>> m_alternatives;
+    private final List<List<IGrammarSimpleElement<?>>> m_alternatives;
 
     /**
      * ctor
@@ -72,7 +72,7 @@ public class CGrammarTerminal implements IGrammarTerminal
 
 
         m_alternatives = p_alternatives == null
-                         ? Collections.<List<CTerminalValue<?>>>emptyList()
+                         ? Collections.<List<IGrammarSimpleElement<?>>>emptyList()
                          : p_alternatives.stream().map( j -> convert( j ) ).collect( Collectors.toList() );
     }
 
@@ -83,7 +83,7 @@ public class CGrammarTerminal implements IGrammarTerminal
     }
 
     @Override
-    public final List<List<CTerminalValue<?>>> alternatives()
+    public final List<List<IGrammarSimpleElement<?>>> alternatives()
     {
         return m_alternatives;
     }
@@ -132,7 +132,7 @@ public class CGrammarTerminal implements IGrammarTerminal
      * @param p_input input data
      * @return terminal value
      */
-    private static List<CTerminalValue<?>> convert( final Collection<String> p_input )
+    private static List<IGrammarSimpleElement<?>> convert( final Collection<String> p_input )
     {
         return p_input.stream()
                       .map( i -> {
@@ -151,7 +151,7 @@ public class CGrammarTerminal implements IGrammarTerminal
                           }
 
                           // it is a string / identifier
-                          return new CTerminalValue<>( i );
+                          return new CGrammarLink( i );
                       } )
                       .filter( i -> i != null )
                       .collect( Collectors.toList() );

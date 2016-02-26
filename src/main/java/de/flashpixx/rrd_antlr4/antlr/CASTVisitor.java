@@ -74,7 +74,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
                           .map( i -> (String) this.visitChildren( i ) )
                           .filter( i -> i != null )
                           .map( i -> i.startsWith( "'" ) && i.endsWith( "'" ) ? new CTerminalValue( i.substring( 1, i.length() - 1 ) )
-                                                                              : new CTerminalValue( i ) )
+                                                                              : new CGrammarLink( i ) )
                           .collect( Collectors.toList() )
                : null;
     }

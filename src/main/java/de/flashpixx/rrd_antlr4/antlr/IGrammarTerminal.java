@@ -44,6 +44,6 @@ public interface IGrammarTerminal extends IGrammarComplexElement
      *
      * @return collection of string alternatives
      */
-    List<List<CTerminalValue<?>>> alternatives();
+    List<List<IGrammarSimpleElement<?>>> alternatives();
 
 }
