@@ -70,19 +70,29 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
     @Override
     public final Object visitRuleAltList( final ANTLRv4Parser.RuleAltListContext p_context )
     {
-        return p_context.labeledAlt() != null
-               ? p_context.labeledAlt().stream()
-                          .map( i -> (String) this.visitChildren( i ) )
-                          .filter( i -> i != null )
-                          .map( i -> i.startsWith( "'" ) && i.endsWith( "'" )
+        return p_context.labeledAlt().stream().map( i -> this.visitLabeledAlt( i ) ).filter( i -> i != null ).collect( Collectors.toList() );
+    }
+
+
+    @Override
+    public final Object visitAlternative( final ANTLRv4Parser.AlternativeContext p_context )
+    {
+        // ignore element options
+        return p_context.element() == null
+               ? null
+               : p_context.element().stream()
+                          .map( i -> (String) this.visitElement( i ) )
+                          .map( i -> {
+                              return i.startsWith( "'" ) && i.endsWith( "'" )
                                      ? new CTerminalValue( i.substring( 1, i.length() - 1 ) )
-                                     : new CGrammarIdentifier( i ) )
-                          .collect( Collectors.toList() )
-               : null;
+                                     : new CGrammarIdentifier( i );
+                          } )
+                          .filter( i -> i != null )
+                          .collect( Collectors.toList() );
     }
 
     @Override
-    public Object visitElement( final ANTLRv4Parser.ElementContext p_context )
+    public final Object visitElement( final ANTLRv4Parser.ElementContext p_context )
     {
         return p_context.getText();
     }
