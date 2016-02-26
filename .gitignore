@@ -11,6 +11,7 @@
 !*.md
 !*.properties
 !*.tex
+!*.htm
 
 !src/main/documentation/*.doxyfile
 !src/main/documentation/*.htm
