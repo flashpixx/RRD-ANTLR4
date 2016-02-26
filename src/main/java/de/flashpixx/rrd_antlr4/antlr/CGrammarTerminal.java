@@ -26,12 +26,8 @@ package de.flashpixx.rrd_antlr4.antlr;
 import org.apache.commons.lang3.StringUtils;
 
 import java.text.MessageFormat;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-import java.util.stream.Collectors;
 
 
 /**
@@ -64,16 +60,14 @@ public class CGrammarTerminal implements IGrammarTerminal
      * @param p_documentation documentation
      * @param p_alternatives alternatives
      */
-    public CGrammarTerminal( final String p_id, final boolean p_isfragment, final String p_documentation, final Collection<Collection<String>> p_alternatives )
+    public CGrammarTerminal( final String p_id, final boolean p_isfragment, final String p_documentation,
+                             final List<List<IGrammarSimpleElement<?>>> p_alternatives
+    )
     {
         m_id = p_id;
         m_isfragment = p_isfragment;
         m_documentation = p_documentation == null ? "" : p_documentation;
-
-
-        m_alternatives = p_alternatives == null
-                         ? Collections.<List<IGrammarSimpleElement<?>>>emptyList()
-                         : p_alternatives.stream().map( j -> convert( j ) ).collect( Collectors.toList() );
+        m_alternatives = p_alternatives == null ? Collections.<List<IGrammarSimpleElement<?>>>emptyList() : p_alternatives;
     }
 
     @Override
@@ -124,36 +118,4 @@ public class CGrammarTerminal implements IGrammarTerminal
         );
     }
 
-    /**
-     * converting for alternative data,
-     * terminal alternatives can be string (quoated by single quotes), a regular expression or another terminal identifier,
-     * that starts with an upper-case letter
-     *
-     * @param p_input input data
-     * @return terminal value
-     */
-    private static List<IGrammarSimpleElement<?>> convert( final Collection<String> p_input )
-    {
-        return p_input.stream()
-                      .map( i -> {
-
-                          // string check
-                          if ( i.startsWith( "'" ) && ( i.endsWith( "'" ) ) )
-                              return new CTerminalValue<>( i.substring( 1, i.length() - 1 ) );
-
-                          // regular expression check
-                          try
-                          {
-                              return new CTerminalValue<>( Pattern.compile( i ) );
-                          }
-                          catch ( final PatternSyntaxException p_exception )
-                          {
-                          }
-
-                          // it is a string / identifier
-                          return new CGrammarLink( i );
-                      } )
-                      .filter( i -> i != null )
-                      .collect( Collectors.toList() );
-    }
 }

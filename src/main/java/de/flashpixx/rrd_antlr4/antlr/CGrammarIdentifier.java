@@ -29,7 +29,7 @@ import java.util.Arrays;
 /**
  * link class between two rules
  */
-public final class CGrammarLink implements IGrammarSimpleElement<String>
+public final class CGrammarIdentifier implements IGrammarSimpleElement<String>
 {
     /**
      * rule name
@@ -41,7 +41,7 @@ public final class CGrammarLink implements IGrammarSimpleElement<String>
      *
      * @param p_value rule name
      */
-    public CGrammarLink( final String p_value )
+    public CGrammarIdentifier( final String p_value )
     {
         m_value = p_value;
     }

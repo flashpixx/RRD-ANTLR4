@@ -25,8 +25,9 @@ package de.flashpixx.rrd_antlr4.antlr;
 
 import de.flashpixx.rrd_antlr4.engine.template.ITemplate;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 
 
@@ -73,8 +74,9 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
                ? p_context.labeledAlt().stream()
                           .map( i -> (String) this.visitChildren( i ) )
                           .filter( i -> i != null )
-                          .map( i -> i.startsWith( "'" ) && i.endsWith( "'" ) ? new CTerminalValue( i.substring( 1, i.length() - 1 ) )
-                                                                              : new CGrammarLink( i ) )
+                          .map( i -> i.startsWith( "'" ) && i.endsWith( "'" )
+                                     ? new CTerminalValue( i.substring( 1, i.length() - 1 ) )
+                                     : new CGrammarIdentifier( i ) )
                           .collect( Collectors.toList() )
                : null;
     }
@@ -95,7 +97,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
                         p_context.TOKEN_REF().getText(),
                         p_context.FRAGMENT() != null,
                         p_context.DOC_COMMENT() == null ? "" : p_context.DOC_COMMENT().getText(),
-                        (Collection<Collection<String>>) this.visitLexerRuleBlock( p_context.lexerRuleBlock() )
+                        (List<List<IGrammarSimpleElement<?>>>) this.visitLexerRuleBlock( p_context.lexerRuleBlock() )
                 ) );
         return null;
     }
@@ -116,7 +118,27 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
     @Override
     public final Object visitLexerElements( final ANTLRv4Parser.LexerElementsContext p_context )
     {
-        return p_context.lexerElement().stream().map( i -> this.visitLexerElement( i ) ).filter( i -> i != null ).collect( Collectors.toList() );
+        return p_context.lexerElement().stream()
+                        .map( i -> (String) this.visitLexerElement( i ) )
+                        .filter( i -> i != null )
+                        .map( i -> {
+                            // string check
+                            if ( i.startsWith( "'" ) && ( i.endsWith( "'" ) ) )
+                                return new CTerminalValue<>( i.substring( 1, i.length() - 1 ) );
+
+                            // regular expression check
+                            try
+                            {
+                                return new CTerminalValue<>( Pattern.compile( i ) );
+                            }
+                            catch ( final PatternSyntaxException p_exception )
+                            {
+                            }
+
+                            // it is a string / identifier
+                            return new CGrammarIdentifier( i );
+                        } )
+                        .collect( Collectors.toList() );
     }
 
     @Override
