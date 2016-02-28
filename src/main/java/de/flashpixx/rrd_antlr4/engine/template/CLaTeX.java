@@ -47,13 +47,13 @@ public class CLaTeX implements ITemplate
     }
 
     @Override
-    public final void rule( final IGrammarRule p_rule )
+    public final void rule( final String p_grammar, final IGrammarRule p_rule )
     {
 
     }
 
     @Override
-    public final void terminal( IGrammarTerminal p_terminal )
+    public final void terminal( final String p_grammar, IGrammarTerminal p_terminal )
     {
 
     }

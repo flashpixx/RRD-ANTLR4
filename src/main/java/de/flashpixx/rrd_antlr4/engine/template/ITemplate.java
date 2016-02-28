@@ -54,15 +54,17 @@ public interface ITemplate
     /**
      * is called if any grammar rule is created
      *
+     * @param p_grammar grammar file name
      * @param p_rule rule
      */
-    void rule( final IGrammarRule p_rule );
+    void rule( final String p_grammar, final IGrammarRule p_rule );
 
     /**
      * is called if a terminal is created
      *
+     * @param p_grammar grammar file name
      * @param p_terminal terminal
      */
-    void terminal( final IGrammarTerminal p_terminal );
+    void terminal( final String p_grammar, final IGrammarTerminal p_terminal );
 
 }

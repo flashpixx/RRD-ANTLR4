@@ -47,13 +47,13 @@ public final class CHTML implements ITemplate
     }
 
     @Override
-    public final void rule( final IGrammarRule p_rule )
+    public final void rule( final String p_grammar, final IGrammarRule p_rule )
     {
         System.out.println( "---> " + p_rule );
     }
 
     @Override
-    public final void terminal( final IGrammarTerminal p_terminal )
+    public final void terminal( final String p_grammar, final IGrammarTerminal p_terminal )
     {
         System.out.println( "---> " + p_terminal );
     }

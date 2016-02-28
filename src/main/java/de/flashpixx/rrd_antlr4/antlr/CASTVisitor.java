@@ -41,23 +41,41 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
      * exporting template
      */
     private final ITemplate m_template;
+    /**
+     * grammar file name
+     */
+    private final String m_grammar;
 
     /**
      * exporting template
      *
+     * @param p_grammer grammar file name
      * @param p_template template
      */
-    public CASTVisitor( final ITemplate p_template )
+    public CASTVisitor( final String p_grammer, final ITemplate p_template )
     {
+        m_grammar = p_grammer;
         m_template = p_template;
     }
 
 
+    @Override
+    public final Object visitDelegateGrammars( final ANTLRv4Parser.DelegateGrammarsContext p_context )
+    {
+        return super.visitDelegateGrammars( p_context );
+    }
+
+    @Override
+    public final Object visitDelegateGrammar( final ANTLRv4Parser.DelegateGrammarContext p_context )
+    {
+        return super.visitDelegateGrammar( p_context );
+    }
 
     @Override
     public final Object visitParserRuleSpec( final ANTLRv4Parser.ParserRuleSpecContext p_context )
     {
         m_template.rule(
+                m_grammar,
                 new CGrammarRule(
                         p_context.RULE_REF().getText(),
                         p_context.DOC_COMMENT() == null ? "" : p_context.DOC_COMMENT().getText(),
@@ -98,6 +116,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
     public final Object visitLexerRuleSpec( final ANTLRv4Parser.LexerRuleSpecContext p_context )
     {
         m_template.terminal(
+                m_grammar,
                 new CGrammarTerminal(
                         p_context.TOKEN_REF().getText(),
                         p_context.FRAGMENT() != null,
