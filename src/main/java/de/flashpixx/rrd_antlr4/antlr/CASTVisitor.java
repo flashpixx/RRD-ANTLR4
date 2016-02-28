@@ -42,22 +42,27 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
      */
     private final ITemplate m_template;
     /**
-     * grammar file name
+     * grammar name - is set by the first grammar rule
      */
-    private final String m_grammar;
+    private String m_grammar;
 
     /**
      * exporting template
      *
-     * @param p_grammer grammar file name
      * @param p_template template
      */
-    public CASTVisitor( final String p_grammer, final ITemplate p_template )
+    public CASTVisitor( final ITemplate p_template )
     {
-        m_grammar = p_grammer;
         m_template = p_template;
     }
 
+
+    @Override
+    public final Object visitGrammarSpec( final ANTLRv4Parser.GrammarSpecContext p_context )
+    {
+        m_grammar = p_context.id().getText();
+        return super.visitGrammarSpec( p_context );
+    }
 
     @Override
     public final Object visitDelegateGrammars( final ANTLRv4Parser.DelegateGrammarsContext p_context )

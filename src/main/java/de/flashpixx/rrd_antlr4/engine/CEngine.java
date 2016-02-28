@@ -72,7 +72,7 @@ public final class CEngine
 
         // run exporting process with the visitor
         p_template.preprocess( p_outputdirectory, p_grammar.getName() );
-        new CASTVisitor( p_grammar.getName(), p_template ).visit( l_parser.grammarSpec() );
+        new CASTVisitor( p_template ).visit( l_parser.grammarSpec() );
         p_template.postprocess( p_outputdirectory, p_grammar.getName() );
     }
 
