@@ -38,11 +38,13 @@ import org.apache.maven.plugins.annotations.Parameter;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -71,10 +73,12 @@ public final class CMain extends AbstractMojo
      */
     private static final String GRAMMARFILEEXTENSION = ".g4";
 
+
+
     /**
      * Maven plugin parameter for output
      */
-    @Parameter( defaultValue = DEFAULTOUTPUT )
+    @Parameter( defaultValue = "target/" + DEFAULTOUTPUT )
     private String output;
     /**
      * Maven plugin used templates option
@@ -91,6 +95,12 @@ public final class CMain extends AbstractMojo
      */
     @Parameter( defaultValue = "src/main/antlr4/imports" )
     private String[] imports;
+    /**
+     * Maven plugin exclude file list
+     */
+    @Parameter
+    private String[] exclude;
+
 
 
     /**
@@ -103,11 +113,14 @@ public final class CMain extends AbstractMojo
         // --- define CLI options --------------------------------------------------------------------------------------
         final Options l_clioptions = new Options();
         l_clioptions.addOption( "help", false, CCommon.getLanguageString( CMain.class, "help" ) );
+        l_clioptions.addOption( "output", true, CCommon.getLanguageString( CMain.class, "output", DEFAULTOUTPUT ) );
+        l_clioptions.addOption( "import", true, CCommon.getLanguageString( CMain.class, "import" ) );
+        l_clioptions.addOption( "exclude", true, CCommon.getLanguageString( CMain.class, "exclude" ) );
         l_clioptions.addOption( "grammar", true, CCommon.getLanguageString( CMain.class, "grammar" ) );
         l_clioptions.addOption( "template", true, CCommon.getLanguageString( CMain.class, "template", Arrays.asList( ETemplate.values() ), DEFAULTTEMPLATE ) );
-        l_clioptions.addOption( "output", true, CCommon.getLanguageString( CMain.class, "output", DEFAULTOUTPUT ) );
 
-        CommandLine l_cli = null;
+
+        final CommandLine l_cli;
         try
         {
             l_cli = new DefaultParser().parse( l_clioptions, p_args );
@@ -116,6 +129,7 @@ public final class CMain extends AbstractMojo
         {
             System.err.println( CCommon.getLanguageString( CMain.class, "parseerror", l_exception.getLocalizedMessage() ) );
             System.exit( -1 );
+            return;
         }
 
 
@@ -135,11 +149,17 @@ public final class CMain extends AbstractMojo
             System.exit( -1 );
         }
 
+        final Set<String> l_exclude = l_cli.hasOption( "exclude" ) ? new HashSet<String>()
+        {{
+            Arrays.stream( l_cli.getOptionValue( "exclude" ).split( "," ) ).forEach( i -> add( i.trim() ) );
+        }} : Collections.<String>emptySet();
         final String[] l_templates = l_cli.hasOption( "template" ) ? l_cli.getOptionValue( "template" ).split( "," ) : new String[]{DEFAULTTEMPLATE};
-        final Path l_outputdirectory = l_cli.hasOption( "output" ) ? Paths.get( l_cli.getOptionValue( "output" ) ) : null;
+        final String l_outputdirectory = l_cli.hasOption( "output" ) ? l_cli.getOptionValue( "output" ) : DEFAULTOUTPUT;
+
+
         final Collection<String> l_errors = Arrays.stream( l_cli.getOptionValue( "grammar" ).split( "," ) )
                                                   .parallel()
-                                                  .flatMap( i -> generate( new File( i ), l_outputdirectory, l_templates ).stream() )
+                                                  .flatMap( i -> generate( new File( i ), l_exclude, l_outputdirectory, l_templates ).stream() )
                                                   .collect( Collectors.toList() );
 
         if ( !l_errors.isEmpty() )
@@ -160,13 +180,14 @@ public final class CMain extends AbstractMojo
      * generating export
      *
      * @param p_grammar path to grammar file or grammar file directory
+     * @param p_exclude file names which are ignored
      * @param p_outputdirectory output directory
      * @param p_template string with export name
      * @return returns a collection with error messages
      */
-    private static Collection<String> generate( final File p_grammar, final Path p_outputdirectory, final String... p_template )
+    private static Collection<String> generate( final File p_grammar, final Set<String> p_exclude, final String p_outputdirectory, final String... p_template )
     {
-        return getFileList( p_grammar ).flatMap( i ->
+        return getFileList( p_grammar, p_exclude ).flatMap( i ->
                                                          Arrays.stream( p_template )
                                                                .parallel()
                                                                .map( j -> {
@@ -175,10 +196,10 @@ public final class CMain extends AbstractMojo
                                                                              ENGINE.generate(
                                                                                      i,
                                                                                      ETemplate.valueOf( j.trim().toUpperCase() ).generate(),
-                                                                                     p_outputdirectory != null ? p_outputdirectory
-                                                                                                               : Paths.get( DEFAULTOUTPUT, j.trim().toLowerCase(),
-                                                                                                                            p_grammar.getName().toLowerCase()
-                                                                                                               )
+                                                                                     Paths.get(
+                                                                                             p_outputdirectory, j.trim().toLowerCase(),
+                                                                                             p_grammar.getName().toLowerCase()
+                                                                                     )
                                                                              );
                                                                              return null;
                                                                          }
@@ -197,20 +218,27 @@ public final class CMain extends AbstractMojo
      * returns a list of grammar files
      *
      * @param p_input grammar file or directory with grammar files
+     * @param p_exclude file names which are ignored
      * @return stream of file objects
      */
-    private static Stream<File> getFileList( final File p_input )
+    private static Stream<File> getFileList( final File p_input, final Set<String> p_exclude )
     {
-        return p_input.isFile() ? new LinkedList<File>()
-        {{
-            add( p_input );
-        }}.stream() : Arrays.stream( p_input.listFiles( new FilenameFilter()
-        {
-            @Override
-            public final boolean accept( final File p_dir, final String p_name )
-            {
-                return p_name.endsWith( GRAMMARFILEEXTENSION );
-            }
-        } ) );
+        return (
+                p_input.isFile()
+
+                ? new LinkedList<File>()
+                {{
+                    add( p_input );
+                }}.stream()
+
+                : Arrays.stream( p_input.listFiles( new FilenameFilter()
+                {
+                    @Override
+                    public final boolean accept( final File p_dir, final String p_name )
+                    {
+                        return p_name.endsWith( GRAMMARFILEEXTENSION );
+                    }
+                } ) )
+        ).filter( i -> !p_exclude.contains( i.getName() ) );
     }
 }
