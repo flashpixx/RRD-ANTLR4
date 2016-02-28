@@ -36,12 +36,15 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 /**
@@ -63,6 +66,10 @@ public final class CMain extends AbstractMojo
      * default export format
      */
     private static final String DEFAULTTEMPLATE = "HTML";
+    /**
+     * default grammar file extension
+     */
+    private static final String GRAMMARFILEEXTENSION = ".g4";
 
     /**
      * Maven plugin parameter for output
@@ -74,6 +81,16 @@ public final class CMain extends AbstractMojo
      */
     @Parameter( defaultValue = DEFAULTTEMPLATE )
     private String[] template;
+    /**
+     * Maven plugin default directories of grammars
+     */
+    @Parameter( defaultValue = "src/main/antlr4" )
+    private String[] grammar;
+    /**
+     * Maven plugin default grammar import directories
+     */
+    @Parameter( defaultValue = "src/main/antlr4/imports" )
+    private String[] imports;
 
 
     /**
@@ -142,33 +159,58 @@ public final class CMain extends AbstractMojo
     /**
      * generating export
      *
-     * @param p_grammar path to grammar file
+     * @param p_grammar path to grammar file or grammar file directory
      * @param p_outputdirectory output directory
      * @param p_template string with export name
      * @return returns a collection with error messages
      */
     private static Collection<String> generate( final File p_grammar, final Path p_outputdirectory, final String... p_template )
     {
-        return Arrays.stream( p_template )
-                     .parallel()
-                     .map( i -> {
-                               try
-                               {
-                                   ENGINE.generate(
-                                           p_grammar,
-                                           ETemplate.valueOf( i.trim().toUpperCase() ).generate(),
-                                           p_outputdirectory != null ? p_outputdirectory
-                                                                     : Paths.get( DEFAULTOUTPUT, i.trim().toLowerCase(), p_grammar.getName().toLowerCase() )
-                                   );
-                                   return null;
-                               }
-                               catch ( final IOException p_exception )
-                               {
-                                   return p_exception.getMessage();
-                               }
-                           }
-                     )
-                     .filter( i -> i != null )
-                     .collect( Collectors.toSet() );
+        return getFileList( p_grammar ).flatMap( i ->
+                                                         Arrays.stream( p_template )
+                                                               .parallel()
+                                                               .map( j -> {
+                                                                         try
+                                                                         {
+                                                                             ENGINE.generate(
+                                                                                     i,
+                                                                                     ETemplate.valueOf( j.trim().toUpperCase() ).generate(),
+                                                                                     p_outputdirectory != null ? p_outputdirectory
+                                                                                                               : Paths.get( DEFAULTOUTPUT, j.trim().toLowerCase(),
+                                                                                                                            p_grammar.getName().toLowerCase()
+                                                                                                               )
+                                                                             );
+                                                                             return null;
+                                                                         }
+                                                                         catch ( final IOException p_exception )
+                                                                         {
+                                                                             return p_exception.getMessage();
+                                                                         }
+                                                                     }
+                                                               )
+                                                               .filter( j -> j != null )
+
+        ).collect( Collectors.toSet() );
+    }
+
+    /**
+     * returns a list of grammar files
+     *
+     * @param p_input grammar file or directory with grammar files
+     * @return stream of file objects
+     */
+    private static Stream<File> getFileList( final File p_input )
+    {
+        return p_input.isFile() ? new LinkedList<File>()
+        {{
+            add( p_input );
+        }}.stream() : Arrays.stream( p_input.listFiles( new FilenameFilter()
+        {
+            @Override
+            public final boolean accept( final File p_dir, final String p_name )
+            {
+                return p_name.endsWith( GRAMMARFILEEXTENSION );
+            }
+        } ) );
     }
 }
