@@ -25,7 +25,9 @@ package de.flashpixx.rrd_antlr4.antlr;
 
 import de.flashpixx.rrd_antlr4.engine.template.ITemplate;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
@@ -45,6 +47,10 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
      * grammar name - is set by the first grammar rule
      */
     private String m_grammar;
+    /**
+     * set with grammer imports
+     */
+    private Set<String> m_imports = new HashSet<>();
 
     /**
      * exporting template
@@ -65,14 +71,9 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
     }
 
     @Override
-    public final Object visitDelegateGrammars( final ANTLRv4Parser.DelegateGrammarsContext p_context )
-    {
-        return super.visitDelegateGrammars( p_context );
-    }
-
-    @Override
     public final Object visitDelegateGrammar( final ANTLRv4Parser.DelegateGrammarContext p_context )
     {
+        p_context.id().stream().map( i -> i.getText() ).forEach( i -> m_imports.add( i ) );
         return super.visitDelegateGrammar( p_context );
     }
 
@@ -157,6 +158,16 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
     public final Object visitLexerElement( final ANTLRv4Parser.LexerElementContext p_context )
     {
         return p_context.getText();
+    }
+
+    /**
+     * returns a set with grammar imports
+     *
+     * @return set with grammar imports
+     */
+    public final Set<String> getGrammarImports()
+    {
+        return m_imports;
     }
 
     /**

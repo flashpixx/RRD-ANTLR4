@@ -36,6 +36,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -47,6 +49,11 @@ public final class CEngine
      * error handler
      */
     private final ANTLRErrorListener m_errorlistener = new CErrorListener();
+    /**
+     * directories with grammar imports
+     */
+    private final Set<Files> m_imports = new HashSet<>();
+
 
     /**
      * generator call
@@ -70,9 +77,15 @@ public final class CEngine
         // create output directory of not exists
         Files.createDirectories( p_outputdirectory );
 
-        // run exporting process with the visitor
+        // run exporting process of the input grammar file with the visitor
         p_template.preprocess( p_outputdirectory, p_grammar.getName() );
-        new CASTVisitor( p_template ).visit( l_parser.grammarSpec() );
+
+        final CASTVisitor l_visitor = new CASTVisitor( p_template );
+        l_visitor.visit( l_parser.grammarSpec() );
+
+        // do recursive call to handle imported grammar files
+        //l_visitor.getGrammarImports().stream().map( i ->  )
+
         p_template.postprocess( p_outputdirectory, p_grammar.getName() );
     }
 
