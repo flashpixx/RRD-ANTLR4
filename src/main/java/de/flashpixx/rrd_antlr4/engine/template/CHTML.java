@@ -62,6 +62,9 @@ public final class CHTML extends IBaseTemplate
         this.copy( "lib/jquery/dist/jquery.min.js", p_output );
         this.copy( "lib/railroad-diagrams/railroad-diagrams.css", p_output );
         this.copy( "lib/railroad-diagrams/railroad-diagrams.js", p_output );
+
+        // replace content
+
     }
 
     @Override

@@ -24,7 +24,9 @@
 package de.flashpixx.rrd_antlr4.engine.template;
 
 import de.flashpixx.rrd_antlr4.CCommon;
+import org.apache.commons.io.FileUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -70,7 +72,7 @@ public abstract class IBaseTemplate implements ITemplate
      * @throws IOException on IO error
      * @throws URISyntaxException on URL syntax error
      */
-    public final void copy( final String p_templatefile, final Path p_output ) throws IOException, URISyntaxException
+    protected final void copy( final String p_templatefile, final Path p_output ) throws IOException, URISyntaxException
     {
         final Path l_target = Paths.get( p_output.toString(), p_templatefile );
         Files.createDirectories( l_target.getParent() );
@@ -79,6 +81,22 @@ public abstract class IBaseTemplate implements ITemplate
                 l_target,
                 StandardCopyOption.REPLACE_EXISTING
         );
+    }
+
+    /**
+     * replaces the string within the file
+     *
+     * @param p_file file
+     * @param p_replacepair string tupels for replacing
+     */
+    protected final void replace( final File p_file, final String... p_replacepair ) throws IOException
+    {
+        if ( ( p_replacepair == null ) || ( p_replacepair.length % 2 != 0 ) )
+            throw new IllegalArgumentException( CCommon.getLanguageString( IBaseTemplate.class, "replaceerror" ) );
+
+
+        final String l_content = FileUtils.readFileToString( p_file );
+        //IntStream.range( 0, p_replacepair.length-1 ).boxed().forEach( i)
     }
 
 }
