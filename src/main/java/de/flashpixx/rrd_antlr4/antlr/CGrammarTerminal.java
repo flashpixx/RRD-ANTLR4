@@ -114,7 +114,7 @@ public class CGrammarTerminal implements IGrammarTerminal
                 this.id(),
                 m_isfragment ? " (fragment)" : "",
                 StringUtils.join( m_alternatives, " | " ),
-                m_documentation
+                m_documentation.isEmpty() ? "" : " // " + m_documentation
         ).trim();
     }
 

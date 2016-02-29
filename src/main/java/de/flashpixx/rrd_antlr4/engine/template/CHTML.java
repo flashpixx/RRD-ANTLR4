@@ -27,6 +27,7 @@ import de.flashpixx.rrd_antlr4.antlr.IGrammarComplexElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarRule;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarTerminal;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
@@ -37,6 +38,7 @@ import java.nio.file.Path;
  */
 public final class CHTML extends IBaseTemplate
 {
+    private IGrammarComplexElement m_grammar;
 
 
     /**
@@ -58,19 +60,23 @@ public final class CHTML extends IBaseTemplate
     public final void postprocess( final Path p_output ) throws IOException, URISyntaxException
     {
         // copy JavaScript and CSS elements
-        this.copy( "rrd.htm", p_output );
+        this.copy( "index.htm", p_output );
         this.copy( "lib/jquery/dist/jquery.min.js", p_output );
         this.copy( "lib/railroad-diagrams/railroad-diagrams.css", p_output );
         this.copy( "lib/railroad-diagrams/railroad-diagrams.js", p_output );
 
         // replace content
-
+        this.replace(
+                new File( p_output.toString(), "/index.htm" ),
+                "%grammarname%", m_grammar.id(),
+                "%grammardocumentation%", m_grammar.documentation()
+        );
     }
 
     @Override
     public final void grammar( final IGrammarComplexElement p_grammar )
     {
-
+        m_grammar = p_grammar;
     }
 
     @Override

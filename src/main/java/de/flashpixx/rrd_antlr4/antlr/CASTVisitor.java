@@ -66,7 +66,8 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
     @Override
     public final Object visitGrammarSpec( final ANTLRv4Parser.GrammarSpecContext p_context )
     {
-        m_grammar = new CGrammar( p_context.id().getText(), p_context.DOC_COMMENT() == null ? null : p_context.DOC_COMMENT().getText() );
+        m_grammar = new CGrammar( p_context.id().getText(), this.cleanComment( p_context.DOC_COMMENT() == null ? null : p_context.DOC_COMMENT().getText() ) );
+        m_template.grammar( m_grammar );
         return super.visitGrammarSpec( p_context );
     }
 
@@ -84,7 +85,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
                 m_grammar,
                 new CGrammarRule(
                         p_context.RULE_REF().getText(),
-                        p_context.DOC_COMMENT() == null ? "" : p_context.DOC_COMMENT().getText(),
+                        this.cleanComment( p_context.DOC_COMMENT() == null ? null : p_context.DOC_COMMENT().getText() ),
                         (List<List<IGrammarElement>>) this.visitRuleBlock( p_context.ruleBlock() )
                 )
         );
@@ -126,7 +127,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
                 new CGrammarTerminal(
                         p_context.TOKEN_REF().getText(),
                         p_context.FRAGMENT() != null,
-                        p_context.DOC_COMMENT() == null ? "" : p_context.DOC_COMMENT().getText(),
+                        this.cleanComment( p_context.DOC_COMMENT() == null ? null : p_context.DOC_COMMENT().getText() ),
                         (List<List<IGrammarSimpleElement<?>>>) this.visitLexerRuleBlock( p_context.lexerRuleBlock() )
                 )
         );
@@ -197,6 +198,17 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
 
         // it is a string / identifier
         return new CGrammarIdentifier( p_input );
+    }
+
+    /**
+     * cleanup comment from doxygen structure
+     *
+     * @param p_comment comment input
+     * @return cleaned text or null
+     */
+    private String cleanComment( final String p_comment )
+    {
+        return p_comment == null ? null : p_comment.replace( "*", "" ).replace( "/", "" ).trim();
     }
 
 }

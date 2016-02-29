@@ -78,7 +78,7 @@ public final class CGrammarRule implements IGrammarRule
                 "{0} -> {1} {2}",
                 this.id(),
                 StringUtils.join( m_alternatives, " | " ),
-                m_documentation
+                m_documentation.isEmpty() ? "" : " // " + m_documentation
         ).trim();
     }
 }

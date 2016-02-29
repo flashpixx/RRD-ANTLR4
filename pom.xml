@@ -97,6 +97,13 @@
             <scope>compile</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.aol.cyclops</groupId>
+            <artifactId>cyclops-streams</artifactId>
+            <version>7.3.1</version>
+            <scope>compile</scope>
+        </dependency>
+
 
         <!-- test -->
         <dependency>

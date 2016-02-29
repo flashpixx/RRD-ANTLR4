@@ -80,8 +80,6 @@ public final class CEngine
         l_parser.removeErrorListeners();
         l_parser.addErrorListener( m_errorlistener );
 
-
-        // run for each template the exporting process
         return p_template
                 .parallelStream()
 
