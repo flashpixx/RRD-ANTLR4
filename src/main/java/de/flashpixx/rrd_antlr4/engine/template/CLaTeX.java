@@ -23,6 +23,7 @@
 
 package de.flashpixx.rrd_antlr4.engine.template;
 
+import de.flashpixx.rrd_antlr4.antlr.IGrammarComplexElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarRule;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarTerminal;
 
@@ -34,27 +35,55 @@ import java.nio.file.Path;
  */
 public class CLaTeX implements ITemplate
 {
+    /**
+     * template name
+     */
+    private final String m_name;
+
+    /**
+     * ctor
+     *
+     * @param p_name template name
+     */
+    public CLaTeX( final String p_name )
+    {
+        m_name = p_name;
+    }
+
     @Override
-    public final void preprocess( final Path p_outputdirectory, final String p_grammar )
+    public final String name()
+    {
+        return m_name;
+    }
+
+    @Override
+    public final void preprocess( final Path p_outputdirectory )
     {
 
     }
 
     @Override
-    public final void postprocess( final Path p_outputdirectory, final String p_grammar )
+    public final void postprocess( final Path p_outputdirectory )
     {
 
     }
 
     @Override
-    public final void rule( final String p_grammar, final IGrammarRule p_rule )
+    public final void grammar( final IGrammarComplexElement p_grammar )
     {
 
     }
 
     @Override
-    public final void terminal( final String p_grammar, IGrammarTerminal p_terminal )
+    public final void rule( final IGrammarComplexElement p_grammar, final IGrammarRule p_rule )
     {
 
     }
+
+    @Override
+    public final void terminal( final IGrammarComplexElement p_grammar, final IGrammarTerminal p_terminal )
+    {
+
+    }
+
 }

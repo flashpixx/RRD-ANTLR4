@@ -46,7 +46,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
     /**
      * grammar name - is set by the first grammar rule
      */
-    private String m_grammar;
+    private IGrammarComplexElement m_grammar;
     /**
      * set with grammer imports
      */
@@ -66,7 +66,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
     @Override
     public final Object visitGrammarSpec( final ANTLRv4Parser.GrammarSpecContext p_context )
     {
-        m_grammar = p_context.id().getText();
+        m_grammar = new CGrammar( p_context.id().getText(), p_context.DOC_COMMENT() == null ? null : p_context.DOC_COMMENT().getText() );
         return super.visitGrammarSpec( p_context );
     }
 
@@ -128,7 +128,8 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
                         p_context.FRAGMENT() != null,
                         p_context.DOC_COMMENT() == null ? "" : p_context.DOC_COMMENT().getText(),
                         (List<List<IGrammarSimpleElement<?>>>) this.visitLexerRuleBlock( p_context.lexerRuleBlock() )
-                ) );
+                )
+        );
         return null;
     }
 

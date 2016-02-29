@@ -36,8 +36,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 /**
@@ -58,13 +61,16 @@ public final class CEngine
     /**
      * generator call
      *
+     * @param p_outputdirectory output directory - the template name and grammar file name will be appended
      * @param p_grammar grammar input file
-     * @param p_template exporting template
-     * @param p_outputdirectory output direcotry
-     * @throws IOException
+     * @param p_template exporting templates
+     * @return list with error messages
+     *
+     * @throws IOException on IO error
      */
-    public void generate( final File p_grammar, final ITemplate p_template, final Path p_outputdirectory ) throws IOException
+    public Collection<String> generate( final String p_outputdirectory, final File p_grammar, final Set<ITemplate> p_template ) throws IOException
     {
+        // lexing and parsing the input grammar file
         final ANTLRv4Lexer l_lexer = new ANTLRv4Lexer( new ANTLRInputStream( new FileInputStream( p_grammar ) ) );
         l_lexer.removeErrorListeners();
         l_lexer.addErrorListener( m_errorlistener );
@@ -74,19 +80,34 @@ public final class CEngine
         l_parser.addErrorListener( m_errorlistener );
 
 
-        // create output directory of not exists
-        Files.createDirectories( p_outputdirectory );
+        // run for each template the exporting process
+        return p_template
+                .parallelStream()
 
-        // run exporting process of the input grammar file with the visitor
-        p_template.preprocess( p_outputdirectory, p_grammar.getName() );
+                // create output directory if not exists
+                .map( i -> {
+                    try
+                    {
+                        final Path l_directory = Files.createDirectories( Paths.get( p_outputdirectory, i.name().trim().toLowerCase() ) );
 
-        final CASTVisitor l_visitor = new CASTVisitor( p_template );
-        l_visitor.visit( l_parser.grammarSpec() );
+                        // run exporting process of the input grammar file with the visitor
+                        i.preprocess( l_directory );
 
-        // do recursive call to handle imported grammar files
-        //l_visitor.getGrammarImports().stream().map( i ->  )
+                        final CASTVisitor l_visitor = new CASTVisitor( i );
+                        l_visitor.visit( l_parser.grammarSpec() );
 
-        p_template.postprocess( p_outputdirectory, p_grammar.getName() );
+                        // do recursive call to handle imported grammar files
+                        i.postprocess( l_directory );
+                        return null;
+                    }
+                    catch ( final IOException p_exception )
+                    {
+                        return p_exception.getMessage();
+                    }
+                } )
+
+                // collect error messages
+                .collect( Collectors.toList() );
     }
 
 }

@@ -38,7 +38,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -159,7 +158,7 @@ public final class CMain extends AbstractMojo
 
         final Collection<String> l_errors = Arrays.stream( l_cli.getOptionValue( "grammar" ).split( "," ) )
                                                   .parallel()
-                                                  .flatMap( i -> generate( new File( i ), l_exclude, l_outputdirectory, l_templates ).stream() )
+                                                  .flatMap( i -> generate( l_outputdirectory, l_exclude, new File( i ), l_templates ).stream() )
                                                   .collect( Collectors.toList() );
 
         if ( !l_errors.isEmpty() )
@@ -177,41 +176,41 @@ public final class CMain extends AbstractMojo
 
 
     /**
-     * generating export
+     * generating export (generate template instances and call engine)
      *
-     * @param p_grammar path to grammar file or grammar file directory
-     * @param p_exclude file names which are ignored
      * @param p_outputdirectory output directory
+     * @param p_exclude file names which are ignored
+     * @param p_grammar path to grammar file or grammar file directory
      * @param p_template string with export name
      * @return returns a collection with error messages
      */
-    private static Collection<String> generate( final File p_grammar, final Set<String> p_exclude, final String p_outputdirectory, final String... p_template )
+    private static Collection<String> generate( final String p_outputdirectory, final Set<String> p_exclude, final File p_grammar,
+                                                final String... p_template
+    )
     {
-        return getFileList( p_grammar, p_exclude ).flatMap( i ->
-                                                         Arrays.stream( p_template )
-                                                               .parallel()
-                                                               .map( j -> {
-                                                                         try
-                                                                         {
-                                                                             ENGINE.generate(
-                                                                                     i,
-                                                                                     ETemplate.valueOf( j.trim().toUpperCase() ).generate(),
-                                                                                     Paths.get(
-                                                                                             p_outputdirectory, j.trim().toLowerCase(),
-                                                                                             p_grammar.getName().toLowerCase()
-                                                                                     )
-                                                                             );
-                                                                             return null;
-                                                                         }
-                                                                         catch ( final IOException p_exception )
-                                                                         {
-                                                                             return p_exception.getMessage();
-                                                                         }
-                                                                     }
-                                                               )
-                                                               .filter( j -> j != null )
+        return getFileList( p_grammar, p_exclude )
+                .flatMap( i -> {
+                    try
+                    {
+                        return ENGINE.generate(
+                                p_outputdirectory,
+                                i,
+                                Arrays.stream( p_template )
+                                      .map( j -> ETemplate.valueOf( j.trim().toUpperCase() ).generate() )
+                                      .collect( Collectors.toSet() )
+                        ).stream();
+                    }
+                    catch ( final IOException p_exception )
+                    {
+                        return new LinkedList<String>()
+                        {{
+                            add( p_exception.getMessage() );
+                        }}.stream();
+                    }
+                } )
+                .filter( i -> i != null )
+                .collect( Collectors.toList() );
 
-        ).collect( Collectors.toSet() );
     }
 
     /**

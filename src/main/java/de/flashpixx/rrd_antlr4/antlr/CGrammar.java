@@ -21,34 +21,64 @@
  * @endcond
  */
 
-package de.flashpixx.rrd_antlr4.engine.template;
+package de.flashpixx.rrd_antlr4.antlr;
 
-import de.flashpixx.rrd_antlr4.CCommon;
+import java.text.MessageFormat;
 
 
 /**
- * enum for template creation
+ * grammar information
  */
-public enum ETemplate
+public final class CGrammar implements IGrammarComplexElement
 {
-    HTML,
-    LATEX;
+    /**
+     * grammar name
+     */
+    private final String m_id;
+    /**
+     * grammar documentation
+     */
+    private final String m_documentation;
 
     /**
-     * creates a new template
+     * ctor
+     *
+     * @param p_id grammar name
+     * @param p_documentation documentation
      */
-    public ITemplate generate()
+    public CGrammar( final String p_id, final String p_documentation )
     {
-        switch ( this )
-        {
-            case HTML:
-                return new CHTML( HTML.toString() );
+        m_id = p_id;
+        m_documentation = p_documentation == null ? "" : p_documentation;
+    }
 
-            case LATEX:
-                return new CLaTeX( LATEX.toString() );
+    @Override
+    public final String id()
+    {
+        return m_id;
+    }
 
-            default:
-                throw new IllegalStateException( CCommon.getLanguageString( this, "unknowntype" ) );
-        }
+    @Override
+    public final String documentation()
+    {
+        return m_documentation;
+    }
+
+    @Override
+    public final int hashCode()
+    {
+        return m_id.hashCode();
+    }
+
+    @Override
+    public final boolean equals( final Object p_object )
+    {
+        return this.hashCode() == p_object.hashCode();
+    }
+
+    @Override
+    public final String toString()
+    {
+        return MessageFormat.format( "{0}{1}", m_id, m_documentation.isEmpty() ? "" : " // " + m_documentation );
     }
 }
