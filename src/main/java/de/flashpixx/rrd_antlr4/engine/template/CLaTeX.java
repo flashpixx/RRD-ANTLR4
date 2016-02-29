@@ -33,12 +33,8 @@ import java.nio.file.Path;
 /**
  * template for LaTeX export
  */
-public class CLaTeX implements ITemplate
+public class CLaTeX extends IBaseTemplate
 {
-    /**
-     * template name
-     */
-    private final String m_name;
 
     /**
      * ctor
@@ -47,23 +43,17 @@ public class CLaTeX implements ITemplate
      */
     public CLaTeX( final String p_name )
     {
-        m_name = p_name;
+        super( p_name );
     }
 
     @Override
-    public final String name()
-    {
-        return m_name;
-    }
-
-    @Override
-    public final void preprocess( final Path p_outputdirectory )
+    public final void preprocess( final Path p_output )
     {
 
     }
 
     @Override
-    public final void postprocess( final Path p_outputdirectory )
+    public final void postprocess( final Path p_output )
     {
 
     }

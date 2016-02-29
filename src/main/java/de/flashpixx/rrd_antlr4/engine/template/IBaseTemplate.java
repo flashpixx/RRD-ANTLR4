@@ -23,63 +23,62 @@
 
 package de.flashpixx.rrd_antlr4.engine.template;
 
-import de.flashpixx.rrd_antlr4.antlr.IGrammarComplexElement;
-import de.flashpixx.rrd_antlr4.antlr.IGrammarRule;
-import de.flashpixx.rrd_antlr4.antlr.IGrammarTerminal;
+import de.flashpixx.rrd_antlr4.CCommon;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.text.MessageFormat;
 
 
 /**
- * interface of a template
+ * base implementation
  */
-public interface ITemplate
+public abstract class IBaseTemplate implements ITemplate
 {
 
     /**
-     * returns the name of the template
-     *
-     * @return template name
+     * template name
      */
-    String name();
+    private final String m_name;
 
     /**
-     * preprocessing (before AST visiting)
+     * ctor
      *
-     * @param p_outputdirectory output directory
+     * @param p_name template name
      */
-    void preprocess( final Path p_outputdirectory ) throws IOException, URISyntaxException;
+    public IBaseTemplate( final String p_name )
+    {
+        m_name = p_name.trim().toLowerCase();
+    }
+
+    @Override
+    public final String name()
+    {
+        return m_name;
+    }
 
     /**
-     * postprocessing (after AST visiting)
+     * copies files from the template directory of the template
+     * to the output directory
      *
-     * @param p_outputdirectory working directory
+     * @param p_templatefile file within the template directory
+     * @param p_output output directory
+     * @throws IOException on IO error
+     * @throws URISyntaxException on URL syntax error
      */
-    void postprocess( final Path p_outputdirectory ) throws IOException, URISyntaxException;
-
-    /**
-     * is called on the grammar definition
-     *
-     * @param p_grammar grammar
-     */
-    void grammar( final IGrammarComplexElement p_grammar );
-
-    /**
-     * is called if any grammar rule is created
-     *
-     * @param p_grammar grammar
-     * @param p_rule rule
-     */
-    void rule( final IGrammarComplexElement p_grammar, final IGrammarRule p_rule );
-
-    /**
-     * is called if a terminal is created
-     *
-     * @param p_grammar grammar
-     * @param p_terminal terminal
-     */
-    void terminal( final IGrammarComplexElement p_grammar, final IGrammarTerminal p_terminal );
+    public final void copy( final String p_templatefile, final Path p_output ) throws IOException, URISyntaxException
+    {
+        final Path l_target = Paths.get( p_output.toString(), p_templatefile );
+        Files.createDirectories( l_target.getParent() );
+        Files.copy(
+                CCommon.getResourceURL( MessageFormat.format( "{0}{1}{2}{3}", "template/", m_name, "/", p_templatefile ) ).openStream(),
+                l_target,
+                StandardCopyOption.REPLACE_EXISTING
+        );
+    }
 
 }

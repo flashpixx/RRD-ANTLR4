@@ -79,6 +79,6 @@ public final class CGrammar implements IGrammarComplexElement
     @Override
     public final String toString()
     {
-        return MessageFormat.format( "{0}{1}", m_id, m_documentation.isEmpty() ? "" : " // " + m_documentation );
+        return MessageFormat.format( "{0} {1}", m_id, m_documentation ).trim();
     }
 }

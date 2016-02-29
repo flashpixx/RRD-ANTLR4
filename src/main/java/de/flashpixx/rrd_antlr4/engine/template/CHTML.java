@@ -27,18 +27,17 @@ import de.flashpixx.rrd_antlr4.antlr.IGrammarComplexElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarRule;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarTerminal;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 
 
 /**
  * template for HTML export
  */
-public final class CHTML implements ITemplate
+public final class CHTML extends IBaseTemplate
 {
-    /**
-     * template name
-     */
-    private final String m_name;
+
 
     /**
      * ctor
@@ -47,25 +46,22 @@ public final class CHTML implements ITemplate
      */
     public CHTML( final String p_name )
     {
-        m_name = p_name;
+        super( p_name );
     }
 
     @Override
-    public final String name()
+    public final void preprocess( final Path p_output ) throws IOException, URISyntaxException
     {
-        return m_name;
     }
 
     @Override
-    public final void preprocess( final Path p_outputdirectoryfinal )
+    public final void postprocess( final Path p_output ) throws IOException, URISyntaxException
     {
-
-    }
-
-    @Override
-    public final void postprocess( final Path p_outputdirectoryfinal )
-    {
-
+        // copy JavaScript and CSS elements
+        this.copy( "rrd.htm", p_output );
+        this.copy( "lib/jquery/dist/jquery.min.js", p_output );
+        this.copy( "lib/railroad-diagrams/railroad-diagrams.css", p_output );
+        this.copy( "lib/railroad-diagrams/railroad-diagrams.js", p_output );
     }
 
     @Override

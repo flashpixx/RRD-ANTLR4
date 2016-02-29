@@ -194,10 +194,9 @@ public final class CMain extends AbstractMojo
                     {
                         return ENGINE.generate(
                                 p_outputdirectory,
-                                i,
                                 Arrays.stream( p_template )
                                       .map( j -> ETemplate.valueOf( j.trim().toUpperCase() ).generate() )
-                                      .collect( Collectors.toSet() )
+                                      .collect( Collectors.toSet() ), i
                         ).stream();
                     }
                     catch ( final IOException p_exception )

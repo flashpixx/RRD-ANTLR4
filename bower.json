@@ -2,6 +2,7 @@
   "name": "RRD-AntLR4",
   "private": true,
   "dependencies": {
-    "railroad-diagrams": "https://github.com/tabatkins/railroad-diagrams.git#gh-pages"
+    "railroad-diagrams" : "https://github.com/tabatkins/railroad-diagrams.git#gh-pages",
+    "jquery" : "~2.2.1"
   }
 }

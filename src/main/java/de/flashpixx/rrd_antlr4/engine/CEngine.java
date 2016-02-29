@@ -34,6 +34,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -62,13 +63,13 @@ public final class CEngine
      * generator call
      *
      * @param p_outputdirectory output directory - the template name and grammar file name will be appended
-     * @param p_grammar grammar input file
      * @param p_template exporting templates
+     * @param p_grammar grammar input file
      * @return list with error messages
      *
      * @throws IOException on IO error
      */
-    public Collection<String> generate( final String p_outputdirectory, final File p_grammar, final Set<ITemplate> p_template ) throws IOException
+    public Collection<String> generate( final String p_outputdirectory, final Set<ITemplate> p_template, final File p_grammar ) throws IOException
     {
         // lexing and parsing the input grammar file
         final ANTLRv4Lexer l_lexer = new ANTLRv4Lexer( new ANTLRInputStream( new FileInputStream( p_grammar ) ) );
@@ -88,7 +89,7 @@ public final class CEngine
                 .map( i -> {
                     try
                     {
-                        final Path l_directory = Files.createDirectories( Paths.get( p_outputdirectory, i.name().trim().toLowerCase() ) );
+                        final Path l_directory = Files.createDirectories( Paths.get( p_outputdirectory, i.name(), p_grammar.getName().toLowerCase() ) );
 
                         // run exporting process of the input grammar file with the visitor
                         i.preprocess( l_directory );
@@ -97,10 +98,12 @@ public final class CEngine
                         l_visitor.visit( l_parser.grammarSpec() );
 
                         // do recursive call to handle imported grammar files
+
+
                         i.postprocess( l_directory );
                         return null;
                     }
-                    catch ( final IOException p_exception )
+                    catch ( final URISyntaxException | IOException p_exception )
                     {
                         return p_exception.getMessage();
                     }

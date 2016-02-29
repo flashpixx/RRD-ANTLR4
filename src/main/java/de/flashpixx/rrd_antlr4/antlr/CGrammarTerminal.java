@@ -110,12 +110,12 @@ public class CGrammarTerminal implements IGrammarTerminal
     public final String toString()
     {
         return MessageFormat.format(
-                "{0}{1} -> {2}{3}",
+                "{0}{1} -> {2} {3}",
                 this.id(),
                 m_isfragment ? " (fragment)" : "",
                 StringUtils.join( m_alternatives, " | " ),
-                m_documentation.isEmpty() ? "" : "   // " + m_documentation
-        );
+                m_documentation
+        ).trim();
     }
 
 }
