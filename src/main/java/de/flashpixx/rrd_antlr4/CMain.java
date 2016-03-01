@@ -85,7 +85,7 @@ public final class CMain extends AbstractMojo
      * Maven plugin used templates option
      */
     @Parameter( defaultValue = DEFAULTTEMPLATE )
-    private String[] template;
+    private String[] templates;
     /**
      * Maven plugin default directories of grammars
      */
@@ -120,11 +120,11 @@ public final class CMain extends AbstractMojo
         final Options l_clioptions = new Options();
         l_clioptions.addOption( "help", false, CCommon.getLanguageString( CMain.class, "help" ) );
         l_clioptions.addOption( "output", true, CCommon.getLanguageString( CMain.class, "output", DEFAULTOUTPUT ) );
-        l_clioptions.addOption( "import", true, CCommon.getLanguageString( CMain.class, "import" ) );
-        l_clioptions.addOption( "exclude", true, CCommon.getLanguageString( CMain.class, "exclude" ) );
+        l_clioptions.addOption( "imports", true, CCommon.getLanguageString( CMain.class, "import" ) );
+        l_clioptions.addOption( "excludes", true, CCommon.getLanguageString( CMain.class, "exclude" ) );
         l_clioptions.addOption( "grammar", true, CCommon.getLanguageString( CMain.class, "grammar" ) );
         l_clioptions.addOption( "docclean", true, CCommon.getLanguageString( CMain.class, "documentationclean" ) );
-        l_clioptions.addOption( "template", true, CCommon.getLanguageString( CMain.class, "template", Arrays.asList( ETemplate.values() ), DEFAULTTEMPLATE ) );
+        l_clioptions.addOption( "templates", true, CCommon.getLanguageString( CMain.class, "template", Arrays.asList( ETemplate.values() ), DEFAULTTEMPLATE ) );
 
 
         final CommandLine l_cli;
@@ -160,16 +160,16 @@ public final class CMain extends AbstractMojo
                                       ? Collections.<String>emptySet()
                                       : new HashSet<>( FileUtils.readLines( new File( l_cli.getOptionValue( "docclean" ) ) ) );
 
-        final Set<String> l_exclude = !l_cli.hasOption( "exclude" )
+        final Set<String> l_exclude = !l_cli.hasOption( "excludes" )
                                       ? Collections.<String>emptySet()
-                                      : Arrays.stream( l_cli.getOptionValue( "exclude" ).split( "," ) ).map( i -> i.trim() ).collect( Collectors.toSet() );
+                                      : Arrays.stream( l_cli.getOptionValue( "excludes" ).split( "," ) ).map( i -> i.trim() ).collect( Collectors.toSet() );
 
-        final Set<String> l_import = !l_cli.hasOption( "import" )
+        final Set<String> l_import = !l_cli.hasOption( "imports" )
                                      ? Collections.<String>emptySet()
-                                     : Arrays.stream( l_cli.getOptionValue( "import" ).split( "," ) ).map( i -> i.trim() ).collect( Collectors.toSet() );
+                                     : Arrays.stream( l_cli.getOptionValue( "imports" ).split( "," ) ).map( i -> i.trim() ).collect( Collectors.toSet() );
 
-        final String[] l_templates = l_cli.hasOption( "template" )
-                                     ? l_cli.getOptionValue( "template" ).split( "," )
+        final String[] l_templates = l_cli.hasOption( "templates" )
+                                     ? l_cli.getOptionValue( "templates" ).split( "," )
                                      : new String[]{DEFAULTTEMPLATE};
 
         final String l_outputdirectory = l_cli.hasOption( "output" )

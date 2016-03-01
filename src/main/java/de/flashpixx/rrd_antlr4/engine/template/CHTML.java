@@ -82,17 +82,21 @@ public final class CHTML extends IBaseTemplate
         // replace content
         this.replace(
                 new File( p_output.toString(), "/index.htm" ),
+
                 // set HTML language code
                 "%language%", Locale.getDefault().getLanguage(),
+
                 // set HTML title
                 "%title%", CCommon.getLanguageString( this, "htmltitle", m_grammar.id() ),
+
                 // set grammar documentation
                 "%grammardocumentation%", m_grammar.documentation(),
+
                 // set menu with rule list
                 "%rulelist%", StringUtils.join(
                         m_rules.rowMap().entrySet().stream().sorted( ( n, m ) -> n.getKey().compareToIgnoreCase( m.getKey() ) )
                                .map( i -> MessageFormat.format(
-                                       "<div id=\"{0}\">{0}<ul>{1}</ul></div>",
+                                       "<div class=\"rulelist\" id=\"list_{0}\"><a href=\"#list_{0}\">{0}</a><ul>{1}</ul></div>",
                                        i.getKey(),
                                        StringUtils.join(
                                                i.getValue().keySet().stream()
@@ -105,6 +109,25 @@ public final class CHTML extends IBaseTemplate
                                )
                                .collect( Collectors.toList() ),
                         ""
+                ),
+
+                // set rules of diagrams
+                "%rules%", StringUtils.join(
+                        m_rules.rowMap().entrySet().stream().sorted( ( n, m ) -> n.getKey().compareToIgnoreCase( m.getKey() ) )
+                               .map( i -> MessageFormat.format(
+                                       "<div class=\"rules\" id=\"rules_{0}\"><p>{0}</p><span><script>\n{1}\n</script></span></div>",
+                                       i.getKey(),
+                                       StringUtils.join(
+                                               i.getValue().entrySet().stream()
+                                                .sorted( ( n, m ) -> n.getKey().compareToIgnoreCase( m.getKey() ) )
+                                                .map( j -> j.getValue() )
+                                                .collect( Collectors.toList() ),
+                                               "\n"
+                                       ).trim()
+                                     )
+                               )
+                               .collect( Collectors.toList() ),
+                        ""
                 )
         );
     }
@@ -112,20 +135,32 @@ public final class CHTML extends IBaseTemplate
     @Override
     public final void grammar( final IGrammarComplexElement p_grammar )
     {
-        m_grammar = p_grammar;
+        // set only if is not net
+        if ( m_grammar == null )
+            m_grammar = p_grammar;
     }
 
     @Override
     public final void rule( final IGrammarComplexElement p_grammar, final IGrammarRule p_rule )
     {
-        m_rules.put( p_grammar.id(), p_rule.id(), "" );
-
+        m_rules.put(
+                p_grammar.id(),
+                p_rule.id(),
+                ""
+        );
     }
 
     @Override
     public final void terminal( final IGrammarComplexElement p_grammar, final IGrammarTerminal p_terminal )
     {
-        m_rules.put( p_grammar.id(), p_terminal.id(), "" );
+        m_rules.put(
+                p_grammar.id(),
+                p_terminal.id(),
+                MessageFormat.format(
+                        "Diagram(\"{0}\").addTo();",
+                        p_terminal.id()
+                )
+        );
     }
 
 }
