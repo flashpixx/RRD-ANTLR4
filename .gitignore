@@ -10,6 +10,7 @@
 !*.g4
 !*.md
 !*.properties
+!*.css
 !*.tex
 !*.htm
 !*.txt

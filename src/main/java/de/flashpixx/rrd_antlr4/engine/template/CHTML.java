@@ -74,6 +74,7 @@ public final class CHTML extends IBaseTemplate
     {
         // copy JavaScript and CSS elements
         this.copy( "index.htm", p_output );
+        this.copy( "layout.css", p_output );
         this.copy( "lib/jquery/dist/jquery.min.js", p_output );
         this.copy( "lib/railroad-diagrams/railroad-diagrams.css", p_output );
         this.copy( "lib/railroad-diagrams/railroad-diagrams.js", p_output );
