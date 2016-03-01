@@ -38,7 +38,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -56,16 +59,16 @@ public final class CEngine
 
     /**
      * generator call
-     *
-     * @param p_outputdirectory output directory - the template name and grammar file name will be appended
-     * @param p_docuclean set with documentation clean regex
+     *  @param p_outputdirectory output directory - the template name and grammar file name will be appended
      * @param p_grammar grammar input file
-     * @param p_template exporting templates
-     * @return list with error messages
+     * @param p_docuclean set with documentation clean regex
+     * @param p_imports map with grammar imported grammar files
+     * @param p_template exporting templates  @return list with error messages
      *
      * @throws IOException on IO error
      */
-    public Collection<String> generate( final String p_outputdirectory, final Set<String> p_docuclean, final File p_grammar, final Set<ITemplate> p_template
+    public Collection<String> generate( final String p_outputdirectory, final File p_grammar, final Set<String> p_docuclean,
+                                        final Map<String, File> p_imports, final Set<ITemplate> p_template
     ) throws IOException
     {
         // lexing and parsing the input grammar file
@@ -77,7 +80,7 @@ public final class CEngine
                 .parallelStream()
 
                 // create output directory if not exists
-                .map( i -> {
+                .flatMap( i -> {
                     try
                     {
                         final Path l_directory = Files.createDirectories( Paths.get( p_outputdirectory, i.name(), p_grammar.getName().toLowerCase() ) );
@@ -89,14 +92,37 @@ public final class CEngine
                         l_visitor.visit( l_parser.grammarSpec() );
 
                         // do recursive call to handle imported grammar files
+                        final Collection<String> l_errors = l_visitor.getGrammarImports().stream()
+                                                                     .map( j -> p_imports.get( j ) )
+                                                                     .filter( j -> j != null )
+                                                                     .flatMap( j -> {
+                                                                         try
+                                                                         {
+                                                                             return this.generate( p_outputdirectory, j, p_docuclean, p_imports, p_template )
+                                                                                        .stream();
+                                                                         }
+                                                                         catch ( final IOException p_exception )
+                                                                         {
+                                                                             return new LinkedList<String>()
+                                                                             {{
+                                                                                 add( p_exception.getMessage() );
+                                                                             }}.stream();
+                                                                         }
+                                                                     } )
+                                                                     .collect( Collectors.toList() );
 
+                        if ( !l_errors.isEmpty() )
+                            return l_errors.stream();
 
                         i.postprocess( l_directory );
-                        return null;
+                        return Collections.<String>emptyList().stream();
                     }
                     catch ( final URISyntaxException | IOException p_exception )
                     {
-                        return p_exception.getMessage();
+                        return new LinkedList<String>()
+                        {{
+                            add( p_exception.getMessage() );
+                        }}.stream();
                     }
                 } )
 

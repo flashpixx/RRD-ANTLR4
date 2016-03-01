@@ -81,9 +81,13 @@ public final class CHTML extends IBaseTemplate
         // replace content
         this.replace(
                 new File( p_output.toString(), "/index.htm" ),
+                // set HTML language code
                 "%language%", Locale.getDefault().getLanguage(),
+                // set HTML title
                 "%title%", CCommon.getLanguageString( this, "htmltitle", m_grammar.id() ),
+                // set grammar documentation
                 "%grammardocumentation%", m_grammar.documentation(),
+                // set menu with rule list
                 "%rulelist%", StringUtils.join(
                         m_rules.rowMap().entrySet().stream().sorted( ( n, m ) -> n.getKey().compareToIgnoreCase( m.getKey() ) )
                                .map( i -> MessageFormat.format(
@@ -92,7 +96,7 @@ public final class CHTML extends IBaseTemplate
                                        StringUtils.join(
                                                i.getValue().keySet().stream()
                                                 .sorted( ( n, m ) -> n.compareToIgnoreCase( m ) )
-                                                .map( j -> "<li>" + j.toLowerCase() + "</li>" )
+                                                .map( j -> MessageFormat.format( "<li>{0}</li>", j.toLowerCase() ) )
                                                 .collect( Collectors.toList() ),
                                                ""
                                        )

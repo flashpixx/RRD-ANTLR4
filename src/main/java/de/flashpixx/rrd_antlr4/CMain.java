@@ -31,6 +31,7 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -44,6 +45,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -163,6 +165,10 @@ public final class CMain extends AbstractMojo
                                       ? Collections.<String>emptySet()
                                       : Arrays.stream( l_cli.getOptionValue( "exclude" ).split( "," ) ).map( i -> i.trim() ).collect( Collectors.toSet() );
 
+        final Set<String> l_import = !l_cli.hasOption( "import" )
+                                     ? Collections.<String>emptySet()
+                                     : Arrays.stream( l_cli.getOptionValue( "import" ).split( "," ) ).map( i -> i.trim() ).collect( Collectors.toSet() );
+
         final String[] l_templates = l_cli.hasOption( "template" )
                                      ? l_cli.getOptionValue( "template" ).split( "," )
                                      : new String[]{DEFAULTTEMPLATE};
@@ -175,8 +181,8 @@ public final class CMain extends AbstractMojo
         // --- run generating ------------------------------------------------------------------------------------------
         final Collection<String> l_errors = Arrays.stream( l_cli.getOptionValue( "grammar" ).split( "," ) )
                                                   .parallel()
-                                                  .flatMap( i -> generate( l_outputdirectory, l_exclude, l_doclean,
-                                                                           new File( i ), l_templates
+                                                  .flatMap( i -> generate( l_outputdirectory, l_exclude, l_import,
+                                                                           new File( i ), l_doclean, l_templates
                                                   ).stream() )
                                                   .collect( Collectors.toList() );
 
@@ -199,23 +205,29 @@ public final class CMain extends AbstractMojo
      *
      * @param p_outputdirectory output directory
      * @param p_exclude file names which are ignored
-     * @param p_docuclean set with documentation clean regex
+     * @param p_import import files & directories
      * @param p_grammar path to grammar file or grammar file directory
+     * @param p_docuclean set with documentation clean regex
      * @param p_template string with export name
      * @return returns a collection with error messages
      */
-    private static Collection<String> generate( final String p_outputdirectory, final Set<String> p_exclude, final Set<String> p_docuclean,
-                                                final File p_grammar, final String... p_template
+    private static Collection<String> generate( final String p_outputdirectory, final Set<String> p_exclude, final Set<String> p_import, final File p_grammar,
+                                                final Set<String> p_docuclean, final String... p_template
     )
     {
+        // build import map
+        final Map<String, File> l_imports = p_import.stream()
+                                                    .flatMap( i -> getFileList( new File( i ), p_exclude ) )
+                                                    .collect( Collectors.toMap( i -> FilenameUtils.removeExtension( i.getName() ), j -> j ) );
+
         return getFileList( p_grammar, p_exclude )
                 .flatMap( i -> {
                     try
                     {
                         return ENGINE.generate(
                                 p_outputdirectory,
-                                p_docuclean,
-                                i,
+                                i, p_docuclean,
+                                l_imports,
                                 Arrays.stream( p_template )
                                       .map( j -> ETemplate.valueOf( j.trim().toUpperCase() ).generate() )
                                       .collect( Collectors.toSet() )
