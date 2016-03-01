@@ -25,14 +25,19 @@ package de.flashpixx.rrd_antlr4.engine.template;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
+import de.flashpixx.rrd_antlr4.CCommon;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarComplexElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarRule;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarTerminal;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
+import java.text.MessageFormat;
+import java.util.Locale;
+import java.util.stream.Collectors;
 
 
 /**
@@ -76,11 +81,27 @@ public final class CHTML extends IBaseTemplate
         // replace content
         this.replace(
                 new File( p_output.toString(), "/index.htm" ),
-                "%grammarname%", m_grammar.id(),
-                "%grammardocumentation%", m_grammar.documentation()
+                "%language%", Locale.getDefault().getLanguage(),
+                "%title%", CCommon.getLanguageString( this, "htmltitle", m_grammar.id() ),
+                "%grammardocumentation%", m_grammar.documentation(),
+                "%rulelist%", StringUtils.join(
+                        m_rules.rowMap().entrySet().stream().sorted( ( n, m ) -> n.getKey().compareToIgnoreCase( m.getKey() ) )
+                               .map( i -> MessageFormat.format(
+                                       "<div id=\"{0}\">{0}<ul>{1}</ul></div>",
+                                       i.getKey(),
+                                       StringUtils.join(
+                                               i.getValue().keySet().stream()
+                                                .sorted( ( n, m ) -> n.compareToIgnoreCase( m ) )
+                                                .map( j -> "<li>" + j.toLowerCase() + "</li>" )
+                                                .collect( Collectors.toList() ),
+                                               ""
+                                       )
+                                     )
+                               )
+                               .collect( Collectors.toList() ),
+                        ""
+                )
         );
-
-        System.out.println( m_rules );
     }
 
     @Override

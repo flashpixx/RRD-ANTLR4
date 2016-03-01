@@ -61,6 +61,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
      * exporting template
      *
      * @param p_template template
+     * @param p_docuclean set with regex for documentation cleanup
      */
     public CASTVisitor( final ITemplate p_template, final Set<String> p_docuclean )
     {

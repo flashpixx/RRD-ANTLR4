@@ -100,6 +100,11 @@ public final class CMain extends AbstractMojo
      */
     @Parameter
     private String[] exclude;
+    /**
+     * Maven plugin documentation cleanup regex
+     */
+    @Parameter
+    private String[] docclean;
 
 
 
