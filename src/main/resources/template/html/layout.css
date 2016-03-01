@@ -293,3 +293,16 @@ sup {
 		word-wrap: break-word;
 	}
 }
+
+
+#rulemenu {
+    width: 15%;
+    float: left;
+    padding: 1em;
+    border: 1px solid #cccccc;
+}
+
+.elements {
+    width: 83%;
+    float: right;
+}

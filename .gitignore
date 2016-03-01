@@ -13,6 +13,7 @@
 !*.css
 !*.tex
 !*.htm
+!*.js
 !*.txt
 
 !src/main/documentation/*.doxyfile

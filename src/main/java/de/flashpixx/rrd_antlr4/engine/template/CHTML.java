@@ -75,6 +75,7 @@ public final class CHTML extends IBaseTemplate
         // copy JavaScript and CSS elements
         this.copy( "index.htm", p_output );
         this.copy( "layout.css", p_output );
+        this.copy( "action.js", p_output );
         this.copy( "lib/jquery/dist/jquery.min.js", p_output );
         this.copy( "lib/railroad-diagrams/railroad-diagrams.css", p_output );
         this.copy( "lib/railroad-diagrams/railroad-diagrams.js", p_output );
@@ -92,11 +93,17 @@ public final class CHTML extends IBaseTemplate
                 // set grammar documentation
                 "%grammardocumentation%", m_grammar.documentation(),
 
+                // sets the showall text
+                "%ruletoggle%", CCommon.getLanguageString( this, "htmlruletoggle" ),
+
                 // set menu with rule list
                 "%rulelist%", StringUtils.join(
                         m_rules.rowMap().entrySet().stream().sorted( ( n, m ) -> n.getKey().compareToIgnoreCase( m.getKey() ) )
                                .map( i -> MessageFormat.format(
-                                       "<div class=\"rulelist\" id=\"list_{0}\"><a href=\"#list_{0}\">{0}</a><ul>{1}</ul></div>",
+                                       "<div class=\"rulelist\" id=\"list_{0}\">" +
+                                       "<span data-ruleset=\"rules_{0}\" class=\"grammarlisthead\">{0}</span>" +
+                                       "<ul>{1}</ul>" +
+                                       "</div>",
                                        i.getKey(),
                                        StringUtils.join(
                                                i.getValue().keySet().stream()
@@ -115,7 +122,10 @@ public final class CHTML extends IBaseTemplate
                 "%rules%", StringUtils.join(
                         m_rules.rowMap().entrySet().stream().sorted( ( n, m ) -> n.getKey().compareToIgnoreCase( m.getKey() ) )
                                .map( i -> MessageFormat.format(
-                                       "<div class=\"rules\" id=\"rules_{0}\"><p>{0}</p><span><script>\n{1}\n</script></span></div>",
+                                       "<div class=\"elements\" id=\"rules_{0}\">" +
+                                       "<p>{0}</p>" +
+                                       "<span><script>\n{1}\n</script></span>" +
+                                       "</div>",
                                        i.getKey(),
                                        StringUtils.join(
                                                i.getValue().entrySet().stream()
