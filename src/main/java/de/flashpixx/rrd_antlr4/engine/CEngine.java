@@ -40,7 +40,6 @@ import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 
@@ -66,7 +65,7 @@ public final class CEngine
      *
      * @throws IOException on IO error
      */
-    public Collection<String> generate( final String p_outputdirectory, final Set<Pattern> p_docuclean, final File p_grammar, final Set<ITemplate> p_template
+    public Collection<String> generate( final String p_outputdirectory, final Set<String> p_docuclean, final File p_grammar, final Set<ITemplate> p_template
     ) throws IOException
     {
         // lexing and parsing the input grammar file
@@ -86,7 +85,7 @@ public final class CEngine
                         // run exporting process of the input grammar file with the visitor
                         i.preprocess( l_directory );
 
-                        final CASTVisitor l_visitor = new CASTVisitor( i );
+                        final CASTVisitor l_visitor = new CASTVisitor( i, p_docuclean );
                         l_visitor.visit( l_parser.grammarSpec() );
 
                         // do recursive call to handle imported grammar files

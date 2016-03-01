@@ -23,6 +23,7 @@
 
 package de.flashpixx.rrd_antlr4.antlr;
 
+import de.flashpixx.rrd_antlr4.CStringReplace;
 import de.flashpixx.rrd_antlr4.engine.template.ITemplate;
 
 import java.util.HashSet;
@@ -51,15 +52,20 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
      * set with grammer imports
      */
     private Set<String> m_imports = new HashSet<>();
+    /**
+     * set with documentation clean pattern
+     */
+    private final Set<String> m_docuclean;
 
     /**
      * exporting template
      *
      * @param p_template template
      */
-    public CASTVisitor( final ITemplate p_template )
+    public CASTVisitor( final ITemplate p_template, final Set<String> p_docuclean )
     {
         m_template = p_template;
+        m_docuclean = p_docuclean;
     }
 
 
@@ -208,7 +214,14 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
      */
     private String cleanComment( final String p_comment )
     {
-        return p_comment == null ? null : p_comment.replace( "*", "" ).replace( "/", "" ).trim();
+        if ( p_comment == null )
+            return null;
+
+        // remove CR, LF and tab
+        final CStringReplace l_documentation = new CStringReplace( p_comment ).replaceAll( "(\\t|\\n)+", " " ).replace( "\r", "" );
+        m_docuclean.stream().forEach( i -> l_documentation.replaceAll( i, "" ) );
+
+        return l_documentation.replaceAll( "\\*", "" ).replaceAll( "\\/", "" ).get().trim();
     }
 
 }

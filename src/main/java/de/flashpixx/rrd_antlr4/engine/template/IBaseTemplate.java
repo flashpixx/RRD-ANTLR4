@@ -25,6 +25,7 @@ package de.flashpixx.rrd_antlr4.engine.template;
 
 import com.aol.cyclops.sequence.SequenceM;
 import de.flashpixx.rrd_antlr4.CCommon;
+import de.flashpixx.rrd_antlr4.CStringReplace;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -95,71 +96,11 @@ public abstract class IBaseTemplate implements ITemplate
         if ( ( p_replacepair == null ) || ( p_replacepair.length % 2 != 0 ) )
             throw new IllegalArgumentException( CCommon.getLanguageString( IBaseTemplate.class, "replaceerror" ) );
 
-        final CStringReplacing l_content = new CStringReplacing( FileUtils.readFileToString( p_file ) );
+        final CStringReplace l_content = new CStringReplace( FileUtils.readFileToString( p_file ) );
         SequenceM.rangeLong( 0, p_replacepair.length )
                  .sliding( 2, 2 )
                  .forEach( i -> l_content.replaceAll( p_replacepair[i.get( 0 ).intValue()], p_replacepair[i.get( 1 ).intValue()] ) );
         FileUtils.writeStringToFile( p_file, l_content.get() );
     }
 
-
-    /**
-     * class for replacing string content
-     */
-    private static final class CStringReplacing
-    {
-        /**
-         * string data
-         */
-        private String m_data;
-
-        /**
-         * ctor
-         *
-         * @param p_data input data
-         */
-        public CStringReplacing( final String p_data )
-        {
-            m_data = p_data;
-        }
-
-        /**
-         * replaces the content
-         *
-         * @param p_source source
-         * @param p_target target
-         */
-        public final void replaceAll( final String p_source, final String p_target )
-        {
-            m_data = m_data.replaceAll( p_source, p_target );
-        }
-
-        /**
-         * returns the data
-         *
-         * @return string
-         */
-        public final String get()
-        {
-            return m_data;
-        }
-
-        @Override
-        public final int hashCode()
-        {
-            return m_data.hashCode();
-        }
-
-        @Override
-        public final boolean equals( final Object p_object )
-        {
-            return m_data.hashCode() == p_object.hashCode();
-        }
-
-        @Override
-        public final String toString()
-        {
-            return m_data;
-        }
-    }
 }

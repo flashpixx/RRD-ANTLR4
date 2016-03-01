@@ -12,6 +12,7 @@
 !*.properties
 !*.tex
 !*.htm
+!*.txt
 
 !src/main/documentation/*.doxyfile
 !src/main/documentation/*.htm

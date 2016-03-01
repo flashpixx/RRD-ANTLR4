@@ -42,9 +42,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -150,12 +150,9 @@ public final class CMain extends AbstractMojo
             System.exit( -1 );
         }
 
-        final Set<Pattern> l_doclean = !l_cli.hasOption( "docclean" )
-                                       ? Collections.<Pattern>emptySet()
-                                       : FileUtils.readLines( new File( l_cli.getOptionValue( "docclean" ) ) )
-                                                  .stream()
-                                                  .map( i -> Pattern.compile( i ) )
-                                                  .collect( Collectors.toSet() );
+        final Set<String> l_doclean = !l_cli.hasOption( "docclean" )
+                                      ? Collections.<String>emptySet()
+                                      : new HashSet<>( FileUtils.readLines( new File( l_cli.getOptionValue( "docclean" ) ) ) );
 
         final Set<String> l_exclude = !l_cli.hasOption( "exclude" )
                                       ? Collections.<String>emptySet()
@@ -202,7 +199,7 @@ public final class CMain extends AbstractMojo
      * @param p_template string with export name
      * @return returns a collection with error messages
      */
-    private static Collection<String> generate( final String p_outputdirectory, final Set<String> p_exclude, final Set<Pattern> p_docuclean,
+    private static Collection<String> generate( final String p_outputdirectory, final Set<String> p_exclude, final Set<String> p_docuclean,
                                                 final File p_grammar, final String... p_template
     )
     {
