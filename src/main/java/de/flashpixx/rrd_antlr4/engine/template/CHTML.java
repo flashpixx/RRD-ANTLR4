@@ -23,6 +23,8 @@
 
 package de.flashpixx.rrd_antlr4.engine.template;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarComplexElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarRule;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarTerminal;
@@ -42,7 +44,10 @@ public final class CHTML extends IBaseTemplate
      * main grammar
      */
     private IGrammarComplexElement m_grammar;
-
+    /**
+     * rules table
+     */
+    private final Table<String, String, String> m_rules = HashBasedTable.create();
 
     /**
      * ctor
@@ -74,6 +79,8 @@ public final class CHTML extends IBaseTemplate
                 "%grammarname%", m_grammar.id(),
                 "%grammardocumentation%", m_grammar.documentation()
         );
+
+        System.out.println( m_rules );
     }
 
     @Override
@@ -85,13 +92,14 @@ public final class CHTML extends IBaseTemplate
     @Override
     public final void rule( final IGrammarComplexElement p_grammar, final IGrammarRule p_rule )
     {
-        System.out.println( "---> " + p_grammar + "    " + p_rule );
+        m_rules.put( p_grammar.id(), p_rule.id(), "" );
+
     }
 
     @Override
     public final void terminal( final IGrammarComplexElement p_grammar, final IGrammarTerminal p_terminal )
     {
-        System.out.println( "---> " + p_grammar + "    " + p_terminal );
+        m_rules.put( p_grammar.id(), p_terminal.id(), "" );
     }
 
 }

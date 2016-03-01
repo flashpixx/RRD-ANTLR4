@@ -30,6 +30,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
+import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -41,9 +42,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -107,7 +108,7 @@ public final class CMain extends AbstractMojo
      *
      * @param p_args command-line arguments
      */
-    public static void main( final String[] p_args )
+    public static void main( final String[] p_args ) throws IOException
     {
         // --- define CLI options --------------------------------------------------------------------------------------
         final Options l_clioptions = new Options();
@@ -116,6 +117,7 @@ public final class CMain extends AbstractMojo
         l_clioptions.addOption( "import", true, CCommon.getLanguageString( CMain.class, "import" ) );
         l_clioptions.addOption( "exclude", true, CCommon.getLanguageString( CMain.class, "exclude" ) );
         l_clioptions.addOption( "grammar", true, CCommon.getLanguageString( CMain.class, "grammar" ) );
+        l_clioptions.addOption( "docclean", true, CCommon.getLanguageString( CMain.class, "documentationclean" ) );
         l_clioptions.addOption( "template", true, CCommon.getLanguageString( CMain.class, "template", Arrays.asList( ETemplate.values() ), DEFAULTTEMPLATE ) );
 
 
@@ -148,18 +150,32 @@ public final class CMain extends AbstractMojo
             System.exit( -1 );
         }
 
-        final Set<String> l_exclude = l_cli.hasOption( "exclude" ) ? new HashSet<String>()
-        {{
-            Arrays.stream( l_cli.getOptionValue( "exclude" ).split( "," ) ).forEach( i -> add( i.trim() ) );
-        }} : Collections.<String>emptySet();
-        final String[] l_templates = l_cli.hasOption( "template" ) ? l_cli.getOptionValue( "template" ).split( "," ) : new String[]{DEFAULTTEMPLATE};
-        final String l_outputdirectory = l_cli.hasOption( "output" ) ? l_cli.getOptionValue( "output" ) : DEFAULTOUTPUT;
+        final Set<Pattern> l_doclean = !l_cli.hasOption( "docclean" )
+                                       ? Collections.<Pattern>emptySet()
+                                       : FileUtils.readLines( new File( l_cli.getOptionValue( "docclean" ) ) )
+                                                  .stream()
+                                                  .map( i -> Pattern.compile( i ) )
+                                                  .collect( Collectors.toSet() );
+
+        final Set<String> l_exclude = !l_cli.hasOption( "exclude" )
+                                      ? Collections.<String>emptySet()
+                                      : Arrays.stream( l_cli.getOptionValue( "exclude" ).split( "," ) ).map( i -> i.trim() ).collect( Collectors.toSet() );
+
+        final String[] l_templates = l_cli.hasOption( "template" )
+                                     ? l_cli.getOptionValue( "template" ).split( "," )
+                                     : new String[]{DEFAULTTEMPLATE};
+
+        final String l_outputdirectory = l_cli.hasOption( "output" )
+                                         ? l_cli.getOptionValue( "output" )
+                                         : DEFAULTOUTPUT;
 
 
         // --- run generating ------------------------------------------------------------------------------------------
         final Collection<String> l_errors = Arrays.stream( l_cli.getOptionValue( "grammar" ).split( "," ) )
                                                   .parallel()
-                                                  .flatMap( i -> generate( l_outputdirectory, l_exclude, new File( i ), l_templates ).stream() )
+                                                  .flatMap( i -> generate( l_outputdirectory, l_exclude, l_doclean,
+                                                                           new File( i ), l_templates
+                                                  ).stream() )
                                                   .collect( Collectors.toList() );
 
         if ( !l_errors.isEmpty() )
@@ -181,12 +197,13 @@ public final class CMain extends AbstractMojo
      *
      * @param p_outputdirectory output directory
      * @param p_exclude file names which are ignored
+     * @param p_docuclean set with documentation clean regex
      * @param p_grammar path to grammar file or grammar file directory
      * @param p_template string with export name
      * @return returns a collection with error messages
      */
-    private static Collection<String> generate( final String p_outputdirectory, final Set<String> p_exclude, final File p_grammar,
-                                                final String... p_template
+    private static Collection<String> generate( final String p_outputdirectory, final Set<String> p_exclude, final Set<Pattern> p_docuclean,
+                                                final File p_grammar, final String... p_template
     )
     {
         return getFileList( p_grammar, p_exclude )
@@ -195,9 +212,11 @@ public final class CMain extends AbstractMojo
                     {
                         return ENGINE.generate(
                                 p_outputdirectory,
+                                p_docuclean,
+                                i,
                                 Arrays.stream( p_template )
                                       .map( j -> ETemplate.valueOf( j.trim().toUpperCase() ).generate() )
-                                      .collect( Collectors.toSet() ), i
+                                      .collect( Collectors.toSet() )
                         ).stream();
                     }
                     catch ( final IOException p_exception )

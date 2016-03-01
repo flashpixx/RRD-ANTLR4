@@ -40,6 +40,7 @@ import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 
@@ -58,17 +59,20 @@ public final class CEngine
      * generator call
      *
      * @param p_outputdirectory output directory - the template name and grammar file name will be appended
-     * @param p_template exporting templates
+     * @param p_docuclean set with documentation clean regex
      * @param p_grammar grammar input file
+     * @param p_template exporting templates
      * @return list with error messages
      *
      * @throws IOException on IO error
      */
-    public Collection<String> generate( final String p_outputdirectory, final Set<ITemplate> p_template, final File p_grammar ) throws IOException
+    public Collection<String> generate( final String p_outputdirectory, final Set<Pattern> p_docuclean, final File p_grammar, final Set<ITemplate> p_template
+    ) throws IOException
     {
         // lexing and parsing the input grammar file
         final ANTLRv4Parser l_parser = new ANTLRv4Parser(
-                new CommonTokenStream( new ANTLRv4Lexer( new ANTLRInputStream( new FileInputStream( p_grammar ) ) ) ) );
+                new CommonTokenStream( new ANTLRv4Lexer( new ANTLRInputStream( new FileInputStream( p_grammar ) ) ) )
+        );
 
         return p_template
                 .parallelStream()
