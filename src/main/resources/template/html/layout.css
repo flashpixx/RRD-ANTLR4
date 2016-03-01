@@ -1,11 +1,10 @@
 body {
   font-family: Helvetica, arial, sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1.6;
-  padding-top: 10px;
-  padding-bottom: 10px;
   background-color: white;
-  padding: 30px; }
+  padding: 10px;
+}
 
 body > *:first-child {
   margin-top: 0 !important; }
@@ -295,10 +294,16 @@ sup {
 }
 
 
+#grammartitle {
+    text-align: center;
+    margin-top: 5px;
+    margin-bottom: 0.5em;
+}
+
 #rulemenu {
     width: 15%;
     float: left;
-    padding: 1em;
+    padding: 0.5em;
     border: 1px solid #cccccc;
 }
 
