@@ -34,7 +34,7 @@ public interface IGrammarSimpleElement<T> extends IGrammarElement
      *
      * @return value
      */
-    T get();
+    <N> N get();
 
     /**
      * checkes assignable of the value

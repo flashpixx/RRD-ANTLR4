@@ -47,9 +47,10 @@ public final class CTerminalValue<T> implements IGrammarSimpleElement<T>
     }
 
     @Override
-    public final T get()
+    @SuppressWarnings( "unchecked" )
+    public final <N> N get()
     {
-        return m_value;
+        return (N) m_value;
     }
 
     @Override

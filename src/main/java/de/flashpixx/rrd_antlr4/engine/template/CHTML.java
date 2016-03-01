@@ -28,7 +28,9 @@ import com.google.common.collect.Table;
 import de.flashpixx.rrd_antlr4.CCommon;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarComplexElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarRule;
+import de.flashpixx.rrd_antlr4.antlr.IGrammarSimpleElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarTerminal;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
@@ -36,6 +38,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.text.MessageFormat;
+import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
@@ -156,7 +159,12 @@ public final class CHTML extends IBaseTemplate
         m_rules.put(
                 p_grammar.id(),
                 p_rule.id(),
-                ""
+                StringUtils.join(
+                        p_rule.alternatives().stream()
+                              .map( i -> this.choice( i ) )
+                              .collect( Collectors.toList() ),
+                        ", "
+                )
         );
     }
 
@@ -167,10 +175,78 @@ public final class CHTML extends IBaseTemplate
                 p_grammar.id(),
                 p_terminal.id(),
                 MessageFormat.format(
-                        "Diagram(\"{0}\").addTo();",
-                        p_terminal.id()
+                        "Diagram({0}).addTo();",
+                        StringUtils.join(
+                                p_terminal.alternatives().stream()
+                                          .map( i -> this.choice( i ) )
+                                          .collect( Collectors.toList() ),
+                                ", "
+                        )
                 )
         );
     }
 
+    /**
+     * creates a grammar choice
+     *
+     * @param p_input element list
+     * @return string representation
+     */
+    private String choice( final List<?> p_input )
+    {
+        return MessageFormat.format(
+                "Choice({0}, {1})",
+                0,
+                StringUtils.join(
+                        p_input.stream()
+                               .map( i -> element( i ) )
+                               .filter( i -> i != null )
+                               .collect( Collectors.toList() ),
+                        ", "
+                )
+        );
+    }
+
+    /**
+     * creates a grammar sequence
+     *
+     * @param p_input element list
+     * @return string representation
+     */
+    private String sequence( final List<?> p_input )
+    {
+        return MessageFormat.format(
+                "Sequence({0})",
+                StringUtils.join(
+                        p_input.stream()
+                               .map( i -> this.element( i ) )
+                               .filter( i -> i != null )
+                               .collect( Collectors.toList() ),
+                        ", "
+                )
+        );
+    }
+
+    /**
+     * create an element string
+     *
+     * @param p_element grammat element or string
+     * @return string representation
+     *
+     * @tparam T object type
+     */
+    @SuppressWarnings( "unchecked" )
+    private <T> String element( final T p_element )
+    {
+        if ( p_element instanceof String )
+            return (String) p_element;
+
+        if ( p_element instanceof IGrammarRule )
+            return this.choice( ( (IGrammarRule) p_element ).alternatives() );
+
+        if ( ( p_element instanceof IGrammarSimpleElement<?> ) && ( ( (IGrammarSimpleElement<?>) p_element ).isValueAssignableTo( String.class ) ) )
+            return "'" + StringEscapeUtils.escapeJava( ( (IGrammarSimpleElement<?>) p_element ).<String>get() ) + "'";
+
+        return StringEscapeUtils.escapeJava( "'foo'" );
+    }
 }
