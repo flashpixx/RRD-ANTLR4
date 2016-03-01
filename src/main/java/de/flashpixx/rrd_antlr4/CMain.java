@@ -32,6 +32,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -100,7 +101,7 @@ public final class CMain extends AbstractMojo
      * Maven plugin exclude file list
      */
     @Parameter
-    private String[] exclude;
+    private String[] excludes;
     /**
      * Maven plugin documentation cleanup regex
      */
@@ -195,7 +196,18 @@ public final class CMain extends AbstractMojo
     @Override
     public final void execute() throws MojoExecutionException, MojoFailureException
     {
+        final Set<String> l_doclean = Arrays.stream( docclean ).collect( Collectors.toSet() );
+        final Set<String> l_exclude = Arrays.stream( excludes ).collect( Collectors.toSet() );
+        final Set<String> l_import = Arrays.stream( imports ).collect( Collectors.toSet() );
 
+        final Collection<String> l_errors = Arrays.stream( grammar ).parallel()
+                                                  .flatMap( i -> generate( output, l_exclude, l_import,
+                                                                           new File( i ), l_doclean, templates
+                                                  ).stream() )
+                                                  .collect( Collectors.toList() );
+
+        if ( !l_errors.isEmpty() )
+            throw new MojoFailureException( StringUtils.join( l_errors, "\n" ) );
     }
 
 
