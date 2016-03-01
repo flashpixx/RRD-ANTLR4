@@ -97,7 +97,7 @@ public final class CHTML extends IBaseTemplate
                 "%grammardocumentation%", m_grammar.documentation(),
 
                 // sets the showall text
-                "%ruletoggle%", CCommon.getLanguageString( this, "htmlruletoggle" ),
+                "%ruletoggle%", MessageFormat.format( "<h5 id = \"ruletoggle\" >{0}</h5>", CCommon.getLanguageString( this, "htmlruletoggle" ) ),
 
                 // set menu with rule list
                 "%rulelist%", StringUtils.join(
