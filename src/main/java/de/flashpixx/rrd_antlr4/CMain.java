@@ -44,7 +44,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -235,10 +234,7 @@ public final class CMain extends AbstractMojo
                     }
                     catch ( final IOException p_exception )
                     {
-                        return new LinkedList<String>()
-                        {{
-                            add( p_exception.getMessage() );
-                        }}.stream();
+                        return Stream.of( p_exception.getMessage() );
                     }
                 } )
                 .filter( i -> i != null )
@@ -257,12 +253,7 @@ public final class CMain extends AbstractMojo
     {
         return (
                 p_input.isFile()
-
-                ? new LinkedList<File>()
-                {{
-                    add( p_input );
-                }}.stream()
-
+                ? Stream.of( p_input )
                 : Arrays.stream( p_input.listFiles( new FilenameFilter()
                 {
                     @Override

@@ -38,12 +38,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 /**
@@ -51,32 +49,22 @@ import java.util.stream.Collectors;
  */
 public final class CEngine
 {
-    /**
-     * directories with grammar imports
-     */
-    private final Set<Files> m_imports = new HashSet<>();
-
 
     /**
      * generator call
-     *  @param p_outputdirectory output directory - the template name and grammar file name will be appended
+     *
+     * @param p_outputdirectory output directory - the template name and grammar file name will be appended
      * @param p_grammar grammar input file
      * @param p_docuclean set with documentation clean regex
      * @param p_imports map with grammar imported grammar files
-     * @param p_template exporting templates  @return list with error messages
-     *
+     * @param p_templates exporting templates  @return list with error messages
      * @throws IOException on IO error
      */
     public Collection<String> generate( final String p_outputdirectory, final File p_grammar, final Set<String> p_docuclean,
-                                        final Map<String, File> p_imports, final Set<ITemplate> p_template
+                                        final Map<String, File> p_imports, final Set<ITemplate> p_templates
     ) throws IOException
     {
-        // lexing and parsing the input grammar file
-        final ANTLRv4Parser l_parser = new ANTLRv4Parser(
-                new CommonTokenStream( new ANTLRv4Lexer( new ANTLRInputStream( new FileInputStream( p_grammar ) ) ) )
-        );
-
-        return p_template
+        return p_templates
                 .parallelStream()
 
                 // create output directory if not exists
@@ -85,49 +73,60 @@ public final class CEngine
                     {
                         final Path l_directory = Files.createDirectories( Paths.get( p_outputdirectory, i.name(), p_grammar.getName().toLowerCase() ) );
 
-                        // run exporting process of the input grammar file with the visitor
+                        // run exporting process
                         i.preprocess( l_directory );
-
-                        final CASTVisitor l_visitor = new CASTVisitor( i, p_docuclean );
-                        l_visitor.visit( l_parser.grammarSpec() );
-
-                        // do recursive call to handle imported grammar files
-                        final Collection<String> l_errors = l_visitor.getGrammarImports().stream()
-                                                                     .map( j -> p_imports.get( j ) )
-                                                                     .filter( j -> j != null )
-                                                                     .flatMap( j -> {
-                                                                         try
-                                                                         {
-                                                                             return this.generate( p_outputdirectory, j, p_docuclean, p_imports, p_template )
-                                                                                        .stream();
-                                                                         }
-                                                                         catch ( final IOException p_exception )
-                                                                         {
-                                                                             return new LinkedList<String>()
-                                                                             {{
-                                                                                 add( p_exception.getMessage() );
-                                                                             }}.stream();
-                                                                         }
-                                                                     } )
-                                                                     .collect( Collectors.toList() );
-
+                        final Collection<String> l_errors = this.parse( p_grammar, p_docuclean, p_imports, i );
                         if ( !l_errors.isEmpty() )
                             return l_errors.stream();
 
                         i.postprocess( l_directory );
-                        return Collections.<String>emptyList().stream();
+                        return Stream.<String>of();
                     }
                     catch ( final URISyntaxException | IOException p_exception )
                     {
-                        return new LinkedList<String>()
-                        {{
-                            add( p_exception.getMessage() );
-                        }}.stream();
+                        return Stream.of( p_exception.getMessage() );
                     }
                 } )
 
                 // collect error messages
                 .collect( Collectors.toList() );
+    }
+
+
+    /**
+     * runs parsing process with recursive descent of a grammar file
+     *
+     * @param p_grammar grammar file
+     * @param p_docuclean set with documentation clean regex
+     * @param p_imports map with grammar imported grammar files
+     * @param p_template template which will be passend
+     * @return colleciton with error messages
+     *
+     * @throws IOException thrown on IO errors
+     */
+    private Collection<String> parse( final File p_grammar, final Set<String> p_docuclean, final Map<String, File> p_imports, final ITemplate p_template )
+    throws IOException
+    {
+        // lexing and parsing the input grammar file
+        final CASTVisitor l_visitor = new CASTVisitor( p_template, p_docuclean );
+        l_visitor.visit( new ANTLRv4Parser(
+                                 new CommonTokenStream( new ANTLRv4Lexer( new ANTLRInputStream( new FileInputStream( p_grammar ) ) ) )
+                         ).grammarSpec()
+        );
+
+        return l_visitor.getGrammarImports().stream()
+                        .map( i -> p_imports.get( i ) )
+                        .filter( i -> i != null )
+                        .flatMap( i -> {
+                            try
+                            {
+                                return this.parse( i, p_docuclean, p_imports, p_template ).stream();
+                            }
+                            catch ( final IOException p_exception )
+                            {
+                                return Stream.of( p_exception.getMessage() );
+                            }
+                        } ).collect( Collectors.toList() );
     }
 
 }

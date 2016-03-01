@@ -301,6 +301,7 @@
                             <directory>.</directory>
                             <includes>
                                 <include>src/main/resources/template/html/lib/**</include>
+                                <include>rrd-output/**</include>
                                 <include>dependency-reduced-pom.xml</include>
                             </includes>
                         </fileset>
