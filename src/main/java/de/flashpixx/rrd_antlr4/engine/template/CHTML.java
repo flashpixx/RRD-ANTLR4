@@ -104,7 +104,7 @@ public final class CHTML extends IBaseTemplate
                         m_rules.rowMap().entrySet().stream().sorted( ( n, m ) -> n.getKey().compareToIgnoreCase( m.getKey() ) )
                                .map( i -> MessageFormat.format(
                                        "<div class=\"rulelist\" id=\"list_{0}\">" +
-                                       "<span data-ruleset=\"rules_{0}\" class=\"grammarlisthead\">{0}</span>" +
+                                       "<h5 data-ruleset=\"rules_{0}\" class=\"grammarlisthead\">{0}</h5>" +
                                        "<ul>{1}</ul>" +
                                        "</div>",
                                        i.getKey(),
@@ -126,7 +126,7 @@ public final class CHTML extends IBaseTemplate
                         m_rules.rowMap().entrySet().stream().sorted( ( n, m ) -> n.getKey().compareToIgnoreCase( m.getKey() ) )
                                .map( i -> MessageFormat.format(
                                        "<div class=\"elements\" id=\"rules_{0}\">" +
-                                       "<p>{0}</p>" +
+                                       "<h2>{0}</h2>" +
                                        "<span><script>\n{1}\n</script></span>" +
                                        "</div>",
                                        i.getKey(),

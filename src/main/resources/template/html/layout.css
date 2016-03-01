@@ -293,6 +293,9 @@ sup {
 	}
 }
 
+svg.railroad-diagram {
+    background-color: transparent;
+}
 
 #grammartitle {
     text-align: center;
