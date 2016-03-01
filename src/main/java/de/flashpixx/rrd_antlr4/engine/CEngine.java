@@ -27,7 +27,6 @@ import de.flashpixx.rrd_antlr4.antlr.ANTLRv4Lexer;
 import de.flashpixx.rrd_antlr4.antlr.ANTLRv4Parser;
 import de.flashpixx.rrd_antlr4.antlr.CASTVisitor;
 import de.flashpixx.rrd_antlr4.engine.template.ITemplate;
-import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 
@@ -50,10 +49,6 @@ import java.util.stream.Collectors;
 public final class CEngine
 {
     /**
-     * error handler
-     */
-    private final ANTLRErrorListener m_errorlistener = new CErrorListener();
-    /**
      * directories with grammar imports
      */
     private final Set<Files> m_imports = new HashSet<>();
@@ -72,13 +67,8 @@ public final class CEngine
     public Collection<String> generate( final String p_outputdirectory, final Set<ITemplate> p_template, final File p_grammar ) throws IOException
     {
         // lexing and parsing the input grammar file
-        final ANTLRv4Lexer l_lexer = new ANTLRv4Lexer( new ANTLRInputStream( new FileInputStream( p_grammar ) ) );
-        l_lexer.removeErrorListeners();
-        l_lexer.addErrorListener( m_errorlistener );
-
-        final ANTLRv4Parser l_parser = new ANTLRv4Parser( new CommonTokenStream( l_lexer ) );
-        l_parser.removeErrorListeners();
-        l_parser.addErrorListener( m_errorlistener );
+        final ANTLRv4Parser l_parser = new ANTLRv4Parser(
+                new CommonTokenStream( new ANTLRv4Lexer( new ANTLRInputStream( new FileInputStream( p_grammar ) ) ) ) );
 
         return p_template
                 .parallelStream()

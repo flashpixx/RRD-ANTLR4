@@ -156,6 +156,7 @@ public final class CMain extends AbstractMojo
         final String l_outputdirectory = l_cli.hasOption( "output" ) ? l_cli.getOptionValue( "output" ) : DEFAULTOUTPUT;
 
 
+        // --- run generating ------------------------------------------------------------------------------------------
         final Collection<String> l_errors = Arrays.stream( l_cli.getOptionValue( "grammar" ).split( "," ) )
                                                   .parallel()
                                                   .flatMap( i -> generate( l_outputdirectory, l_exclude, new File( i ), l_templates ).stream() )

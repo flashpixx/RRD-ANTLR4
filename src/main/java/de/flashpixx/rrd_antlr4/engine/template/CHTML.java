@@ -38,6 +38,9 @@ import java.nio.file.Path;
  */
 public final class CHTML extends IBaseTemplate
 {
+    /**
+     * main grammar
+     */
     private IGrammarComplexElement m_grammar;
 
 
