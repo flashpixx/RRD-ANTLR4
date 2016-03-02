@@ -54,6 +54,7 @@ import java.util.stream.Stream;
  * standalone program and Maven plugin
  *
  * @see https://maven.apache.org/guides/plugin/guide-java-plugin-development.html
+ * @see https://books.sonatype.com/mvnref-book/reference/writing-plugins-sect-custom-plugin.html
  */
 public final class CMain extends AbstractMojo
 {
