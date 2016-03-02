@@ -28,6 +28,7 @@ import com.google.common.collect.Table;
 import de.flashpixx.rrd_antlr4.CCommon;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarCollection;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarComplexElement;
+import de.flashpixx.rrd_antlr4.antlr.IGrammarElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarRule;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarSimpleElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarTerminal;
@@ -155,37 +156,14 @@ public final class CHTML extends IBaseTemplate
     }
 
     @Override
-    public final void rule( final IGrammarComplexElement p_grammar, final IGrammarRule p_rule )
+    public final void element( final IGrammarComplexElement p_grammar, final IGrammarComplexElement p_element )
     {
         m_rules.put(
                 p_grammar.id(),
-                p_rule.id(),
+                p_element.id(),
                 MessageFormat.format(
                         "Diagram({0}).addTo();",
-                        StringUtils.join(
-                                p_rule.elements().get().stream()
-                                      .map( i -> this.element( i ) )
-                                      .collect( Collectors.toList() ),
-                                ", "
-                        )
-                )
-        );
-    }
-
-    @Override
-    public final void terminal( final IGrammarComplexElement p_grammar, final IGrammarTerminal p_terminal )
-    {
-        m_rules.put(
-                p_grammar.id(),
-                p_terminal.id(),
-                MessageFormat.format(
-                        "Diagram({0}).addTo();",
-                        StringUtils.join(
-                                p_terminal.alternatives().get().stream()
-                                          .map( i -> this.element( i ) )
-                                          .collect( Collectors.toList() ),
-                                ", "
-                        )
+                        this.element( p_element )
                 )
         );
     }
@@ -203,7 +181,7 @@ public final class CHTML extends IBaseTemplate
                 0,
                 StringUtils.join(
                         p_input.get().stream()
-                               .map( i -> element( i ) )
+                               .map( i -> this.element( i ) )
                                .filter( i -> i != null )
                                .collect( Collectors.toList() ),
                         ", "
@@ -232,18 +210,30 @@ public final class CHTML extends IBaseTemplate
     }
 
     /**
+     * creates a terminal
+     *
+     * @param p_terminal terminal element
+     * @return string represenation
+     */
+    private String terminal( final IGrammarTerminal p_terminal )
+    {
+        return MessageFormat.format(
+                "Terminal({0})",
+                "'" + p_terminal.alternatives().toString() + "'"
+        );
+    }
+
+    /**
      * create an element string
      *
      * @param p_element grammat element or string
      * @return string representation
-     *
-     * @tparam T object type
+
      */
-    @SuppressWarnings( "unchecked" )
-    private <T> String element( final T p_element )
+    private String element( final IGrammarElement p_element )
     {
-        if ( p_element instanceof String )
-            return (String) p_element;
+        if ( p_element instanceof IGrammarTerminal )
+            return this.terminal( ( (IGrammarTerminal) p_element ) );
 
         if ( p_element instanceof IGrammarRule )
             return this.choice( ( (IGrammarRule) p_element ).elements() );

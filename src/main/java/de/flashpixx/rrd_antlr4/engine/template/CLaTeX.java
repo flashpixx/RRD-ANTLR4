@@ -24,8 +24,6 @@
 package de.flashpixx.rrd_antlr4.engine.template;
 
 import de.flashpixx.rrd_antlr4.antlr.IGrammarComplexElement;
-import de.flashpixx.rrd_antlr4.antlr.IGrammarRule;
-import de.flashpixx.rrd_antlr4.antlr.IGrammarTerminal;
 
 import java.nio.file.Path;
 
@@ -65,13 +63,7 @@ public class CLaTeX extends IBaseTemplate
     }
 
     @Override
-    public final void rule( final IGrammarComplexElement p_grammar, final IGrammarRule p_rule )
-    {
-
-    }
-
-    @Override
-    public final void terminal( final IGrammarComplexElement p_grammar, final IGrammarTerminal p_terminal )
+    public final void element( final IGrammarComplexElement p_grammar, final IGrammarComplexElement p_element )
     {
 
     }

@@ -24,8 +24,6 @@
 package de.flashpixx.rrd_antlr4.engine.template;
 
 import de.flashpixx.rrd_antlr4.antlr.IGrammarComplexElement;
-import de.flashpixx.rrd_antlr4.antlr.IGrammarRule;
-import de.flashpixx.rrd_antlr4.antlr.IGrammarTerminal;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -67,19 +65,10 @@ public interface ITemplate
     void grammar( final IGrammarComplexElement p_grammar );
 
     /**
-     * is called if any grammar rule is created
-     *
+     * is called if any grammar element is completed
      * @param p_grammar grammar
-     * @param p_rule rule
+     * @param p_element element
      */
-    void rule( final IGrammarComplexElement p_grammar, final IGrammarRule p_rule );
-
-    /**
-     * is called if a terminal is created
-     *
-     * @param p_grammar grammar
-     * @param p_terminal terminal
-     */
-    void terminal( final IGrammarComplexElement p_grammar, final IGrammarTerminal p_terminal );
+    void element( final IGrammarComplexElement p_grammar, final IGrammarComplexElement p_element );
 
 }

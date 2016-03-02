@@ -77,6 +77,9 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
         return super.visitGrammarSpec( p_context );
     }
 
+
+
+    // ---------- old -------------------------
     @Override
     public final Object visitDelegateGrammar( final ANTLRv4Parser.DelegateGrammarContext p_context )
     {
@@ -93,7 +96,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
     @Override
     public final Object visitParserRuleSpec( final ANTLRv4Parser.ParserRuleSpecContext p_context )
     {
-        m_template.rule(
+        m_template.element(
                 m_grammar,
                 new CGrammarRule(
                         p_context.RULE_REF().getText(),
@@ -135,7 +138,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
     @Override
     public final Object visitLexerRuleSpec( final ANTLRv4Parser.LexerRuleSpecContext p_context )
     {
-        m_template.terminal(
+        m_template.element(
                 m_grammar,
                 new CGrammarTerminal(
                         p_context.TOKEN_REF().getText(),
@@ -175,6 +178,16 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
     {
         return this.convert( p_context.getText() );
     }
+    // ----------------------------------------
+
+
+    // --- new --------------------------------
+    // ----------------------------------------
+
+
+
+
+
 
     /**
      * returns a set with grammar imports
