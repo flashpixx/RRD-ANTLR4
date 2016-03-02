@@ -159,11 +159,14 @@ public final class CHTML extends IBaseTemplate
         m_rules.put(
                 p_grammar.id(),
                 p_rule.id(),
-                StringUtils.join(
-                        p_rule.alternatives().stream()
-                              .map( i -> this.choice( i ) )
-                              .collect( Collectors.toList() ),
-                        ", "
+                MessageFormat.format(
+                        "Diagram({0}).addTo();",
+                        StringUtils.join(
+                                p_rule.alternatives().stream()
+                                      .map( i -> this.choice( i ) )
+                                      .collect( Collectors.toList() ),
+                                ", "
+                        )
                 )
         );
     }
