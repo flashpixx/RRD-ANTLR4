@@ -47,9 +47,10 @@ public final class CGrammarIdentifier implements IGrammarSimpleElement<String>
     }
 
     @Override
-    public final String get()
+    @SuppressWarnings( "unchecked" )
+    public final <N> N get()
     {
-        return m_value;
+        return (N) m_value;
     }
 
     @Override

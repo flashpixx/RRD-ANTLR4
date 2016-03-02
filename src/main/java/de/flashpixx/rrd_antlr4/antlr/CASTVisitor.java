@@ -27,7 +27,6 @@ import de.flashpixx.rrd_antlr4.CStringReplace;
 import de.flashpixx.rrd_antlr4.engine.template.ITemplate;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -99,7 +98,8 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
                 new CGrammarRule(
                         p_context.RULE_REF().getText(),
                         this.cleanComment( p_context.DOC_COMMENT() == null ? null : p_context.DOC_COMMENT().getText() ),
-                        (List<List<IGrammarElement>>) this.visitRuleBlock( p_context.ruleBlock() )
+                        null
+                        // (List<List<IGrammarElement>>) this.visitRuleBlock( p_context.ruleBlock() )
                 )
         );
         return null;
@@ -141,7 +141,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
                         p_context.TOKEN_REF().getText(),
                         p_context.FRAGMENT() != null,
                         this.cleanComment( p_context.DOC_COMMENT() == null ? null : p_context.DOC_COMMENT().getText() ),
-                        (List<List<IGrammarSimpleElement<?>>>) this.visitLexerRuleBlock( p_context.lexerRuleBlock() )
+                        null //(List<List<IGrammarSimpleElement<?>>>) this.visitLexerRuleBlock( p_context.lexerRuleBlock() )
                 )
         );
         return null;

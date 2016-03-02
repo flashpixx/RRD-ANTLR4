@@ -24,23 +24,8 @@
 package de.flashpixx.rrd_antlr4.antlr;
 
 /**
- * interface of grammar terminal
+ * grammar element sequence
  */
-public interface IGrammarTerminal extends IGrammarComplexElement
+public interface IGrammarSequence extends IGrammarCollection
 {
-
-    /**
-     * flag to check if the terminal is a fragment
-     *
-     * @return fragment flag
-     */
-    boolean isFragment();
-
-    /**
-     * terminal alternatives
-     *
-     * @return grammar collection
-     */
-    IGrammarCollection alternatives();
-
 }

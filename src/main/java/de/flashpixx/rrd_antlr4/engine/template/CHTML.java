@@ -26,6 +26,7 @@ package de.flashpixx.rrd_antlr4.engine.template;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import de.flashpixx.rrd_antlr4.CCommon;
+import de.flashpixx.rrd_antlr4.antlr.IGrammarCollection;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarComplexElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarRule;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarSimpleElement;
@@ -38,7 +39,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.text.MessageFormat;
-import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -163,8 +163,8 @@ public final class CHTML extends IBaseTemplate
                 MessageFormat.format(
                         "Diagram({0}).addTo();",
                         StringUtils.join(
-                                p_rule.alternatives().stream()
-                                      .map( i -> this.choice( i ) )
+                                p_rule.elements().get().stream()
+                                      .map( i -> this.element( i ) )
                                       .collect( Collectors.toList() ),
                                 ", "
                         )
@@ -181,8 +181,8 @@ public final class CHTML extends IBaseTemplate
                 MessageFormat.format(
                         "Diagram({0}).addTo();",
                         StringUtils.join(
-                                p_terminal.alternatives().stream()
-                                          .map( i -> this.choice( i ) )
+                                p_terminal.alternatives().get().stream()
+                                          .map( i -> this.element( i ) )
                                           .collect( Collectors.toList() ),
                                 ", "
                         )
@@ -196,13 +196,13 @@ public final class CHTML extends IBaseTemplate
      * @param p_input element list
      * @return string representation
      */
-    private String choice( final List<?> p_input )
+    private String choice( final IGrammarCollection p_input )
     {
         return MessageFormat.format(
                 "Choice({0}, {1})",
                 0,
                 StringUtils.join(
-                        p_input.stream()
+                        p_input.get().stream()
                                .map( i -> element( i ) )
                                .filter( i -> i != null )
                                .collect( Collectors.toList() ),
@@ -217,12 +217,12 @@ public final class CHTML extends IBaseTemplate
      * @param p_input element list
      * @return string representation
      */
-    private String sequence( final List<?> p_input )
+    private String sequence( final IGrammarCollection p_input )
     {
         return MessageFormat.format(
                 "Sequence({0})",
                 StringUtils.join(
-                        p_input.stream()
+                        p_input.get().stream()
                                .map( i -> this.element( i ) )
                                .filter( i -> i != null )
                                .collect( Collectors.toList() ),
@@ -246,7 +246,7 @@ public final class CHTML extends IBaseTemplate
             return (String) p_element;
 
         if ( p_element instanceof IGrammarRule )
-            return this.choice( ( (IGrammarRule) p_element ).alternatives() );
+            return this.choice( ( (IGrammarRule) p_element ).elements() );
 
         if ( ( p_element instanceof IGrammarSimpleElement<?> ) && ( ( (IGrammarSimpleElement<?>) p_element ).isValueAssignableTo( Pattern.class ) ) )
             return "'" + StringEscapeUtils.escapeEcmaScript(

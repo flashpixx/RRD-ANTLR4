@@ -21,26 +21,23 @@
  * @endcond
  */
 
+
 package de.flashpixx.rrd_antlr4.antlr;
 
+import java.util.Collection;
+
+
 /**
- * interface of grammar terminal
+ * interface of grammar collection elements
  */
-public interface IGrammarTerminal extends IGrammarComplexElement
+public interface IGrammarCollection extends IGrammarElement
 {
 
     /**
-     * flag to check if the terminal is a fragment
+     * returns the elements
      *
-     * @return fragment flag
+     * @return collection of grammar elements
      */
-    boolean isFragment();
-
-    /**
-     * terminal alternatives
-     *
-     * @return grammar collection
-     */
-    IGrammarCollection alternatives();
+    Collection<IGrammarElement> get();
 
 }

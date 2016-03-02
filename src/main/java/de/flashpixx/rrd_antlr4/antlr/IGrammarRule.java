@@ -23,9 +23,6 @@
 
 package de.flashpixx.rrd_antlr4.antlr;
 
-import java.util.List;
-
-
 /**
  * interface for a grammar rule
  */
@@ -33,10 +30,10 @@ public interface IGrammarRule extends IGrammarComplexElement
 {
 
     /**
-     * returns a list of alternatives of the element
+     * returns collection of elements
      *
-     * @return alternative list
+     * @return elements
      */
-    List<List<IGrammarElement>> alternatives();
+    IGrammarCollection elements();
 
 }

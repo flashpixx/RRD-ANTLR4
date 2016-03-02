@@ -26,8 +26,6 @@ package de.flashpixx.rrd_antlr4.antlr;
 import org.apache.commons.lang3.StringUtils;
 
 import java.text.MessageFormat;
-import java.util.Collections;
-import java.util.List;
 
 
 /**
@@ -48,9 +46,9 @@ public class CGrammarTerminal implements IGrammarTerminal
      */
     private final String m_documentation;
     /**
-     * alternatives
+     * elements
      */
-    private final List<List<IGrammarSimpleElement<?>>> m_alternatives;
+    private final IGrammarCollection m_elements;
 
     /**
      * ctor
@@ -58,16 +56,16 @@ public class CGrammarTerminal implements IGrammarTerminal
      * @param p_id ID
      * @param p_isfragment fragment
      * @param p_documentation documentation
-     * @param p_alternatives alternatives
+     * @param p_elements elements
      */
     public CGrammarTerminal( final String p_id, final boolean p_isfragment, final String p_documentation,
-                             final List<List<IGrammarSimpleElement<?>>> p_alternatives
+                             final IGrammarCollection p_elements
     )
     {
         m_id = p_id;
         m_isfragment = p_isfragment;
         m_documentation = p_documentation == null ? "" : p_documentation;
-        m_alternatives = p_alternatives == null ? Collections.<List<IGrammarSimpleElement<?>>>emptyList() : p_alternatives;
+        m_elements = p_elements == null ? CGrammarEmptyCollection.INSTANCE : p_elements;
     }
 
     @Override
@@ -77,9 +75,9 @@ public class CGrammarTerminal implements IGrammarTerminal
     }
 
     @Override
-    public final List<List<IGrammarSimpleElement<?>>> alternatives()
+    public final IGrammarCollection alternatives()
     {
-        return m_alternatives;
+        return m_elements;
     }
 
     @Override
@@ -113,7 +111,7 @@ public class CGrammarTerminal implements IGrammarTerminal
                 "{0}{1} -> {2} {3}",
                 this.id(),
                 m_isfragment ? " (fragment)" : "",
-                StringUtils.join( m_alternatives, " | " ),
+                StringUtils.join( m_elements, " | " ),
                 m_documentation.isEmpty() ? "" : " // " + m_documentation
         ).trim();
     }

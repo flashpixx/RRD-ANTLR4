@@ -23,24 +23,32 @@
 
 package de.flashpixx.rrd_antlr4.antlr;
 
+import java.util.Collection;
+import java.util.Collections;
+
+
 /**
- * interface of grammar terminal
+ * empty grammar collection
  */
-public interface IGrammarTerminal extends IGrammarComplexElement
+public final class CGrammarEmptyCollection implements IGrammarCollection
 {
+    /**
+     * singletone instance
+     */
+    public static final CGrammarEmptyCollection INSTANCE = new CGrammarEmptyCollection();
+
 
     /**
-     * flag to check if the terminal is a fragment
-     *
-     * @return fragment flag
+     * ctor
      */
-    boolean isFragment();
+    private CGrammarEmptyCollection()
+    {
+    }
 
-    /**
-     * terminal alternatives
-     *
-     * @return grammar collection
-     */
-    IGrammarCollection alternatives();
+    @Override
+    public final Collection<IGrammarElement> get()
+    {
+        return Collections.<IGrammarElement>emptyList();
+    }
 
 }
