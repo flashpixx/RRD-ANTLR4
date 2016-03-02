@@ -40,6 +40,7 @@ import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 
@@ -247,9 +248,13 @@ public final class CHTML extends IBaseTemplate
         if ( p_element instanceof IGrammarRule )
             return this.choice( ( (IGrammarRule) p_element ).alternatives() );
 
-        if ( ( p_element instanceof IGrammarSimpleElement<?> ) && ( ( (IGrammarSimpleElement<?>) p_element ).isValueAssignableTo( String.class ) ) )
-            return "'" + StringEscapeUtils.escapeJava( ( (IGrammarSimpleElement<?>) p_element ).<String>get() ) + "'";
+        if ( ( p_element instanceof IGrammarSimpleElement<?> ) && ( ( (IGrammarSimpleElement<?>) p_element ).isValueAssignableTo( Pattern.class ) ) )
+            return "'" + StringEscapeUtils.escapeEcmaScript(
+                    StringEscapeUtils.escapeEcmaScript( ( (IGrammarSimpleElement<?>) p_element ).<Pattern>get().pattern() ) ) + "'";
 
-        return StringEscapeUtils.escapeJava( "'foo'" );
+        if ( ( p_element instanceof IGrammarSimpleElement<?> ) && ( ( (IGrammarSimpleElement<?>) p_element ).isValueAssignableTo( String.class ) ) )
+            return "'" + StringEscapeUtils.escapeEcmaScript( ( (IGrammarSimpleElement<?>) p_element ).<String>get() ) + "'";
+
+        return StringEscapeUtils.escapeEcmaScript( "foo" );
     }
 }
