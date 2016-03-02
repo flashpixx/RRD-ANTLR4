@@ -21,59 +21,32 @@
  * @endcond
  */
 
+
 package de.flashpixx.rrd_antlr4.antlr;
 
-import java.util.Arrays;
+import java.util.Collection;
 
 
 /**
- * stores any terminal value
+ * abstract class for collection
  */
-public final class CGrammarTerminal<T> implements IGrammarSimpleElement<T>
+public class IGrammarBaseCollection<T extends Collection<IGrammarElement>> implements IGrammarCollection
 {
-    /**
-     * terminal value
-     */
-    private final T m_value;
+    protected final T m_data;
 
     /**
      * ctor
      *
-     * @param p_value value
+     * @param p_data data
      */
-    public CGrammarTerminal( final T p_value )
+    protected IGrammarBaseCollection( final T p_data )
     {
-        m_value = p_value;
+        m_data = p_data;
     }
 
     @Override
-    @SuppressWarnings( "unchecked" )
-    public final <N> N get()
+    public final Collection<IGrammarElement> get()
     {
-        return (N) m_value;
-    }
-
-    @Override
-    public final int hashCode()
-    {
-        return m_value.hashCode();
-    }
-
-    @Override
-    public final boolean equals( final Object p_object )
-    {
-        return m_value.hashCode() == p_object.hashCode();
-    }
-
-    @Override
-    public final String toString()
-    {
-        return m_value.toString();
-    }
-
-    @Override
-    public final boolean isValueAssignableTo( final Class<?>... p_class )
-    {
-        return m_value == null ? true : Arrays.asList( p_class ).stream().map( i -> i.isAssignableFrom( m_value.getClass() ) ).anyMatch( i -> i );
+        return m_data;
     }
 }

@@ -23,57 +23,97 @@
 
 package de.flashpixx.rrd_antlr4.antlr;
 
-import java.util.Arrays;
+import org.apache.commons.lang3.StringUtils;
+
+import java.text.MessageFormat;
 
 
 /**
- * stores any terminal value
+ * represenation of a terminal symbol
  */
-public final class CGrammarTerminal<T> implements IGrammarSimpleElement<T>
+public class CGrammarNonTerminal implements IGrammarTerminal
 {
     /**
-     * terminal value
+     * ID
      */
-    private final T m_value;
+    private final String m_id;
+    /**
+     * fragment flag
+     */
+    private final boolean m_isfragment;
+    /**
+     * documentation string
+     */
+    private final String m_documentation;
+    /**
+     * elements
+     */
+    private final IGrammarCollection m_elements;
 
     /**
      * ctor
      *
-     * @param p_value value
+     * @param p_id ID
+     * @param p_isfragment fragment
+     * @param p_documentation documentation
+     * @param p_elements elements
      */
-    public CGrammarTerminal( final T p_value )
+    public CGrammarNonTerminal( final String p_id, final boolean p_isfragment, final String p_documentation,
+                                final IGrammarCollection p_elements
+    )
     {
-        m_value = p_value;
+        m_id = p_id;
+        m_isfragment = p_isfragment;
+        m_documentation = p_documentation == null ? "" : p_documentation;
+        m_elements = p_elements;
     }
 
     @Override
-    @SuppressWarnings( "unchecked" )
-    public final <N> N get()
+    public final boolean isFragment()
     {
-        return (N) m_value;
+        return m_isfragment;
+    }
+
+    @Override
+    public final IGrammarCollection alternatives()
+    {
+        return m_elements;
+    }
+
+    @Override
+    public final String id()
+    {
+        return m_id;
+    }
+
+    @Override
+    public final String documentation()
+    {
+        return m_documentation;
     }
 
     @Override
     public final int hashCode()
     {
-        return m_value.hashCode();
+        return super.hashCode();
     }
 
     @Override
     public final boolean equals( final Object p_object )
     {
-        return m_value.hashCode() == p_object.hashCode();
+        return this.hashCode() == p_object.hashCode();
     }
 
     @Override
     public final String toString()
     {
-        return m_value.toString();
+        return MessageFormat.format(
+                "{0}{1} -> {2} {3}",
+                this.id(),
+                m_isfragment ? " (fragment)" : "",
+                StringUtils.join( m_elements, " | " ),
+                m_documentation.isEmpty() ? "" : " // " + m_documentation
+        ).trim();
     }
 
-    @Override
-    public final boolean isValueAssignableTo( final Class<?>... p_class )
-    {
-        return m_value == null ? true : Arrays.asList( p_class ).stream().map( i -> i.isAssignableFrom( m_value.getClass() ) ).anyMatch( i -> i );
-    }
 }

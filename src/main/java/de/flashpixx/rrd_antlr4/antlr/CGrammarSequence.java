@@ -23,57 +23,32 @@
 
 package de.flashpixx.rrd_antlr4.antlr;
 
-import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 
 /**
- * stores any terminal value
+ * grammar sequence
  */
-public final class CTerminalValue<T> implements IGrammarSimpleElement<T>
+public final class CGrammarSequence extends IGrammarBaseCollection<List<IGrammarElement>> implements IGrammarSequence
 {
+
     /**
-     * terminal value
+     * ctor
      */
-    private final T m_value;
+    public CGrammarSequence()
+    {
+        this( new LinkedList<>() );
+    }
 
     /**
      * ctor
      *
-     * @param p_value value
+     * @param p_data data
      */
-    public CTerminalValue( final T p_value )
+    public CGrammarSequence( final List<IGrammarElement> p_data )
     {
-        m_value = p_value;
+        super( p_data );
     }
 
-    @Override
-    @SuppressWarnings( "unchecked" )
-    public final <N> N get()
-    {
-        return (N) m_value;
-    }
-
-    @Override
-    public final int hashCode()
-    {
-        return m_value.hashCode();
-    }
-
-    @Override
-    public final boolean equals( final Object p_object )
-    {
-        return m_value.hashCode() == p_object.hashCode();
-    }
-
-    @Override
-    public final String toString()
-    {
-        return m_value.toString();
-    }
-
-    @Override
-    public final boolean isValueAssignableTo( final Class<?>... p_class )
-    {
-        return m_value == null ? true : Arrays.asList( p_class ).stream().map( i -> i.isAssignableFrom( m_value.getClass() ) ).anyMatch( i -> i );
-    }
 }

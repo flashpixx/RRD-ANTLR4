@@ -101,8 +101,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
                 new CGrammarRule(
                         p_context.RULE_REF().getText(),
                         this.cleanComment( p_context.DOC_COMMENT() == null ? null : p_context.DOC_COMMENT().getText() ),
-                        CGrammarEmptyCollection.INSTANCE
-                        // (List<List<IGrammarElement>>) this.visitRuleBlock( p_context.ruleBlock() )
+                        (IGrammarCollection) this.visitRuleBlock( p_context.ruleBlock() )
                 )
         );
         return null;
@@ -111,7 +110,8 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
     @Override
     public final Object visitRuleAltList( final ANTLRv4Parser.RuleAltListContext p_context )
     {
-        return p_context.labeledAlt().stream().map( i -> this.visitLabeledAlt( i ) ).filter( i -> i != null ).collect( Collectors.toList() );
+        return new CGrammarSequence( p_context.labeledAlt().stream().map( i -> (IGrammarElement) this.visitLabeledAlt( i ) ).filter( i -> i != null )
+                                              .collect( Collectors.toList() ) );
     }
 
 
@@ -119,12 +119,10 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
     public final Object visitAlternative( final ANTLRv4Parser.AlternativeContext p_context )
     {
         // ignore element options
-        return p_context.element() == null
-               ? null
-               : p_context.element().stream()
-                          .map( i -> (IGrammarElement) this.visitElement( i ) )
-                          .filter( i -> i != null )
-                          .collect( Collectors.toList() );
+        return new CGrammarChoice( p_context.element().stream()
+                                            .map( i -> (IGrammarElement) this.visitElement( i ) )
+                                            .filter( i -> i != null )
+                                            .collect( Collectors.toList() ) );
     }
 
     @Override
@@ -133,44 +131,20 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
         return this.convert( p_context.getText() );
     }
 
-
-
-    @Override
-    public final Object visitLexerRuleSpec( final ANTLRv4Parser.LexerRuleSpecContext p_context )
-    {
-        m_template.element(
-                m_grammar,
-                new CGrammarTerminal(
-                        p_context.TOKEN_REF().getText(),
-                        p_context.FRAGMENT() != null,
-                        this.cleanComment( p_context.DOC_COMMENT() == null ? null : p_context.DOC_COMMENT().getText() ),
-                        CGrammarEmptyCollection.INSTANCE
-                        //(List<List<IGrammarSimpleElement<?>>>) this.visitLexerRuleBlock( p_context.lexerRuleBlock() )
-                )
-        );
-        return null;
-    }
-
     @Override
     public final Object visitLexerAltList( final ANTLRv4Parser.LexerAltListContext p_context )
     {
-        return p_context.lexerAlt().stream().map( i -> this.visitLexerAlt( i ) ).filter( i -> i != null ).collect( Collectors.toList() );
-    }
-
-    @Override
-    public final Object visitLexerAlt( final ANTLRv4Parser.LexerAltContext p_context )
-    {
-        // ignoring lexer command rule
-        return this.visitLexerElements( p_context.lexerElements() );
+        return new CGrammarChoice( p_context.lexerAlt().stream().map( i -> (IGrammarElement) this.visitLexerAlt( i ) ).filter( i -> i != null )
+                                            .collect( Collectors.toList() ) );
     }
 
     @Override
     public final Object visitLexerElements( final ANTLRv4Parser.LexerElementsContext p_context )
     {
-        return p_context.lexerElement().stream()
-                        .map( i -> (IGrammarElement) this.visitLexerElement( i ) )
-                        .filter( i -> i != null )
-                        .collect( Collectors.toList() );
+        return new CGrammarChoice( p_context.lexerElement().stream()
+                                            .map( i -> (IGrammarElement) this.visitLexerElement( i ) )
+                                            .filter( i -> i != null )
+                                            .collect( Collectors.toList() ) );
     }
 
     @Override
@@ -182,10 +156,83 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
 
 
     // --- new --------------------------------
+
+    @Override
+    public final Object visitRuleSpec( final ANTLRv4Parser.RuleSpecContext ctx )
+    {
+        // Element Push
+        return super.visitRuleSpec( ctx );
+    }
+
+    @Override
+    public final Object visitLexerRuleSpec( final ANTLRv4Parser.LexerRuleSpecContext p_context )
+    {
+        // Element Push
+        m_template.element(
+                m_grammar,
+                new CGrammarNonTerminal(
+                        p_context.TOKEN_REF().getText(),
+                        p_context.FRAGMENT() != null,
+                        this.cleanComment( p_context.DOC_COMMENT() == null ? null : p_context.DOC_COMMENT().getText() ),
+                        (IGrammarCollection) this.visitLexerRuleBlock( p_context.lexerRuleBlock() )
+                )
+        );
+        return null;
+    }
+
+    @Override
+    public final Object visitAltList( final ANTLRv4Parser.AltListContext p_context )
+    {
+        // Choice
+        return super.visitAltList( p_context );
+    }
+
+    @Override
+    public final Object visitNotSet( final ANTLRv4Parser.NotSetContext p_context )
+    {
+        // Sequence
+        return super.visitNotSet( p_context );
+    }
+
+    @Override
+    public final Object visitLexerAlt( final ANTLRv4Parser.LexerAltContext p_context )
+    {
+        // Sequence
+
+        // ignoring lexer command rule
+        return this.visitLexerElements( p_context.lexerElements() );
+    }
+
+    // visitElements
+
+    @Override
+    public final Object visitBlockSet( final ANTLRv4Parser.BlockSetContext p_context )
+    {
+        // Choice
+        return super.visitBlockSet( p_context );
+    }
+
+    @Override
+    public final Object visitLexerAtom( final ANTLRv4Parser.LexerAtomContext p_context )
+    {
+        // Terminal & NonTermial
+        return super.visitLexerAtom( p_context );
+    }
+
+    @Override
+    public final Object visitEbnfSuffix( final ANTLRv4Parser.EbnfSuffixContext p_context )
+    {
+        // Optional / ZeroOrMore / OneOrMore
+        return super.visitEbnfSuffix( p_context );
+    }
+
+    @Override
+    public final Object visitTerminal( final ANTLRv4Parser.TerminalContext p_context )
+    {
+        return new CGrammarTerminal<>( p_context.getText() );
+    }
+
     // ----------------------------------------
-
-
-
 
 
 
@@ -212,12 +259,12 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
 
         // string check
         if ( p_input.startsWith( "'" ) && ( p_input.endsWith( "'" ) ) )
-            return new CTerminalValue<>( p_input.substring( 1, p_input.length() - 1 ) );
+            return new CGrammarTerminal<>( p_input.substring( 1, p_input.length() - 1 ) );
 
         // regular expression check
         try
         {
-            return new CTerminalValue<>( Pattern.compile( p_input ) );
+            return new CGrammarTerminal<>( Pattern.compile( p_input ) );
         }
         catch ( final PatternSyntaxException p_exception )
         {
