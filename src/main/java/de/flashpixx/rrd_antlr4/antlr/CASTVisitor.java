@@ -51,7 +51,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
     /**
      * set with grammer imports
      */
-    private Set<String> m_imports = new HashSet<>();
+    private Set<IGrammarSimpleElement<String>> m_imports = new HashSet<>();
     /**
      * set with documentation clean pattern
      */
@@ -81,8 +81,14 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
     @Override
     public final Object visitDelegateGrammar( final ANTLRv4Parser.DelegateGrammarContext p_context )
     {
-        p_context.id().stream().map( i -> i.getText() ).forEach( i -> m_imports.add( i ) );
+        p_context.id().stream().map( i -> (IGrammarSimpleElement<String>) this.visitId( i ) ).forEach( i -> m_imports.add( i ) );
         return super.visitDelegateGrammar( p_context );
+    }
+
+    @Override
+    public final Object visitId( final ANTLRv4Parser.IdContext p_context )
+    {
+        return new CGrammarIdentifier( p_context.getText() );
     }
 
     @Override
@@ -113,7 +119,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
         return p_context.element() == null
                ? null
                : p_context.element().stream()
-                          .map( i -> this.convert( (String) this.visitElement( i ) ) )
+                          .map( i -> (IGrammarElement) this.visitElement( i ) )
                           .filter( i -> i != null )
                           .collect( Collectors.toList() );
     }
@@ -121,7 +127,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
     @Override
     public final Object visitElement( final ANTLRv4Parser.ElementContext p_context )
     {
-        return p_context.getText();
+        return this.convert( p_context.getText() );
     }
 
 
@@ -158,7 +164,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
     public final Object visitLexerElements( final ANTLRv4Parser.LexerElementsContext p_context )
     {
         return p_context.lexerElement().stream()
-                        .map( i -> this.convert( (String) this.visitLexerElement( i ) ) )
+                        .map( i -> (IGrammarElement) this.visitLexerElement( i ) )
                         .filter( i -> i != null )
                         .collect( Collectors.toList() );
     }
@@ -166,7 +172,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
     @Override
     public final Object visitLexerElement( final ANTLRv4Parser.LexerElementContext p_context )
     {
-        return p_context.getText();
+        return this.convert( p_context.getText() );
     }
 
     /**
@@ -174,7 +180,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
      *
      * @return set with grammar imports
      */
-    public final Set<String> getGrammarImports()
+    public final Set<IGrammarSimpleElement<String>> getGrammarImports()
     {
         return m_imports;
     }

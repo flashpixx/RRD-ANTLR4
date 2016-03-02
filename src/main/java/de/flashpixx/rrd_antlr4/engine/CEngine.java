@@ -115,7 +115,7 @@ public final class CEngine
         );
 
         return l_visitor.getGrammarImports().stream()
-                        .map( i -> p_imports.get( i ) )
+                        .map( i -> p_imports.get( i.get() ) )
                         .filter( i -> i != null )
                         .flatMap( i -> {
                             try
