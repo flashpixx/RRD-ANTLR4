@@ -98,7 +98,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
                 new CGrammarRule(
                         p_context.RULE_REF().getText(),
                         this.cleanComment( p_context.DOC_COMMENT() == null ? null : p_context.DOC_COMMENT().getText() ),
-                        null
+                        CGrammarEmptyCollection.INSTANCE
                         // (List<List<IGrammarElement>>) this.visitRuleBlock( p_context.ruleBlock() )
                 )
         );
@@ -141,7 +141,8 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
                         p_context.TOKEN_REF().getText(),
                         p_context.FRAGMENT() != null,
                         this.cleanComment( p_context.DOC_COMMENT() == null ? null : p_context.DOC_COMMENT().getText() ),
-                        null //(List<List<IGrammarSimpleElement<?>>>) this.visitLexerRuleBlock( p_context.lexerRuleBlock() )
+                        CGrammarEmptyCollection.INSTANCE
+                        //(List<List<IGrammarSimpleElement<?>>>) this.visitLexerRuleBlock( p_context.lexerRuleBlock() )
                 )
         );
         return null;

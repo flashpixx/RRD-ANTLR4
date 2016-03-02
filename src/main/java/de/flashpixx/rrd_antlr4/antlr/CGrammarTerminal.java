@@ -65,7 +65,7 @@ public class CGrammarTerminal implements IGrammarTerminal
         m_id = p_id;
         m_isfragment = p_isfragment;
         m_documentation = p_documentation == null ? "" : p_documentation;
-        m_elements = p_elements == null ? CGrammarEmptyCollection.INSTANCE : p_elements;
+        m_elements = p_elements;
     }
 
     @Override
