@@ -31,7 +31,7 @@ import java.util.Collections;
 /**
  * abstract class for collection
  */
-public class IGrammarBaseCollection implements IGrammarCollection
+public abstract class IGrammarBaseCollection implements IGrammarCollection
 {
     /**
      * collection data
@@ -40,12 +40,13 @@ public class IGrammarBaseCollection implements IGrammarCollection
     /**
      * cardinality
      */
-    protected final ECardinality m_cardinality;
+    protected ECardinality m_cardinality;
 
 
     /**
      * ctor
      *
+     * @param p_cardinality cardinality
      * @param p_data data
      */
     protected IGrammarBaseCollection( final ECardinality p_cardinality, final Collection<IGrammarElement> p_data )
@@ -64,5 +65,12 @@ public class IGrammarBaseCollection implements IGrammarCollection
     public final ECardinality cardinality()
     {
         return m_cardinality;
+    }
+
+    @Override
+    public final IGrammarElement cardinality( final ECardinality p_cardinality )
+    {
+        m_cardinality = p_cardinality;
+        return this;
     }
 }

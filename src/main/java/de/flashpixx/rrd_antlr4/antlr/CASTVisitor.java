@@ -26,6 +26,7 @@ package de.flashpixx.rrd_antlr4.antlr;
 import de.flashpixx.rrd_antlr4.CStringReplace;
 import de.flashpixx.rrd_antlr4.engine.template.ITemplate;
 
+import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -113,7 +114,8 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
         return new CGrammarSequence(
                 IGrammarElement.ECardinality.NONE,
                 p_context.labeledAlt().stream().map( i -> (IGrammarElement) this.visitLabeledAlt( i ) ).filter( i -> i != null )
-                                              .collect( Collectors.toList() ) );
+                         .collect( Collectors.toList() )
+        );
     }
 
 
@@ -142,7 +144,8 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
         return new CGrammarChoice(
                 IGrammarElement.ECardinality.NONE,
                 p_context.lexerAlt().stream().map( i -> (IGrammarElement) this.visitLexerAlt( i ) ).filter( i -> i != null )
-                                            .collect( Collectors.toList() ) );
+                         .collect( Collectors.toList() )
+        );
     }
 
     @Override
@@ -200,7 +203,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
     @Override
     public final Object visitNotSet( final ANTLRv4Parser.NotSetContext p_context )
     {
-        // Sequence
+        // Sequence with NOT
         return super.visitNotSet( p_context );
     }
 
@@ -223,6 +226,23 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
     }
 
     @Override
+    public final Object visitEbnfSuffix( final ANTLRv4Parser.EbnfSuffixContext p_context )
+    {
+        final IGrammarElement l_element = (IGrammarElement) this.visitChildren( p_context );
+
+        if ( p_context.PLUS() != null )
+            return l_element.cardinality( IGrammarElement.ECardinality.ONEORMORE );
+
+        if ( p_context.STAR() != null )
+            return l_element.cardinality( IGrammarElement.ECardinality.ZEROORMORE );
+
+        if ( p_context.QUESTION() != null )
+            return l_element.cardinality( IGrammarElement.ECardinality.OPTIONAL );
+
+        return l_element;
+    }
+
+    @Override
     public final Object visitLexerAtom( final ANTLRv4Parser.LexerAtomContext p_context )
     {
         // Terminal & NonTermial
@@ -230,16 +250,24 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
     }
 
     @Override
-    public final Object visitEbnfSuffix( final ANTLRv4Parser.EbnfSuffixContext p_context )
+    public final Object visitTerminal( final ANTLRv4Parser.TerminalContext p_context )
     {
-        // Optional / ZeroOrMore / OneOrMore
-        return super.visitEbnfSuffix( p_context );
+        return p_context.TOKEN_REF() != null
+               ? new CGrammarTerminal( IGrammarElement.ECardinality.NONE, p_context.TOKEN_REF().getText() )
+               : new CGrammarTerminal( IGrammarElement.ECardinality.NONE, p_context.STRING_LITERAL().getText() );
     }
 
     @Override
-    public final Object visitTerminal( final ANTLRv4Parser.TerminalContext p_context )
+    public final Object visitRange( final ANTLRv4Parser.RangeContext p_context )
     {
-        return new CGrammarTerminal<>( IGrammarElement.ECardinality.NONE, p_context.getText() );
+        return new CGrammarTerminal<>(
+                IGrammarElement.ECardinality.NONE,
+                MessageFormat.format(
+                        "{0} .. {1}",
+                        p_context.STRING_LITERAL( 0 ).getText(),
+                        p_context.STRING_LITERAL( 1 ).getText()
+                )
+        );
     }
 
     // ----------------------------------------

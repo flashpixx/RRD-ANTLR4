@@ -40,7 +40,7 @@ public class CGrammarNonTerminal implements IGrammarTerminal
     /**
      * cardinality
      */
-    private final ECardinality m_cardinality;
+    private ECardinality m_cardinality;
     /**
      * documentation string
      */
@@ -112,5 +112,12 @@ public class CGrammarNonTerminal implements IGrammarTerminal
     public final ECardinality cardinality()
     {
         return m_cardinality;
+    }
+
+    @Override
+    public final IGrammarElement cardinality( final ECardinality p_cardinality )
+    {
+        m_cardinality = p_cardinality;
+        return this;
     }
 }

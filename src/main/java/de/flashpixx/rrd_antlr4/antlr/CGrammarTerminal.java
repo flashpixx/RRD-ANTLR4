@@ -38,7 +38,7 @@ public final class CGrammarTerminal<T> implements IGrammarSimpleElement<T>
     /**
      * cardinality
      */
-    private final ECardinality m_cardinality;
+    private ECardinality m_cardinality;
 
     /**
      * ctor
@@ -87,5 +87,12 @@ public final class CGrammarTerminal<T> implements IGrammarSimpleElement<T>
     public final ECardinality cardinality()
     {
         return m_cardinality;
+    }
+
+    @Override
+    public final IGrammarElement cardinality( final ECardinality p_cardinality )
+    {
+        m_cardinality = p_cardinality;
+        return this;
     }
 }

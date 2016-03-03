@@ -109,4 +109,10 @@ public final class CGrammarRule implements IGrammarRule
     {
         return ECardinality.NONE;
     }
+
+    @Override
+    public final IGrammarElement cardinality( final ECardinality p_cardinality )
+    {
+        return this;
+    }
 }

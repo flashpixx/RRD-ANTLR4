@@ -36,6 +36,14 @@ public interface IGrammarElement
     ECardinality cardinality();
 
     /**
+     * changes the cardinality
+     *
+     * @param p_cardinality cardinality value
+     * @return self reference
+     */
+    IGrammarElement cardinality( final ECardinality p_cardinality );
+
+    /**
      * enum define cardinalities
      */
     enum ECardinality
@@ -43,7 +51,8 @@ public interface IGrammarElement
         NONE,
         OPTIONAL,
         ZEROORMORE,
-        ONEORMORE;
+        ONEORMORE,
+        NEGATION;
     }
 
 }

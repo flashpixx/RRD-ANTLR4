@@ -87,4 +87,10 @@ public final class CGrammar implements IGrammarComplexElement
     {
         return ECardinality.NONE;
     }
+
+    @Override
+    public final IGrammarElement cardinality( final ECardinality p_cardinality )
+    {
+        return this;
+    }
 }
