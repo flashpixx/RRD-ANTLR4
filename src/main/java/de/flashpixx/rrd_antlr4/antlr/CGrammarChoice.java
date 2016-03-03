@@ -23,32 +23,35 @@
 
 package de.flashpixx.rrd_antlr4.antlr;
 
+import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
 
 
 /**
  * grammar choice
  */
-public final class CGrammarChoice extends IGrammarBaseCollection<List<IGrammarElement>> implements IGrammarChoice
+public final class CGrammarChoice extends IGrammarBaseCollection implements IGrammarChoice
 {
 
     /**
      * ctor
+     *
+     * @param p_cardinality cardinality
      */
-    public CGrammarChoice()
+    public CGrammarChoice( final ECardinality p_cardinality )
     {
-        this( new LinkedList<>() );
+        this( p_cardinality, new LinkedList<>() );
     }
 
     /**
      * ctor
      *
+     * @param p_cardinality cardinality
      * @param p_data data
      */
-    public CGrammarChoice( final List<IGrammarElement> p_data )
+    public CGrammarChoice( final ECardinality p_cardinality, final Collection<IGrammarElement> p_data )
     {
-        super( p_data );
+        super( p_cardinality, p_data );
     }
 
 }

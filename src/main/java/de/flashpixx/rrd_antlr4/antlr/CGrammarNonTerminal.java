@@ -38,9 +38,9 @@ public class CGrammarNonTerminal implements IGrammarTerminal
      */
     private final String m_id;
     /**
-     * fragment flag
+     * cardinality
      */
-    private final boolean m_isfragment;
+    private final ECardinality m_cardinality;
     /**
      * documentation string
      */
@@ -54,24 +54,17 @@ public class CGrammarNonTerminal implements IGrammarTerminal
      * ctor
      *
      * @param p_id ID
-     * @param p_isfragment fragment
      * @param p_documentation documentation
+     * @param p_cardinality cardinality
      * @param p_elements elements
      */
-    public CGrammarNonTerminal( final String p_id, final boolean p_isfragment, final String p_documentation,
-                                final IGrammarCollection p_elements
+    public CGrammarNonTerminal( final String p_id, final String p_documentation, final ECardinality p_cardinality, final IGrammarCollection p_elements
     )
     {
         m_id = p_id;
-        m_isfragment = p_isfragment;
-        m_documentation = p_documentation == null ? "" : p_documentation;
         m_elements = p_elements;
-    }
-
-    @Override
-    public final boolean isFragment()
-    {
-        return m_isfragment;
+        m_cardinality = p_cardinality;
+        m_documentation = p_documentation == null ? "" : p_documentation;
     }
 
     @Override
@@ -110,10 +103,14 @@ public class CGrammarNonTerminal implements IGrammarTerminal
         return MessageFormat.format(
                 "{0}{1} -> {2} {3}",
                 this.id(),
-                m_isfragment ? " (fragment)" : "",
                 StringUtils.join( m_elements, " | " ),
                 m_documentation.isEmpty() ? "" : " // " + m_documentation
         ).trim();
     }
 
+    @Override
+    public final ECardinality cardinality()
+    {
+        return m_cardinality;
+    }
 }

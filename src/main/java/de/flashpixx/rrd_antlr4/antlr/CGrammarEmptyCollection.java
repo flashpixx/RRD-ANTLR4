@@ -51,4 +51,9 @@ public final class CGrammarEmptyCollection implements IGrammarCollection
         return Collections.<IGrammarElement>emptyList();
     }
 
+    @Override
+    public final ECardinality cardinality()
+    {
+        return ECardinality.NONE;
+    }
 }

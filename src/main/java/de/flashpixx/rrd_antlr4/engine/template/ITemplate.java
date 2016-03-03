@@ -61,14 +61,16 @@ public interface ITemplate
      * is called on the grammar definition
      *
      * @param p_grammar grammar
+     * @return grammar object reference
      */
-    void grammar( final IGrammarComplexElement p_grammar );
+    IGrammarComplexElement grammar( final IGrammarComplexElement p_grammar );
 
     /**
      * is called if any grammar element is completed
      * @param p_grammar grammar
      * @param p_element element
+     * @return grammar object reference
      */
-    void element( final IGrammarComplexElement p_grammar, final IGrammarComplexElement p_element );
+    IGrammarComplexElement element( final IGrammarComplexElement p_grammar, final IGrammarComplexElement p_element );
 
 }

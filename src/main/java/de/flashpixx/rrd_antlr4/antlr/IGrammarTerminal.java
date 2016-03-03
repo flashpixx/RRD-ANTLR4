@@ -30,13 +30,6 @@ public interface IGrammarTerminal extends IGrammarComplexElement
 {
 
     /**
-     * flag to check if the terminal is a fragment
-     *
-     * @return fragment flag
-     */
-    boolean isFragment();
-
-    /**
      * terminal alternatives
      *
      * @return grammar collection

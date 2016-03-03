@@ -35,15 +35,21 @@ public final class CGrammarTerminal<T> implements IGrammarSimpleElement<T>
      * terminal value
      */
     private final T m_value;
+    /**
+     * cardinality
+     */
+    private final ECardinality m_cardinality;
 
     /**
      * ctor
      *
+     * @param p_cardinality cardinality
      * @param p_value value
      */
-    public CGrammarTerminal( final T p_value )
+    public CGrammarTerminal( final ECardinality p_cardinality, final T p_value )
     {
         m_value = p_value;
+        m_cardinality = p_cardinality;
     }
 
     @Override
@@ -75,5 +81,11 @@ public final class CGrammarTerminal<T> implements IGrammarSimpleElement<T>
     public final boolean isValueAssignableTo( final Class<?>... p_class )
     {
         return m_value == null ? true : Arrays.asList( p_class ).stream().map( i -> i.isAssignableFrom( m_value.getClass() ) ).anyMatch( i -> i );
+    }
+
+    @Override
+    public final ECardinality cardinality()
+    {
+        return m_cardinality;
     }
 }

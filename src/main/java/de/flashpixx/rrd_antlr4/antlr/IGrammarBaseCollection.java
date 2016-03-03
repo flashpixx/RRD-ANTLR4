@@ -25,28 +25,44 @@
 package de.flashpixx.rrd_antlr4.antlr;
 
 import java.util.Collection;
+import java.util.Collections;
 
 
 /**
  * abstract class for collection
  */
-public class IGrammarBaseCollection<T extends Collection<IGrammarElement>> implements IGrammarCollection
+public class IGrammarBaseCollection implements IGrammarCollection
 {
-    protected final T m_data;
+    /**
+     * collection data
+     */
+    protected final Collection<IGrammarElement> m_data;
+    /**
+     * cardinality
+     */
+    protected final ECardinality m_cardinality;
+
 
     /**
      * ctor
      *
      * @param p_data data
      */
-    protected IGrammarBaseCollection( final T p_data )
+    protected IGrammarBaseCollection( final ECardinality p_cardinality, final Collection<IGrammarElement> p_data )
     {
-        m_data = p_data;
+        m_data = Collections.unmodifiableCollection( p_data );
+        m_cardinality = p_cardinality;
     }
 
     @Override
     public final Collection<IGrammarElement> get()
     {
         return m_data;
+    }
+
+    @Override
+    public final ECardinality cardinality()
+    {
+        return m_cardinality;
     }
 }

@@ -148,15 +148,17 @@ public final class CHTML extends IBaseTemplate
     }
 
     @Override
-    public final void grammar( final IGrammarComplexElement p_grammar )
+    public final IGrammarComplexElement grammar( final IGrammarComplexElement p_grammar )
     {
         // set only if is not net
         if ( m_grammar == null )
             m_grammar = p_grammar;
+
+        return m_grammar;
     }
 
     @Override
-    public final void element( final IGrammarComplexElement p_grammar, final IGrammarComplexElement p_element )
+    public final IGrammarComplexElement element( final IGrammarComplexElement p_grammar, final IGrammarComplexElement p_element )
     {
         m_rules.put(
                 p_grammar.id(),
@@ -166,6 +168,8 @@ public final class CHTML extends IBaseTemplate
                         this.element( p_element )
                 )
         );
+
+        return p_element;
     }
 
     /**

@@ -76,4 +76,10 @@ public final class CGrammarIdentifier implements IGrammarSimpleElement<String>
     {
         return m_value;
     }
+
+    @Override
+    public final ECardinality cardinality()
+    {
+        return ECardinality.NONE;
+    }
 }

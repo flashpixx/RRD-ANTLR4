@@ -28,4 +28,22 @@ package de.flashpixx.rrd_antlr4.antlr;
  */
 public interface IGrammarElement
 {
+    /**
+     * returns the cardinality
+     *
+     * @return cardinality
+     */
+    ECardinality cardinality();
+
+    /**
+     * enum define cardinalities
+     */
+    enum ECardinality
+    {
+        NONE,
+        OPTIONAL,
+        ZEROORMORE,
+        ONEORMORE;
+    }
+
 }

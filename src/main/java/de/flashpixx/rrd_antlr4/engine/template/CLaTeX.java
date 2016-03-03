@@ -57,15 +57,15 @@ public class CLaTeX extends IBaseTemplate
     }
 
     @Override
-    public final void grammar( final IGrammarComplexElement p_grammar )
+    public final IGrammarComplexElement grammar( final IGrammarComplexElement p_grammar )
     {
-
+        return p_grammar;
     }
 
     @Override
-    public final void element( final IGrammarComplexElement p_grammar, final IGrammarComplexElement p_element )
+    public final IGrammarComplexElement element( final IGrammarComplexElement p_grammar, final IGrammarComplexElement p_element )
     {
-
+        return p_grammar;
     }
 
 }

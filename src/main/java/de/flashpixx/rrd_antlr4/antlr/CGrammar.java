@@ -81,4 +81,10 @@ public final class CGrammar implements IGrammarComplexElement
     {
         return MessageFormat.format( "{0} {1}", m_id, m_documentation.isEmpty() ? "" : " // " + m_documentation ).trim();
     }
+
+    @Override
+    public final ECardinality cardinality()
+    {
+        return ECardinality.NONE;
+    }
 }
