@@ -254,13 +254,13 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
     @Override
     public final Object visitElement( final ANTLRv4Parser.ElementContext p_context )
     {
-        return new CGrammarTerminal<>( IGrammarElement.ECardinality.NONE, p_context.getText() );
+        return new CGrammarTerminal<>( IGrammarElement.ECardinality.NONE, this.cleanString( p_context.getText() ) );
     }
 
     @Override
     public final Object visitLexerElement( final ANTLRv4Parser.LexerElementContext p_context )
     {
-        return new CGrammarTerminal<>( IGrammarElement.ECardinality.NONE, p_context.getText() );
+        return new CGrammarTerminal<>( IGrammarElement.ECardinality.NONE, this.cleanString( p_context.getText() ) );
     }
 
 
@@ -273,6 +273,20 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
     public final Set<IGrammarSimpleElement<String>> getGrammarImports()
     {
         return m_imports;
+    }
+
+    /**
+     * clean string value
+     *
+     * @param p_string string data
+     * @return cleaned string
+     */
+    private String cleanString( final String p_string )
+    {
+        if ( ( p_string.length() > 1 ) && ( p_string.startsWith( "'" ) ) && ( p_string.endsWith( "'" ) ) )
+            return p_string.substring( 1, p_string.length() - 1 );
+
+        return p_string;
     }
 
     /**

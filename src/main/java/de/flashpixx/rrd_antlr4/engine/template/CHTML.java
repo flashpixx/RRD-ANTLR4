@@ -31,7 +31,6 @@ import de.flashpixx.rrd_antlr4.antlr.IGrammarCollection;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarComplexElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarSequence;
-import de.flashpixx.rrd_antlr4.antlr.IGrammarSimpleElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarTerminal;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -42,7 +41,6 @@ import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.Locale;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -182,19 +180,17 @@ public final class CHTML extends IBaseTemplate
      */
     private String choice( final IGrammarChoice p_input )
     {
-        return MessageFormat.format(
-                "Choice({0}, {1})",
-                0,
-                StringUtils.join(
-                        IntStream
-                                .range( 0, p_input.get().size() )
-                                .boxed()
-                                .map( i -> this.element( p_input.get().get( i ) ) )
-                               .filter( i -> i != null )
-                               .collect( Collectors.toList() ),
-                        ", "
-                )
+        final String l_child = StringUtils.join(
+                IntStream
+                        .range( 0, p_input.get().size() )
+                        .boxed()
+                        .map( i -> this.element( p_input.get().get( i ) ) )
+                        .filter( i -> i != null )
+                        .collect( Collectors.toList() ),
+                ", "
         );
+
+        return p_input.get().size() == 1 ? l_child : MessageFormat.format( "Choice({0}, {1})", 0, l_child );
     }
 
     /**
@@ -205,16 +201,15 @@ public final class CHTML extends IBaseTemplate
      */
     private String sequence( final IGrammarCollection p_input )
     {
-        return MessageFormat.format(
-                "Sequence({0})",
-                StringUtils.join(
-                        p_input.get().stream()
-                               .map( i -> this.element( i ) )
-                               .filter( i -> i != null )
-                               .collect( Collectors.toList() ),
-                        ", "
-                )
+        final String l_child = StringUtils.join(
+                p_input.get().stream()
+                       .map( i -> this.element( i ) )
+                       .filter( i -> i != null )
+                       .collect( Collectors.toList() ),
+                ", "
         );
+
+        return p_input.get().size() == 1 ? l_child : MessageFormat.format( "Sequence({0})", l_child );
     }
 
     /**
@@ -227,7 +222,7 @@ public final class CHTML extends IBaseTemplate
     {
         return MessageFormat.format(
                 "Terminal({0})",
-                "'" + p_terminal.alternatives().toString() + "'"
+                "'" + p_terminal.id() + "'"
         );
     }
 
@@ -274,14 +269,14 @@ public final class CHTML extends IBaseTemplate
         if ( p_element instanceof IGrammarSequence )
             return this.cardinality( p_element.cardinality(), this.sequence( (IGrammarSequence) p_element ) );
 
-
-
+        /*
         if ( ( p_element instanceof IGrammarSimpleElement<?> ) && ( ( (IGrammarSimpleElement<?>) p_element ).isValueAssignableTo( Pattern.class ) ) )
             return "'" + StringEscapeUtils.escapeEcmaScript(
                     StringEscapeUtils.escapeEcmaScript( ( (IGrammarSimpleElement<?>) p_element ).<Pattern>get().pattern() ) ) + "'";
 
         if ( ( p_element instanceof IGrammarSimpleElement<?> ) && ( ( (IGrammarSimpleElement<?>) p_element ).isValueAssignableTo( String.class ) ) )
             return "'" + StringEscapeUtils.escapeEcmaScript( ( (IGrammarSimpleElement<?>) p_element ).<String>get() ) + "'";
+        */
 
         return MessageFormat.format( "Terminal({0})", "'" + StringEscapeUtils.escapeEcmaScript( "foo" ) + "'" );
     }
