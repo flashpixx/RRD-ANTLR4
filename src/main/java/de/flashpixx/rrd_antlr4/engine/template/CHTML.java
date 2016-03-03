@@ -26,10 +26,11 @@ package de.flashpixx.rrd_antlr4.engine.template;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import de.flashpixx.rrd_antlr4.CCommon;
+import de.flashpixx.rrd_antlr4.antlr.IGrammarChoice;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarCollection;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarComplexElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarElement;
-import de.flashpixx.rrd_antlr4.antlr.IGrammarRule;
+import de.flashpixx.rrd_antlr4.antlr.IGrammarSequence;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarSimpleElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarTerminal;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -43,6 +44,7 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 
 /**
@@ -178,14 +180,16 @@ public final class CHTML extends IBaseTemplate
      * @param p_input element list
      * @return string representation
      */
-    private String choice( final IGrammarCollection p_input )
+    private String choice( final IGrammarChoice p_input )
     {
         return MessageFormat.format(
                 "Choice({0}, {1})",
                 0,
                 StringUtils.join(
-                        p_input.get().stream()
-                               .map( i -> this.element( i ) )
+                        IntStream
+                                .range( 0, p_input.get().size() )
+                                .boxed()
+                                .map( i -> this.element( p_input.get().get( i ) ) )
                                .filter( i -> i != null )
                                .collect( Collectors.toList() ),
                         ", "
@@ -228,6 +232,31 @@ public final class CHTML extends IBaseTemplate
     }
 
     /**
+     * sets the cardinality
+     *
+     * @param p_cardinality cardinality value
+     * @param p_inner inner string
+     * @return
+     */
+    private String cardinality( final IGrammarElement.ECardinality p_cardinality, final String p_inner )
+    {
+        switch ( p_cardinality )
+        {
+            case OPTIONAL:
+                return MessageFormat.format( "Optional({0})", p_inner );
+
+            case ZEROORMORE:
+                return MessageFormat.format( "ZeroOrMore({0})", p_inner );
+
+            case ONEORMORE:
+                return MessageFormat.format( "OneOrMore({0})", p_inner );
+
+            default:
+                return p_inner;
+        }
+    }
+
+    /**
      * create an element string
      *
      * @param p_element grammat element or string
@@ -237,10 +266,15 @@ public final class CHTML extends IBaseTemplate
     private String element( final IGrammarElement p_element )
     {
         if ( p_element instanceof IGrammarTerminal )
-            return this.terminal( ( (IGrammarTerminal) p_element ) );
+            return this.cardinality( p_element.cardinality(), this.terminal( ( (IGrammarTerminal) p_element ) ) );
 
-        if ( p_element instanceof IGrammarRule )
-            return this.choice( ( (IGrammarRule) p_element ).elements() );
+        if ( p_element instanceof IGrammarChoice )
+            return this.cardinality( p_element.cardinality(), this.choice( (IGrammarChoice) p_element ) );
+
+        if ( p_element instanceof IGrammarSequence )
+            return this.cardinality( p_element.cardinality(), this.sequence( (IGrammarSequence) p_element ) );
+
+
 
         if ( ( p_element instanceof IGrammarSimpleElement<?> ) && ( ( (IGrammarSimpleElement<?>) p_element ).isValueAssignableTo( Pattern.class ) ) )
             return "'" + StringEscapeUtils.escapeEcmaScript(
@@ -249,6 +283,6 @@ public final class CHTML extends IBaseTemplate
         if ( ( p_element instanceof IGrammarSimpleElement<?> ) && ( ( (IGrammarSimpleElement<?>) p_element ).isValueAssignableTo( String.class ) ) )
             return "'" + StringEscapeUtils.escapeEcmaScript( ( (IGrammarSimpleElement<?>) p_element ).<String>get() ) + "'";
 
-        return StringEscapeUtils.escapeEcmaScript( "foo" );
+        return MessageFormat.format( "Terminal({0})", "'" + StringEscapeUtils.escapeEcmaScript( "foo" ) + "'" );
     }
 }

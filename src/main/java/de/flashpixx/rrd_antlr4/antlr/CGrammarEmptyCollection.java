@@ -23,8 +23,8 @@
 
 package de.flashpixx.rrd_antlr4.antlr;
 
-import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 
 /**
@@ -46,7 +46,7 @@ public final class CGrammarEmptyCollection implements IGrammarCollection
     }
 
     @Override
-    public final Collection<IGrammarElement> get()
+    public final List<IGrammarElement> get()
     {
         return Collections.<IGrammarElement>emptyList();
     }

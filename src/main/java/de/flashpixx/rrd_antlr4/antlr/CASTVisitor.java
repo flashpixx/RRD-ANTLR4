@@ -196,8 +196,12 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
     @Override
     public final Object visitAltList( final ANTLRv4Parser.AltListContext p_context )
     {
-        // Choice
-        return super.visitAltList( p_context );
+        return new CGrammarChoice(
+                IGrammarElement.ECardinality.NONE,
+                p_context.alternative().stream()
+                         .map( i -> (IGrammarElement) this.visit( i ) )
+                         .collect( Collectors.toList() )
+        );
     }
 
     @Override
@@ -221,8 +225,12 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<Object>
     @Override
     public final Object visitBlockSet( final ANTLRv4Parser.BlockSetContext p_context )
     {
-        // Choice
-        return super.visitBlockSet( p_context );
+        return new CGrammarChoice(
+                IGrammarElement.ECardinality.NONE,
+                p_context.setElement().stream()
+                         .map( i -> (IGrammarElement) this.visit( i ) )
+                         .collect( Collectors.toList() )
+        );
     }
 
     @Override

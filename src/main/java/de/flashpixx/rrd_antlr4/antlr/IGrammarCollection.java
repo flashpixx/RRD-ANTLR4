@@ -24,7 +24,7 @@
 
 package de.flashpixx.rrd_antlr4.antlr;
 
-import java.util.Collection;
+import java.util.List;
 
 
 /**
@@ -38,6 +38,6 @@ public interface IGrammarCollection extends IGrammarElement
      *
      * @return collection of grammar elements
      */
-    Collection<IGrammarElement> get();
+    List<IGrammarElement> get();
 
 }

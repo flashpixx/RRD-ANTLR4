@@ -23,8 +23,8 @@
 
 package de.flashpixx.rrd_antlr4.antlr;
 
-import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 
 /**
@@ -49,7 +49,7 @@ public final class CGrammarSequence extends IGrammarBaseCollection implements IG
      * @param p_cardinality cardinality
      * @param p_data data
      */
-    public CGrammarSequence( final ECardinality p_cardinality, final Collection<IGrammarElement> p_data )
+    public CGrammarSequence( final ECardinality p_cardinality, final List<IGrammarElement> p_data )
     {
         super( p_cardinality, p_data );
     }
