@@ -131,7 +131,7 @@ public final class CHTML extends IBaseTemplate
                                .map( i -> MessageFormat.format(
                                        "<div class=\"elements\" id=\"rules_{0}\">" +
                                        "<h2>{0}</h2>" +
-                                       "<span><script>\n{1}\n</script></span>" +
+                                       "\n{1}\n" +
                                        "</div>",
                                        i.getKey(),
                                        StringUtils.join(
@@ -156,24 +156,61 @@ public final class CHTML extends IBaseTemplate
         if ( m_grammar == null )
             m_grammar = p_grammar;
 
-        return m_grammar;
+        return p_grammar;
     }
 
     @Override
     public final IGrammarComplexElement element( final IGrammarComplexElement p_grammar, final IGrammarComplexElement p_element )
     {
-        System.out.println( p_element );
+        //System.out.println( p_grammar + "          " + p_element );
         m_rules.put(
                 p_grammar.id(),
                 p_element.id(),
                 MessageFormat.format(
-                        "Diagram({0}).addTo();",
+                        "<p>" +
+                        "<h5>{0}</h5>" +
+                        "<p>{1}</p>" +
+                        "<p><script>Diagram({2}).addTo();</script></p>" +
+                        "</p>",
+                        p_element.id(),
+                        p_element.documentation(),
                         this.element( p_element )
                 )
         );
 
         return p_element;
     }
+
+    /**
+     * create an element string
+     *
+     * @param p_element grammat element or string
+     * @return string representation
+     *
+     * @todo move to super class
+     */
+    @SuppressWarnings( "unchecked" )
+    private String element( final IGrammarElement p_element )
+    {
+        if ( p_element instanceof IGrammarRule )
+            return this.rule( (IGrammarRule) p_element );
+
+        if ( p_element instanceof IGrammarSimpleElement<?> )
+            return this.terminal( (IGrammarSimpleElement<?>) p_element );
+
+        if ( p_element instanceof IGrammarTerminal )
+            return this.cardinality( p_element.cardinality(), this.terminal( ( (IGrammarTerminal) p_element ) ) );
+
+        if ( p_element instanceof IGrammarChoice )
+            return this.cardinality( p_element.cardinality(), this.choice( (IGrammarChoice) p_element ) );
+
+        if ( p_element instanceof IGrammarSequence )
+            return this.cardinality( p_element.cardinality(), this.sequence( (IGrammarSequence) p_element ) );
+
+        throw new IllegalStateException();
+    }
+
+
 
     /**
      * creates a grammar choice
@@ -223,10 +260,7 @@ public final class CHTML extends IBaseTemplate
      */
     private String terminal( final IGrammarTerminal p_terminal )
     {
-        return MessageFormat.format(
-                "Terminal({0})",
-                "'" + p_terminal.id() + "'"
-        );
+        return this.element( p_terminal.children() );
     }
 
     /**
@@ -239,7 +273,7 @@ public final class CHTML extends IBaseTemplate
     {
         return MessageFormat.format(
                 "Terminal({0})",
-                "'" + StringEscapeUtils.escapeEcmaScript( p_value.toString() ) + "'"
+                "'" + StringEscapeUtils.escapeEcmaScript( p_value.get() ) + "'"
         );
     }
 
@@ -251,11 +285,7 @@ public final class CHTML extends IBaseTemplate
      */
     private String rule( final IGrammarRule p_rule )
     {
-        return MessageFormat.format(
-                "NonTerminal({0}, {1})",
-                "'" + p_rule.id() + "'",
-                this.element( p_rule.children() )
-        );
+        return this.element( p_rule.children() );
     }
 
     /**
@@ -283,31 +313,4 @@ public final class CHTML extends IBaseTemplate
         }
     }
 
-    /**
-     * create an element string
-     *
-     * @param p_element grammat element or string
-     * @return string representation
-     * @todo move to super class
-     */
-    @SuppressWarnings( "unchecked" )
-    private String element( final IGrammarElement p_element )
-    {
-        if ( p_element instanceof IGrammarRule )
-            return this.rule( (IGrammarRule) p_element );
-
-        if ( p_element instanceof IGrammarSimpleElement<?> )
-            return this.terminal( (IGrammarSimpleElement<?>) p_element );
-
-        if ( p_element instanceof IGrammarTerminal )
-            return this.cardinality( p_element.cardinality(), this.terminal( ( (IGrammarTerminal) p_element ) ) );
-
-        if ( p_element instanceof IGrammarChoice )
-            return this.cardinality( p_element.cardinality(), this.choice( (IGrammarChoice) p_element ) );
-
-        if ( p_element instanceof IGrammarSequence )
-            return this.cardinality( p_element.cardinality(), this.sequence( (IGrammarSequence) p_element ) );
-
-        throw new IllegalStateException();
-    }
 }
