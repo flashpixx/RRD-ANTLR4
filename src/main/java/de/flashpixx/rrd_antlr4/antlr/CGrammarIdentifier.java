@@ -23,69 +23,19 @@
 
 package de.flashpixx.rrd_antlr4.antlr;
 
-import java.util.Arrays;
-
-
 /**
  * link class between two rules
  */
-public final class CGrammarIdentifier implements IGrammarSimpleElement<String>
+public final class CGrammarIdentifier extends CGrammarTerminal<String>
 {
-    /**
-     * rule name
-     */
-    private final String m_value;
 
     /**
      * ctor
      *
-     * @param p_value rule name
+     * @param p_value value
      */
     public CGrammarIdentifier( final String p_value )
     {
-        m_value = p_value;
-    }
-
-    @Override
-    @SuppressWarnings( "unchecked" )
-    public final <N> N get()
-    {
-        return (N) m_value;
-    }
-
-    @Override
-    public final boolean isValueAssignableTo( final Class<?>... p_class )
-    {
-        return m_value == null ? true : Arrays.asList( p_class ).stream().map( i -> i.isAssignableFrom( m_value.getClass() ) ).anyMatch( i -> i );
-    }
-
-    @Override
-    public final int hashCode()
-    {
-        return m_value.hashCode();
-    }
-
-    @Override
-    public final boolean equals( final Object p_object )
-    {
-        return this.hashCode() == p_object.hashCode();
-    }
-
-    @Override
-    public final String toString()
-    {
-        return m_value;
-    }
-
-    @Override
-    public final ECardinality cardinality()
-    {
-        return ECardinality.NONE;
-    }
-
-    @Override
-    public final IGrammarElement cardinality( final ECardinality p_cardinality )
-    {
-        return this;
+        super( ECardinality.NONE, p_value );
     }
 }

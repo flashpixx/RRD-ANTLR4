@@ -30,7 +30,7 @@ import java.util.Arrays;
 /**
  * stores any terminal value
  */
-public final class CGrammarTerminal<T> implements IGrammarSimpleElement<T>
+public class CGrammarTerminal<T> implements IGrammarSimpleElement<T>
 {
     /**
      * terminal value
