@@ -32,6 +32,7 @@ import de.flashpixx.rrd_antlr4.antlr.IGrammarComplexElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarRule;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarSequence;
+import de.flashpixx.rrd_antlr4.antlr.IGrammarSimpleElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarTerminal;
 import org.apache.commons.lang3.StringUtils;
 
@@ -277,6 +278,9 @@ public final class CHTML extends IBaseTemplate
     @SuppressWarnings( "unchecked" )
     private String element( final IGrammarElement p_element )
     {
+        if ( p_element instanceof IGrammarSimpleElement<?> )
+            return p_element.toString();
+
         if ( p_element instanceof IGrammarTerminal )
             return this.cardinality( p_element.cardinality(), this.terminal( ( (IGrammarTerminal) p_element ) ) );
 

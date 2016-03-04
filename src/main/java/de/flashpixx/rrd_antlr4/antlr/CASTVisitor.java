@@ -231,14 +231,14 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
     public final IGrammarElement visitTerminal( final ANTLRv4Parser.TerminalContext p_context )
     {
         return p_context.TOKEN_REF() != null
-               ? new CGrammarTerminal( IGrammarElement.ECardinality.NONE, p_context.TOKEN_REF().getText() )
-               : new CGrammarTerminal( IGrammarElement.ECardinality.NONE, p_context.STRING_LITERAL().getText() );
+               ? new CGrammarTerminalValue( IGrammarElement.ECardinality.NONE, p_context.TOKEN_REF().getText() )
+               : new CGrammarTerminalValue( IGrammarElement.ECardinality.NONE, p_context.STRING_LITERAL().getText() );
     }
 
     @Override
     public final IGrammarElement visitElement( final ANTLRv4Parser.ElementContext p_context )
     {
-        return new CGrammarTerminal<>(
+        return new CGrammarTerminalValue<>(
                 IGrammarElement.ECardinality.NONE,
                 this.cleanString( p_context.getText() )
         );
@@ -247,7 +247,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
     @Override
     public final IGrammarElement visitLexerElement( final ANTLRv4Parser.LexerElementContext p_context )
     {
-        return new CGrammarTerminal<>(
+        return new CGrammarTerminalValue<>(
                 IGrammarElement.ECardinality.NONE,
                 this.cleanString( p_context.getText() )
         );

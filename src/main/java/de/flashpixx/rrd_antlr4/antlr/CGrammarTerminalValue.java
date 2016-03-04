@@ -30,7 +30,7 @@ import java.util.Arrays;
 /**
  * stores any terminal value
  */
-public class CGrammarTerminal<T> implements IGrammarSimpleElement<T>
+public class CGrammarTerminalValue<T> implements IGrammarSimpleElement<T>
 {
     /**
      * terminal value
@@ -47,7 +47,7 @@ public class CGrammarTerminal<T> implements IGrammarSimpleElement<T>
      * @param p_cardinality cardinality
      * @param p_value value
      */
-    public CGrammarTerminal( final ECardinality p_cardinality, final T p_value )
+    public CGrammarTerminalValue( final ECardinality p_cardinality, final T p_value )
     {
         m_value = p_value;
         m_cardinality = p_cardinality;
