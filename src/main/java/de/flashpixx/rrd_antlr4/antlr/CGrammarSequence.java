@@ -60,7 +60,7 @@ public final class CGrammarSequence extends IGrammarBaseCollection implements IG
     @Override
     public final String toString()
     {
-        return MessageFormat.format( "Sequence( {0} )", StringUtils.join( m_data, ", " ) );
+        return MessageFormat.format( "Sequence( {0} ){1}", StringUtils.join( m_data, ", " ), m_cardinality ).trim();
     }
 
 }

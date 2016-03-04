@@ -26,7 +26,6 @@ package de.flashpixx.rrd_antlr4.antlr;
 import de.flashpixx.rrd_antlr4.CStringReplace;
 import de.flashpixx.rrd_antlr4.engine.template.ITemplate;
 
-import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -238,19 +237,6 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
         return p_context.TOKEN_REF() != null
                ? new CGrammarTerminal( IGrammarElement.ECardinality.NONE, p_context.TOKEN_REF().getText() )
                : new CGrammarTerminal( IGrammarElement.ECardinality.NONE, p_context.STRING_LITERAL().getText() );
-    }
-
-    @Override
-    public final IGrammarElement visitRange( final ANTLRv4Parser.RangeContext p_context )
-    {
-        return new CGrammarTerminal<>(
-                IGrammarElement.ECardinality.NONE,
-                MessageFormat.format(
-                        "{0} .. {1}",
-                        p_context.STRING_LITERAL( 0 ).getText(),
-                        p_context.STRING_LITERAL( 1 ).getText()
-                )
-        );
     }
 
     @Override

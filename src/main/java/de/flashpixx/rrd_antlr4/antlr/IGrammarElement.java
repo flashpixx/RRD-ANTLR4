@@ -48,11 +48,28 @@ public interface IGrammarElement
      */
     enum ECardinality
     {
-        NONE,
-        OPTIONAL,
-        ZEROORMORE,
-        ONEORMORE,
-        NEGATION;
+        NONE( "" ),
+        OPTIONAL( "?" ),
+        ZEROORMORE( "*" ),
+        ONEORMORE( "+" ),
+        NEGATION( "!" );
+
+        /**
+         * string definition
+         */
+        private String m_text;
+
+        ECardinality( final String p_text )
+        {
+            m_text = p_text;
+        }
+
+
+        @Override
+        public final String toString()
+        {
+            return m_text;
+        }
     }
 
 }

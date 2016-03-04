@@ -99,9 +99,10 @@ public class CGrammarNonTerminal implements IGrammarTerminal
     public final String toString()
     {
         return MessageFormat.format(
-                "NonTerminal( {0} : {1} ) {2}",
+                "NonTerminal( {0} : {1} ){2} {3}",
                 this.id(),
                 m_elements,
+                m_cardinality,
                 m_documentation.isEmpty() ? "" : " -- " + m_documentation
         ).trim();
     }

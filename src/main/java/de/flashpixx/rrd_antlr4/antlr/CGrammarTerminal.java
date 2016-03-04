@@ -75,7 +75,7 @@ public final class CGrammarTerminal<T> implements IGrammarSimpleElement<T>
     @Override
     public final String toString()
     {
-        return MessageFormat.format( "Terminal( {0} )", m_value );
+        return MessageFormat.format( "Terminal( {0} ){1}", m_value, m_cardinality );
     }
 
     @Override

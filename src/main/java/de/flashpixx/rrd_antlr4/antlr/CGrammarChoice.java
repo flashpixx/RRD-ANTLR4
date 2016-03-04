@@ -60,6 +60,6 @@ public final class CGrammarChoice extends IGrammarBaseCollection implements IGra
     @Override
     public final String toString()
     {
-        return MessageFormat.format( "Choice( {0} )", StringUtils.join( m_data, ", " ) );
+        return MessageFormat.format( "Choice( {0} ){1}", StringUtils.join( m_data, ", " ), m_cardinality ).trim();
     }
 }
