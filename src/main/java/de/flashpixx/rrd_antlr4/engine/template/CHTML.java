@@ -34,6 +34,7 @@ import de.flashpixx.rrd_antlr4.antlr.IGrammarRule;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarSequence;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarSimpleElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarTerminal;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
@@ -229,6 +230,20 @@ public final class CHTML extends IBaseTemplate
     }
 
     /**
+     * creates a terminal
+     *
+     * @param p_value terminal value element
+     * @return string represenation
+     */
+    private String terminal( final IGrammarSimpleElement<?> p_value )
+    {
+        return MessageFormat.format(
+                "Terminal({0})",
+                "'" + StringEscapeUtils.escapeEcmaScript( p_value.toString() ) + "'"
+        );
+    }
+
+    /**
      * creates a rule
      *
      * @param p_rule
@@ -278,8 +293,11 @@ public final class CHTML extends IBaseTemplate
     @SuppressWarnings( "unchecked" )
     private String element( final IGrammarElement p_element )
     {
+        if ( p_element instanceof IGrammarRule )
+            return this.rule( (IGrammarRule) p_element );
+
         if ( p_element instanceof IGrammarSimpleElement<?> )
-            return p_element.toString();
+            return this.terminal( (IGrammarSimpleElement<?>) p_element );
 
         if ( p_element instanceof IGrammarTerminal )
             return this.cardinality( p_element.cardinality(), this.terminal( ( (IGrammarTerminal) p_element ) ) );
@@ -290,10 +308,6 @@ public final class CHTML extends IBaseTemplate
         if ( p_element instanceof IGrammarSequence )
             return this.cardinality( p_element.cardinality(), this.sequence( (IGrammarSequence) p_element ) );
 
-        if ( p_element instanceof IGrammarRule )
-            return this.rule( (IGrammarRule) p_element );
-
-        System.out.println( p_element.getClass() );
-        return "";
+        throw new IllegalStateException();
     }
 }
