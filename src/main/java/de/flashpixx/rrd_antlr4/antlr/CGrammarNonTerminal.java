@@ -46,29 +46,28 @@ public class CGrammarNonTerminal implements IGrammarTerminal
     /**
      * elements
      */
-    private final IGrammarCollection m_elements;
+    private final IGrammarElement m_element;
 
     /**
      * ctor
-     *
-     * @param p_id ID
+     *  @param p_id ID
      * @param p_documentation documentation
      * @param p_cardinality cardinality
-     * @param p_elements elements
+     * @param p_element elements
      */
-    public CGrammarNonTerminal( final String p_id, final String p_documentation, final ECardinality p_cardinality, final IGrammarCollection p_elements
+    public CGrammarNonTerminal( final String p_id, final String p_documentation, final ECardinality p_cardinality, final IGrammarElement p_element
     )
     {
         m_id = p_id;
-        m_elements = p_elements;
+        m_element = p_element;
         m_cardinality = p_cardinality;
         m_documentation = p_documentation == null ? "" : p_documentation;
     }
 
     @Override
-    public final IGrammarCollection alternatives()
+    public final IGrammarElement children()
     {
-        return m_elements;
+        return m_element;
     }
 
     @Override
@@ -101,7 +100,7 @@ public class CGrammarNonTerminal implements IGrammarTerminal
         return MessageFormat.format(
                 "NonTerminal( {0} : {1} ){2} {3}",
                 this.id(),
-                m_elements,
+                m_element,
                 m_cardinality,
                 m_documentation.isEmpty() ? "" : " -- " + m_documentation
         ).trim();

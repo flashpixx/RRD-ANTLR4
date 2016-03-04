@@ -32,8 +32,8 @@ public interface IGrammarTerminal extends IGrammarComplexElement
     /**
      * terminal alternatives
      *
-     * @return grammar collection
+     * @return grammar element
      */
-    IGrammarCollection alternatives();
+    IGrammarElement children();
 
 }

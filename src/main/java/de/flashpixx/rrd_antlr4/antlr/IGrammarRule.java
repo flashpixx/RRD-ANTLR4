@@ -30,10 +30,10 @@ public interface IGrammarRule extends IGrammarComplexElement
 {
 
     /**
-     * returns collection of elements
+     * returns child element
      *
-     * @return elements
+     * @return element
      */
-    IGrammarCollection elements();
+    IGrammarElement children();
 
 }

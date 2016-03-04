@@ -27,6 +27,7 @@ import de.flashpixx.rrd_antlr4.CStringReplace;
 import de.flashpixx.rrd_antlr4.engine.template.ITemplate;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -102,7 +103,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
                 new CGrammarRule(
                         p_context.RULE_REF().getText(),
                         this.cleanComment( p_context.DOC_COMMENT() == null ? null : p_context.DOC_COMMENT().getText() ),
-                        (IGrammarCollection) this.visitRuleBlock( p_context.ruleBlock() )
+                        this.visitRuleBlock( p_context.ruleBlock() )
                 )
         );
         return null;
@@ -111,8 +112,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
     @Override
     public final IGrammarElement visitRuleAltList( final ANTLRv4Parser.RuleAltListContext p_context )
     {
-        return new CGrammarChoice(
-                IGrammarElement.ECardinality.NONE,
+        return this.choice(
                 p_context.labeledAlt().stream()
                          .map( i -> this.visitLabeledAlt( i ) )
                          .filter( i -> i != null )
@@ -123,8 +123,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
     @Override
     public final IGrammarElement visitLexerAltList( final ANTLRv4Parser.LexerAltListContext p_context )
     {
-        return new CGrammarChoice(
-                IGrammarElement.ECardinality.NONE,
+        return this.choice(
                 p_context.lexerAlt().stream()
                          .map( i -> this.visitLexerAlt( i ) )
                          .filter( i -> i != null )
@@ -135,8 +134,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
     @Override
     public final IGrammarElement visitLexerElements( final ANTLRv4Parser.LexerElementsContext p_context )
     {
-        return new CGrammarSequence(
-                IGrammarElement.ECardinality.NONE,
+        return this.sequence(
                 p_context.lexerElement().stream()
                          .map( i -> this.visitLexerElement( i ) )
                          .filter( i -> i != null )
@@ -161,7 +159,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
                         p_context.TOKEN_REF().getText(),
                         this.cleanComment( p_context.DOC_COMMENT() == null ? null : p_context.DOC_COMMENT().getText() ),
                         IGrammarElement.ECardinality.NONE,
-                        (IGrammarCollection) this.visitLexerRuleBlock( p_context.lexerRuleBlock() )
+                        this.visitLexerRuleBlock( p_context.lexerRuleBlock() )
                 )
         );
         return null;
@@ -170,8 +168,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
     @Override
     public final IGrammarElement visitAltList( final ANTLRv4Parser.AltListContext p_context )
     {
-        return new CGrammarChoice(
-                IGrammarElement.ECardinality.NONE,
+        return this.choice(
                 p_context.alternative().stream()
                          .map( i -> this.visit( i ) )
                          .collect( Collectors.toList() )
@@ -199,8 +196,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
     @Override
     public final IGrammarElement visitBlockSet( final ANTLRv4Parser.BlockSetContext p_context )
     {
-        return new CGrammarChoice(
-                IGrammarElement.ECardinality.NONE,
+        return this.choice(
                 p_context.setElement().stream()
                          .map( i -> this.visit( i ) )
                          .collect( Collectors.toList() )
@@ -299,6 +295,38 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
         m_docuclean.stream().forEach( i -> l_documentation.replaceAll( i, "" ) );
 
         return l_documentation.replaceAll( "\\*", "" ).replaceAll( "\\/", "" ).get().trim();
+    }
+
+    /**
+     * creates a choice
+     *
+     * @param p_elements grammar elements
+     * @return grammar element
+     */
+    private IGrammarElement choice( final List<IGrammarElement> p_elements )
+    {
+        return p_elements.size() == 1
+               ? p_elements.get( 0 )
+               : new CGrammarChoice(
+                       IGrammarElement.ECardinality.NONE,
+                       p_elements
+               );
+    }
+
+    /**
+     * creates a sequence
+     *
+     * @param p_elements grammar elements
+     * @return grammar element
+     */
+    private IGrammarElement sequence( final List<IGrammarElement> p_elements )
+    {
+        return p_elements.size() == 1
+               ? p_elements.get( 0 )
+               : new CGrammarSequence(
+                       IGrammarElement.ECardinality.NONE,
+                       p_elements
+               );
     }
 
 }

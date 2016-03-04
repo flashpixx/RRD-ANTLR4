@@ -23,8 +23,6 @@
 
 package de.flashpixx.rrd_antlr4.antlr;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.text.MessageFormat;
 
 
@@ -44,20 +42,19 @@ public final class CGrammarRule implements IGrammarRule
     /**
      * elements
      */
-    private final IGrammarCollection m_elements;
+    private final IGrammarElement m_element;
 
     /**
      * ctor
-     *
-     * @param p_id rule ID
+     *  @param p_id rule ID
      * @param p_documentation comment
-     * @param p_elements grammar elements
+     * @param p_element grammar elements
      */
-    public CGrammarRule( final String p_id, final String p_documentation, final IGrammarCollection p_elements )
+    public CGrammarRule( final String p_id, final String p_documentation, final IGrammarElement p_element )
     {
         m_id = p_id;
         m_documentation = p_documentation == null ? "" : p_documentation;
-        m_elements = p_elements;
+        m_element = p_element;
     }
 
 
@@ -93,15 +90,15 @@ public final class CGrammarRule implements IGrammarRule
         return MessageFormat.format(
                 "Rule( {0} : {1} ) {2}",
                 this.id(),
-                StringUtils.join( m_elements, ", " ),
+                m_element,
                 m_documentation.isEmpty() ? "" : " -- " + m_documentation
         ).trim();
     }
 
     @Override
-    public final IGrammarCollection elements()
+    public final IGrammarElement children()
     {
-        return m_elements;
+        return m_element;
     }
 
     @Override
