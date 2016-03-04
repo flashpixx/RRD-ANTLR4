@@ -91,10 +91,10 @@ public final class CGrammarRule implements IGrammarRule
     public final String toString()
     {
         return MessageFormat.format(
-                "{0} -> {1} {2}",
+                "Rule( {0} : {1} ) {2}",
                 this.id(),
-                StringUtils.join( m_elements, " | " ),
-                m_documentation.isEmpty() ? "" : " // " + m_documentation
+                StringUtils.join( m_elements, ", " ),
+                m_documentation.isEmpty() ? "" : " -- " + m_documentation
         ).trim();
     }
 

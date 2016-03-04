@@ -23,6 +23,9 @@
 
 package de.flashpixx.rrd_antlr4.antlr;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -54,4 +57,9 @@ public final class CGrammarChoice extends IGrammarBaseCollection implements IGra
         super( p_cardinality, p_data );
     }
 
+    @Override
+    public final String toString()
+    {
+        return MessageFormat.format( "Choice( {0} )", StringUtils.join( m_data, ", " ) );
+    }
 }

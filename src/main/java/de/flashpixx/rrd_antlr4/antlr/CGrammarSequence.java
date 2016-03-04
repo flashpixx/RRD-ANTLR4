@@ -23,6 +23,9 @@
 
 package de.flashpixx.rrd_antlr4.antlr;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -52,6 +55,12 @@ public final class CGrammarSequence extends IGrammarBaseCollection implements IG
     public CGrammarSequence( final ECardinality p_cardinality, final List<IGrammarElement> p_data )
     {
         super( p_cardinality, p_data );
+    }
+
+    @Override
+    public final String toString()
+    {
+        return MessageFormat.format( "Sequence( {0} )", StringUtils.join( m_data, ", " ) );
     }
 
 }

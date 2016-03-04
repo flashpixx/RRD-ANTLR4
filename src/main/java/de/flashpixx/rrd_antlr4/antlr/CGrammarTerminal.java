@@ -23,6 +23,7 @@
 
 package de.flashpixx.rrd_antlr4.antlr;
 
+import java.text.MessageFormat;
 import java.util.Arrays;
 
 
@@ -74,7 +75,7 @@ public final class CGrammarTerminal<T> implements IGrammarSimpleElement<T>
     @Override
     public final String toString()
     {
-        return m_value.toString();
+        return MessageFormat.format( "Terminal( {0} )", m_value );
     }
 
     @Override

@@ -160,7 +160,7 @@ public final class CHTML extends IBaseTemplate
     @Override
     public final IGrammarComplexElement element( final IGrammarComplexElement p_grammar, final IGrammarComplexElement p_element )
     {
-        //System.out.println(p_element);
+        System.out.println( p_element );
         m_rules.put(
                 p_grammar.id(),
                 p_element.id(),

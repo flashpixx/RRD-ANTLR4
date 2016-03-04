@@ -24,7 +24,6 @@
 
 package de.flashpixx.rrd_antlr4.antlr;
 
-import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
 
@@ -79,12 +78,6 @@ public abstract class IGrammarBaseCollection implements IGrammarCollection
     public final int hashCode()
     {
         return m_cardinality.hashCode() + m_data.stream().mapToInt( i -> i.hashCode() ).sum();
-    }
-
-    @Override
-    public final String toString()
-    {
-        return MessageFormat.format( "{0}", m_data );
     }
 
     @Override
