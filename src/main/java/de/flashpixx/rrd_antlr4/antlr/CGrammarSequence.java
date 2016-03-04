@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * grammar sequence
  */
-public final class CGrammarSequence extends IGrammarBaseCollection implements IGrammarChoice
+public final class CGrammarSequence extends IGrammarBaseCollection implements IGrammarSequence
 {
 
     /**

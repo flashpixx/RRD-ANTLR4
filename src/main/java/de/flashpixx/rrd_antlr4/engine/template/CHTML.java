@@ -30,9 +30,9 @@ import de.flashpixx.rrd_antlr4.antlr.IGrammarChoice;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarCollection;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarComplexElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarElement;
+import de.flashpixx.rrd_antlr4.antlr.IGrammarRule;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarSequence;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarTerminal;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
@@ -228,6 +228,21 @@ public final class CHTML extends IBaseTemplate
     }
 
     /**
+     * creates a rule
+     *
+     * @param p_rule
+     * @return
+     */
+    private String rule( final IGrammarRule p_rule )
+    {
+        return MessageFormat.format(
+                "NonTerminal({0}, {1})",
+                "'" + p_rule.id() + "'",
+                this.element( p_rule.children() )
+        );
+    }
+
+    /**
      * sets the cardinality
      *
      * @param p_cardinality cardinality value
@@ -257,8 +272,9 @@ public final class CHTML extends IBaseTemplate
      *
      * @param p_element grammat element or string
      * @return string representation
-
+     * @todo move to super class
      */
+    @SuppressWarnings( "unchecked" )
     private String element( final IGrammarElement p_element )
     {
         if ( p_element instanceof IGrammarTerminal )
@@ -270,15 +286,10 @@ public final class CHTML extends IBaseTemplate
         if ( p_element instanceof IGrammarSequence )
             return this.cardinality( p_element.cardinality(), this.sequence( (IGrammarSequence) p_element ) );
 
-        /*
-        if ( ( p_element instanceof IGrammarSimpleElement<?> ) && ( ( (IGrammarSimpleElement<?>) p_element ).isValueAssignableTo( Pattern.class ) ) )
-            return "'" + StringEscapeUtils.escapeEcmaScript(
-                    StringEscapeUtils.escapeEcmaScript( ( (IGrammarSimpleElement<?>) p_element ).<Pattern>get().pattern() ) ) + "'";
+        if ( p_element instanceof IGrammarRule )
+            return this.rule( (IGrammarRule) p_element );
 
-        if ( ( p_element instanceof IGrammarSimpleElement<?> ) && ( ( (IGrammarSimpleElement<?>) p_element ).isValueAssignableTo( String.class ) ) )
-            return "'" + StringEscapeUtils.escapeEcmaScript( ( (IGrammarSimpleElement<?>) p_element ).<String>get() ) + "'";
-        */
-
-        return MessageFormat.format( "Terminal({0})", "'" + StringEscapeUtils.escapeEcmaScript( "foo" ) + "'" );
+        System.out.println( p_element.getClass() );
+        return "";
     }
 }
