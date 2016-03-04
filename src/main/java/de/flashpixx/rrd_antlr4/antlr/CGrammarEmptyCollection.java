@@ -62,4 +62,22 @@ public final class CGrammarEmptyCollection implements IGrammarCollection
     {
         return this;
     }
+
+    @Override
+    public final int hashCode()
+    {
+        return INSTANCE.hashCode();
+    }
+
+    @Override
+    public final boolean equals( final Object p_object )
+    {
+        return this.hashCode() == p_object.hashCode();
+    }
+
+    @Override
+    public final String toString()
+    {
+        return "";
+    }
 }

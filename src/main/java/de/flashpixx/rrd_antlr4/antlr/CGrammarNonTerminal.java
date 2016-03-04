@@ -88,7 +88,7 @@ public class CGrammarNonTerminal implements IGrammarTerminal
     @Override
     public final int hashCode()
     {
-        return super.hashCode();
+        return m_id.hashCode();
     }
 
     @Override
@@ -101,7 +101,7 @@ public class CGrammarNonTerminal implements IGrammarTerminal
     public final String toString()
     {
         return MessageFormat.format(
-                "{0}{1} -> {2} {3}",
+                "{0} -> {1} {2}",
                 this.id(),
                 StringUtils.join( m_elements, " | " ),
                 m_documentation.isEmpty() ? "" : " // " + m_documentation

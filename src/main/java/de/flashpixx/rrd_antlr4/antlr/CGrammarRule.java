@@ -78,7 +78,7 @@ public final class CGrammarRule implements IGrammarRule
     @Override
     public final int hashCode()
     {
-        return this.id().hashCode();
+        return m_id.hashCode();
     }
 
     @Override
