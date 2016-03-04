@@ -107,15 +107,17 @@ public final class CHTML extends IBaseTemplate
                 "%rulelist%", StringUtils.join(
                         m_rules.rowMap().entrySet().stream().sorted( ( n, m ) -> n.getKey().compareToIgnoreCase( m.getKey() ) )
                                .map( i -> MessageFormat.format(
-                                       "<div class=\"rulelist\" id=\"list_{0}\">" +
-                                       "<h5 data-ruleset=\"rules_{0}\" class=\"grammarlisthead\">{0}</h5>" +
-                                       "<ul>{1}</ul>" +
+                                       "<div class=\"rulelist\" id=\"list_{0}\">\n" +
+                                       "<h5 data-ruleset=\"rules_{0}\" class=\"grammarlisthead\">{0}</h5>\n" +
+                                       "<ul>\n{1}</ul>\n" +
                                        "</div>",
                                        i.getKey(),
                                        StringUtils.join(
                                                i.getValue().keySet().stream()
                                                 .sorted( ( n, m ) -> n.compareToIgnoreCase( m ) )
-                                                .map( j -> MessageFormat.format( "<li>{0}</li>", j.toLowerCase() ) )
+                                                .map( j -> MessageFormat.format( "<li><a href=\"#{0}\">{1}</a></li>\n", ( i.getKey() + "_" + j ).toLowerCase(),
+                                                                                 j.toLowerCase()
+                                                ) )
                                                 .collect( Collectors.toList() ),
                                                ""
                                        )
@@ -168,10 +170,12 @@ public final class CHTML extends IBaseTemplate
                 p_element.id(),
                 MessageFormat.format(
                         "<p>" +
-                        "<h5>{0}</h5>" +
-                        "<p>{1}</p>" +
-                        "<p><script>Diagram({2}).addTo();</script></p>" +
+                        "<a name=\"{0}\"></a>" +
+                        "<h5>{1}</h5>" +
+                        "<p>{2}</p>" +
+                        "<p><script>Diagram({3}).addTo();</script></p>" +
                         "</p>",
+                        ( p_grammar.id() + "_" + p_element.id() ).toLowerCase(),
                         p_element.id(),
                         p_element.documentation(),
                         this.element( p_element )
