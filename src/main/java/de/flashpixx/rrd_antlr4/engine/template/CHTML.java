@@ -169,12 +169,12 @@ public final class CHTML extends IBaseTemplate
                 p_grammar.id(),
                 p_element.id(),
                 MessageFormat.format(
-                        "<p>" +
+                        "<div class=\"ruledetail\">" +
                         "<a name=\"{0}\"></a>" +
                         "<h5>{1}</h5>" +
                         "<p>{2}</p>" +
                         "<p><script>Diagram({3}).addTo();</script></p>" +
-                        "</p>",
+                        "</div>",
                         ( p_grammar.id() + "_" + p_element.id() ).toLowerCase(),
                         p_element.id(),
                         p_element.documentation(),

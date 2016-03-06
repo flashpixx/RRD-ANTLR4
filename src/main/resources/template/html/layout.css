@@ -300,3 +300,8 @@ svg.railroad-diagram {
     width: 83%;
     float: right;
 }
+
+.ruledetail {
+    padding: 0.5em;
+    border: 1px solid #cccccc;
+}
