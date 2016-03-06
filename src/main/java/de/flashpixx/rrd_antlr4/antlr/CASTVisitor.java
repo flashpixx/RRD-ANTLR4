@@ -238,6 +238,48 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
     @Override
     public final IGrammarElement visitElement( final ANTLRv4Parser.ElementContext p_context )
     {
+        // @bug must be split
+        /*
+        boolean hasEbnfSuffix = ( ctx.ebnfSuffix() != null );
+
+        if ( ctx.labeledElement() != null )
+        {
+            if ( hasEbnfSuffix )
+            {
+                return this.visitEbnfSuffix( ctx.ebnfSuffix() ) +
+                       "(" + this.visitLabeledElement( ctx.labeledElement() ) + ")";
+            }
+            else
+            {
+                return this.visitLabeledElement( ctx.labeledElement() );
+            }
+        }
+        else if ( ctx.atom() != null )
+        {
+            if ( hasEbnfSuffix )
+            {
+                return this.visitEbnfSuffix( ctx.ebnfSuffix() ) +
+                       "(" + this.visitAtom( ctx.atom() ) + ")";
+            }
+            else
+            {
+                return this.visitAtom( ctx.atom() );
+            }
+        }
+        else if ( ctx.ebnf() != null )
+        {
+            return this.visitEbnf( ctx.ebnf() );
+        }
+        else if ( ctx.QUESTION() != null )
+        {
+            return "Comment('predicate')";
+        }
+        else
+        {
+            return "Comment('&#949;')";
+        }
+        */
+
         return new CGrammarTerminalValue<>(
                 IGrammarElement.ECardinality.NONE,
                 this.cleanString( p_context.getText() )
