@@ -236,10 +236,12 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
                     : "",
                     this.visitAtom( p_context.atom() )
             );
-/*
+
+        /*
         if (p_context.ebnf() != null)
             return this.visitEbnf( p_context.ebnf() );
-*/
+        */
+
         return new CGrammarTerminalValue<>(
                 IGrammarElement.ECardinality.NONE,
                 this.cleanString( p_context.getText() )
@@ -249,7 +251,9 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
     @Override
     public final IGrammarElement visitEbnf( final ANTLRv4Parser.EbnfContext p_context )
     {
-        return super.visitEbnf( p_context );
+        return p_context.blockSuffix() != null
+               ? new CGrammarGroup( this.visitBlock( p_context.block() ) )
+               : this.visitBlock( p_context.block() );
     }
 
     @Override

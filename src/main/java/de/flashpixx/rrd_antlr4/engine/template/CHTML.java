@@ -30,6 +30,7 @@ import de.flashpixx.rrd_antlr4.antlr.IGrammarChoice;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarCollection;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarComplexElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarElement;
+import de.flashpixx.rrd_antlr4.antlr.IGrammarGroup;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarRule;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarSequence;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarSimpleElement;
@@ -211,10 +212,23 @@ public final class CHTML extends IBaseTemplate
         if ( p_element instanceof IGrammarSequence )
             return this.cardinality( p_element.cardinality(), this.sequence( (IGrammarSequence) p_element ) );
 
-        throw new IllegalStateException();
+        if ( p_element instanceof IGrammarGroup )
+            return this.cardinality( p_element.cardinality(), this.group( (IGrammarGroup) p_element ) );
+
+        throw new IllegalStateException( p_element.getClass().getSimpleName() );
     }
 
 
+    /**
+     * crates a grammer group
+     *
+     * @param p_group group element
+     * @return string representation
+     */
+    private String group( final IGrammarGroup p_group )
+    {
+        return MessageFormat.format( "({0})", this.element( p_group.element() ) );
+    }
 
     /**
      * creates a grammar choice
