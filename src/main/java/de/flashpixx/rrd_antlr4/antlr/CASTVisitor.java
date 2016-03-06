@@ -287,6 +287,20 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
     }
 
     @Override
+    public final IGrammarElement visitLabeledElement( final ANTLRv4Parser.LabeledElementContext p_context )
+    {
+        return p_context.atom() != null
+               ? this.visitChildren( p_context.atom() )
+               : this.visitChildren( p_context.block() );
+    }
+
+    @Override
+    public final IGrammarElement visitBlock( final ANTLRv4Parser.BlockContext p_context )
+    {
+        return this.visitChildren( p_context.altList() );
+    }
+
+    @Override
     public final IGrammarElement visitLexerElement( final ANTLRv4Parser.LexerElementContext p_context )
     {
         return new CGrammarTerminalValue<>(
