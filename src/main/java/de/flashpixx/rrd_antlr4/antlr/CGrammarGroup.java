@@ -53,6 +53,9 @@ public final class CGrammarGroup implements IGrammarGroup
     {
         m_element = p_element;
         m_cardinality = ECardinality.NONE;
+
+        if ( m_element == null )
+            throw new IllegalArgumentException( CCommon.getLanguageString( this, "empty" ) );
     }
 
     /**

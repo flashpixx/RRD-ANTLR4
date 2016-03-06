@@ -169,7 +169,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
     {
         return this.choice(
                 p_context.alternative().stream()
-                         .map( i -> this.visit( i ) )
+                         .map( i -> this.visitAlternative( i ) )
                          .collect( Collectors.toList() )
         );
     }
@@ -197,7 +197,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
     {
         return this.choice(
                 p_context.setElement().stream()
-                         .map( i -> this.visit( i ) )
+                         .map( i -> this.visitSetElement( i ) )
                          .collect( Collectors.toList() )
         );
     }
@@ -223,11 +223,9 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
 
         /**
          * @bug NPE
+         *
         if (p_context.ebnf() != null)
-        {
-        System.out.println();
             return this.visitEbnf( p_context.ebnf() );
-        }
         */
 
         return new CGrammarTerminalValue<>(
@@ -244,7 +242,8 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
     @Override
     public final IGrammarElement visitBlock( final ANTLRv4Parser.BlockContext p_context )
     {
-        return new CGrammarGroup( super.visitBlock( p_context ) );
+        // only alternative elements are needed
+        return new CGrammarGroup( this.visitAltList( p_context.altList() ) );
     }
 
     @Override

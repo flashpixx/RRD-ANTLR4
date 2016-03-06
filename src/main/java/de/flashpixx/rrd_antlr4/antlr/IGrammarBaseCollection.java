@@ -28,6 +28,7 @@ import de.flashpixx.rrd_antlr4.CCommon;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -48,6 +49,8 @@ public abstract class IGrammarBaseCollection implements IGrammarCollection
     /**
      * ctor
      *
+     * @note filtering of not-null values
+     *
      * @param p_cardinality cardinality
      * @param p_data data
      */
@@ -56,7 +59,7 @@ public abstract class IGrammarBaseCollection implements IGrammarCollection
         if ( p_data == null )
             throw new IllegalArgumentException( CCommon.getLanguageString( IGrammarBaseCollection.class, "empty" ) );
 
-        m_data = Collections.unmodifiableList( p_data );
+        m_data = Collections.unmodifiableList( p_data.stream().filter( i -> i != null ).collect( Collectors.toList() ) );
         m_cardinality = p_cardinality;
     }
 
