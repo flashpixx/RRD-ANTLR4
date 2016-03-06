@@ -204,23 +204,6 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
     }
 
     @Override
-    public final IGrammarElement visitEbnfSuffix( final ANTLRv4Parser.EbnfSuffixContext p_context )
-    {
-        final IGrammarElement l_element = this.visitChildren( p_context );
-
-        if ( p_context.PLUS() != null )
-            return l_element.cardinality( IGrammarElement.ECardinality.ONEORMORE );
-
-        if ( p_context.STAR() != null )
-            return l_element.cardinality( IGrammarElement.ECardinality.ZEROORMORE );
-
-        if ( p_context.QUESTION() != null )
-            return l_element.cardinality( IGrammarElement.ECardinality.OPTIONAL );
-
-        return l_element;
-    }
-
-    @Override
     public final IGrammarElement visitLexerAtom( final ANTLRv4Parser.LexerAtomContext p_context )
     {
         // Terminal & NonTermial
@@ -238,52 +221,35 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
     @Override
     public final IGrammarElement visitElement( final ANTLRv4Parser.ElementContext p_context )
     {
-        // @bug must be split
-        /*
-        boolean hasEbnfSuffix = ( ctx.ebnfSuffix() != null );
+        if ( p_context.labeledElement() != null )
+            return this.cardinality(
+                    p_context.ebnfSuffix() != null
+                    ? p_context.ebnfSuffix().getText()
+                    : "",
+                    this.visitLabeledElement( p_context.labeledElement() )
+            );
 
-        if ( ctx.labeledElement() != null )
-        {
-            if ( hasEbnfSuffix )
-            {
-                return this.visitEbnfSuffix( ctx.ebnfSuffix() ) +
-                       "(" + this.visitLabeledElement( ctx.labeledElement() ) + ")";
-            }
-            else
-            {
-                return this.visitLabeledElement( ctx.labeledElement() );
-            }
-        }
-        else if ( ctx.atom() != null )
-        {
-            if ( hasEbnfSuffix )
-            {
-                return this.visitEbnfSuffix( ctx.ebnfSuffix() ) +
-                       "(" + this.visitAtom( ctx.atom() ) + ")";
-            }
-            else
-            {
-                return this.visitAtom( ctx.atom() );
-            }
-        }
-        else if ( ctx.ebnf() != null )
-        {
-            return this.visitEbnf( ctx.ebnf() );
-        }
-        else if ( ctx.QUESTION() != null )
-        {
-            return "Comment('predicate')";
-        }
-        else
-        {
-            return "Comment('&#949;')";
-        }
-        */
-
+        if ( p_context.atom() != null )
+            return this.cardinality(
+                    p_context.ebnfSuffix() != null
+                    ? p_context.ebnfSuffix().getText()
+                    : "",
+                    this.visitAtom( p_context.atom() )
+            );
+/*
+        if (p_context.ebnf() != null)
+            return this.visitEbnf( p_context.ebnf() );
+*/
         return new CGrammarTerminalValue<>(
                 IGrammarElement.ECardinality.NONE,
                 this.cleanString( p_context.getText() )
         );
+    }
+
+    @Override
+    public final IGrammarElement visitEbnf( final ANTLRv4Parser.EbnfContext p_context )
+    {
+        return super.visitEbnf( p_context );
     }
 
     @Override
@@ -383,6 +349,31 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
                        IGrammarElement.ECardinality.NONE,
                        p_elements
                );
+    }
+
+    /**
+     * defines the cardinality of an grammar element
+     *
+     * @param p_cardinality cardinality string
+     * @param p_element element
+     * @return modified element
+     */
+    private IGrammarElement cardinality( final String p_cardinality, final IGrammarElement p_element )
+    {
+        switch ( p_cardinality )
+        {
+            case "+":
+                return p_element.cardinality( IGrammarElement.ECardinality.ONEORMORE );
+
+            case "*":
+                return p_element.cardinality( IGrammarElement.ECardinality.ZEROORMORE );
+
+            case "?":
+                return p_element.cardinality( IGrammarElement.ECardinality.OPTIONAL );
+
+            default:
+                return p_element;
+        }
     }
 
 }
