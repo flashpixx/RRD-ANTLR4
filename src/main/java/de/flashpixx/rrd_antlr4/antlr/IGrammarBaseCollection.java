@@ -24,6 +24,8 @@
 
 package de.flashpixx.rrd_antlr4.antlr;
 
+import de.flashpixx.rrd_antlr4.CCommon;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -51,6 +53,9 @@ public abstract class IGrammarBaseCollection implements IGrammarCollection
      */
     protected IGrammarBaseCollection( final ECardinality p_cardinality, final List<IGrammarElement> p_data )
     {
+        if ( p_data == null )
+            throw new IllegalArgumentException( CCommon.getLanguageString( IGrammarBaseCollection.class, "empty" ) );
+
         m_data = Collections.unmodifiableList( p_data );
         m_cardinality = p_cardinality;
     }

@@ -23,6 +23,7 @@
 
 package de.flashpixx.rrd_antlr4.antlr;
 
+import de.flashpixx.rrd_antlr4.CCommon;
 import org.apache.commons.lang3.StringUtils;
 
 import java.text.MessageFormat;
@@ -64,6 +65,9 @@ public final class CGrammarGroup implements IGrammarGroup
     {
         m_element = p_element;
         m_cardinality = p_cardinality;
+
+        if ( m_element == null )
+            throw new IllegalArgumentException( CCommon.getLanguageString( this, "empty" ) );
     }
 
     @Override

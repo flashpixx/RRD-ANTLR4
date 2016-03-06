@@ -23,6 +23,8 @@
 
 package de.flashpixx.rrd_antlr4.antlr;
 
+import de.flashpixx.rrd_antlr4.CCommon;
+
 import java.text.MessageFormat;
 import java.util.Arrays;
 
@@ -44,6 +46,16 @@ public class CGrammarTerminalValue<T> implements IGrammarSimpleElement<T>
     /**
      * ctor
      *
+     * @param p_value value
+     */
+    public CGrammarTerminalValue( final T p_value )
+    {
+        this( ECardinality.NONE, p_value );
+    }
+
+    /**
+     * ctor
+     *
      * @param p_cardinality cardinality
      * @param p_value value
      */
@@ -51,6 +63,9 @@ public class CGrammarTerminalValue<T> implements IGrammarSimpleElement<T>
     {
         m_value = p_value;
         m_cardinality = p_cardinality;
+
+        if ( m_value == null )
+            throw new IllegalArgumentException( CCommon.getLanguageString( CGrammarTerminalValue.class, "empty" ) );
     }
 
     @Override

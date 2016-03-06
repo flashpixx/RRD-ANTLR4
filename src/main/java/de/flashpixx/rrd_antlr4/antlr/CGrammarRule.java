@@ -23,6 +23,8 @@
 
 package de.flashpixx.rrd_antlr4.antlr;
 
+import de.flashpixx.rrd_antlr4.CCommon;
+
 import java.text.MessageFormat;
 
 
@@ -55,6 +57,9 @@ public final class CGrammarRule implements IGrammarRule
         m_id = p_id;
         m_documentation = p_documentation == null ? "" : p_documentation;
         m_element = p_element;
+
+        if ( m_element == null )
+            throw new IllegalArgumentException( CCommon.getLanguageString( this, "empty" ) );
     }
 
 

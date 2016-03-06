@@ -39,6 +39,16 @@ public final class CGrammarChoice extends IGrammarBaseCollection implements IGra
     /**
      * ctor
      *
+     * @param p_data data
+     */
+    public CGrammarChoice( final List<IGrammarElement> p_data )
+    {
+        super( ECardinality.NONE, p_data );
+    }
+
+    /**
+     * ctor
+     *
      * @param p_cardinality cardinality
      */
     public CGrammarChoice( final ECardinality p_cardinality )

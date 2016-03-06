@@ -52,6 +52,21 @@ public class CGrammarNonTerminal implements IGrammarTerminal
      * ctor
      *  @param p_id ID
      * @param p_documentation documentation
+     * @param p_element elements
+     */
+    public CGrammarNonTerminal( final String p_id, final String p_documentation, final IGrammarElement p_element
+    )
+    {
+        m_id = p_id;
+        m_element = p_element;
+        m_cardinality = ECardinality.NONE;
+        m_documentation = p_documentation == null ? "" : p_documentation;
+    }
+
+    /**
+     * ctor
+     *  @param p_id ID
+     * @param p_documentation documentation
      * @param p_cardinality cardinality
      * @param p_element elements
      */

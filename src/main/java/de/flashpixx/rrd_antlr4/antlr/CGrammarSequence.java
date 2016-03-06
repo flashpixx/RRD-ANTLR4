@@ -39,6 +39,16 @@ public final class CGrammarSequence extends IGrammarBaseCollection implements IG
     /**
      * ctor
      *
+     * @param p_data data
+     */
+    public CGrammarSequence( final List<IGrammarElement> p_data )
+    {
+        super( ECardinality.NONE, p_data );
+    }
+
+    /**
+     * ctor
+     *
      * @param p_cardinality cardinality
      */
     public CGrammarSequence( final ECardinality p_cardinality )

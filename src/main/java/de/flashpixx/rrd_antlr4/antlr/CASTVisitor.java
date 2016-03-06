@@ -158,7 +158,6 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
                 new CGrammarNonTerminal(
                         p_context.TOKEN_REF().getText(),
                         this.cleanComment( p_context.DOC_COMMENT() == null ? null : p_context.DOC_COMMENT().getText() ),
-                        IGrammarElement.ECardinality.NONE,
                         this.visitLexerRuleBlock( p_context.lexerRuleBlock() )
                 )
         );
@@ -204,21 +203,6 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
     }
 
     @Override
-    public final IGrammarElement visitLexerAtom( final ANTLRv4Parser.LexerAtomContext p_context )
-    {
-        // Terminal & NonTermial
-        return super.visitLexerAtom( p_context );
-    }
-
-    @Override
-    public final IGrammarElement visitTerminal( final ANTLRv4Parser.TerminalContext p_context )
-    {
-        return p_context.TOKEN_REF() != null
-               ? new CGrammarTerminalValue( IGrammarElement.ECardinality.NONE, p_context.TOKEN_REF().getText() )
-               : new CGrammarTerminalValue( IGrammarElement.ECardinality.NONE, p_context.STRING_LITERAL().getText() );
-    }
-
-    @Override
     public final IGrammarElement visitElement( final ANTLRv4Parser.ElementContext p_context )
     {
         if ( p_context.labeledElement() != null )
@@ -237,46 +221,45 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
                     this.visitAtom( p_context.atom() )
             );
 
-        /*
+        /**
+         * @bug NPE
         if (p_context.ebnf() != null)
+        {
+        System.out.println();
             return this.visitEbnf( p_context.ebnf() );
+        }
         */
 
         return new CGrammarTerminalValue<>(
-                IGrammarElement.ECardinality.NONE,
                 this.cleanString( p_context.getText() )
         );
-    }
-
-    @Override
-    public final IGrammarElement visitEbnf( final ANTLRv4Parser.EbnfContext p_context )
-    {
-        return p_context.blockSuffix() != null
-               ? new CGrammarGroup( this.visitBlock( p_context.block() ) )
-               : this.visitBlock( p_context.block() );
-    }
-
-    @Override
-    public final IGrammarElement visitLabeledElement( final ANTLRv4Parser.LabeledElementContext p_context )
-    {
-        return p_context.atom() != null
-               ? this.visitChildren( p_context.atom() )
-               : this.visitChildren( p_context.block() );
-    }
-
-    @Override
-    public final IGrammarElement visitBlock( final ANTLRv4Parser.BlockContext p_context )
-    {
-        return this.visitChildren( p_context.altList() );
     }
 
     @Override
     public final IGrammarElement visitLexerElement( final ANTLRv4Parser.LexerElementContext p_context )
     {
-        return new CGrammarTerminalValue<>(
-                IGrammarElement.ECardinality.NONE,
-                this.cleanString( p_context.getText() )
-        );
+        return new CGrammarTerminalValue<>( this.cleanString( p_context.getText() ) );
+    }
+
+    @Override
+    public final IGrammarElement visitBlock( final ANTLRv4Parser.BlockContext p_context )
+    {
+        return new CGrammarGroup( super.visitBlock( p_context ) );
+    }
+
+    @Override
+    public final IGrammarElement visitLexerAtom( final ANTLRv4Parser.LexerAtomContext p_context )
+    {
+        // Terminal & NonTermial
+        return new CGrammarTerminalValue<>( p_context.getText() );
+    }
+
+    @Override
+    public final IGrammarElement visitTerminal( final ANTLRv4Parser.TerminalContext p_context )
+    {
+        return p_context.TOKEN_REF() != null
+               ? new CGrammarTerminalValue( p_context.TOKEN_REF().getText() )
+               : new CGrammarTerminalValue( p_context.STRING_LITERAL().getText() );
     }
 
 
@@ -333,10 +316,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
     {
         return p_elements.size() == 1
                ? p_elements.get( 0 )
-               : new CGrammarChoice(
-                       IGrammarElement.ECardinality.NONE,
-                       p_elements
-               );
+               : new CGrammarChoice( p_elements );
     }
 
     /**
@@ -349,10 +329,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
     {
         return p_elements.size() == 1
                ? p_elements.get( 0 )
-               : new CGrammarSequence(
-                       IGrammarElement.ECardinality.NONE,
-                       p_elements
-               );
+               : new CGrammarSequence( p_elements );
     }
 
     /**
