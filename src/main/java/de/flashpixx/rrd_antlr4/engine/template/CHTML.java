@@ -40,8 +40,11 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -175,10 +178,10 @@ public final class CHTML extends IBaseTemplate
                         "<p>{2}</p>" +
                         "<p><script>Diagram({3}).addTo();</script></p>" +
                         "</div>",
-                        ( p_grammar.id() + "_" + p_element.id() ).toLowerCase(),
+                        this.linkhash( p_element.id() ),
                         p_element.id(),
                         p_element.documentation(),
-                        this.map( p_grammar, p_element )
+                        this.map( p_element )
                 )
         );
 
@@ -187,19 +190,19 @@ public final class CHTML extends IBaseTemplate
 
 
     @Override
-    protected final String group( final IGrammarComplexElement p_grammar, final IGrammarGroup p_group )
+    protected final String group( final IGrammarGroup p_group )
     {
-        return MessageFormat.format( "({0})", this.map( p_grammar, p_group.element() ) );
+        return MessageFormat.format( "({0})", this.map( p_group.element() ) );
     }
 
     @Override
-    protected final String choice( final IGrammarComplexElement p_grammar, final IGrammarChoice p_input )
+    protected final String choice( final IGrammarChoice p_input )
     {
         final String l_child = StringUtils.join(
                 IntStream
                         .range( 0, p_input.get().size() )
                         .boxed()
-                        .map( i -> this.map( p_grammar, p_input.get().get( i ) ) )
+                        .map( i -> this.map( p_input.get().get( i ) ) )
                         .filter( i -> i != null )
                         .collect( Collectors.toList() ),
                 ", "
@@ -209,11 +212,11 @@ public final class CHTML extends IBaseTemplate
     }
 
     @Override
-    protected final String sequence( final IGrammarComplexElement p_grammar, final IGrammarCollection p_input )
+    protected final String sequence( final IGrammarCollection p_input )
     {
         final String l_child = StringUtils.join(
                 p_input.get().stream()
-                       .map( i -> this.map( p_grammar, i ) )
+                       .map( i -> this.map( i ) )
                        .filter( i -> i != null )
                        .collect( Collectors.toList() ),
                 ", "
@@ -223,38 +226,39 @@ public final class CHTML extends IBaseTemplate
     }
 
     @Override
-    protected final String terminal( final IGrammarComplexElement p_grammar, final IGrammarTerminal p_terminal )
+    protected final String terminal( final IGrammarTerminal p_terminal )
     {
-        return this.map( p_grammar, p_terminal.children() );
+        return this.map( p_terminal.children() );
     }
 
     @Override
-    protected final String terminal( final IGrammarComplexElement p_grammar, final IGrammarSimpleElement<?> p_value )
+    protected final String terminal( final IGrammarSimpleElement<?> p_value )
     {
         return MessageFormat.format(
-                "Terminal({0})",
-                "'" + StringEscapeUtils.escapeEcmaScript( p_value.get() ) + "'"
+                "Terminal({0}, {1})",
+                "'" + StringEscapeUtils.escapeEcmaScript( p_value.get() ) + "'",
+                "'#" + this.linkhash( p_value.get() ) + "'"
         );
     }
 
     @Override
-    protected final String identifier( final IGrammarComplexElement p_grammar, final IGrammarIdentifier p_element )
+    protected final String identifier( final IGrammarIdentifier p_element )
     {
         return MessageFormat.format(
                 "Terminal({0}, {1})",
                 "'" + p_element.get() + "'",
-                "'#" + ( p_grammar.id() + "_" + p_element.get() ).toLowerCase() + "'"
+                "'#" + this.linkhash( p_element.get() ) + "'"
         );
     }
 
     @Override
-    protected final String rule( final IGrammarComplexElement p_grammar, final IGrammarRule p_rule )
+    protected final String rule( final IGrammarRule p_rule )
     {
-        return this.map( p_grammar, p_rule.children() );
+        return this.map( p_rule.children() );
     }
 
     @Override
-    protected final String cardinality( final IGrammarComplexElement p_grammar, final IGrammarElement.ECardinality p_cardinality, final String p_inner )
+    protected final String cardinality( final IGrammarElement.ECardinality p_cardinality, final String p_inner )
     {
         switch ( p_cardinality )
         {
@@ -269,6 +273,24 @@ public final class CHTML extends IBaseTemplate
 
             default:
                 return p_inner;
+        }
+    }
+
+    /**
+     * create a hash of a link
+     *
+     * @param p_value ID element
+     * @return hash
+     */
+    private String linkhash( final String p_value )
+    {
+        try
+        {
+            return new BigInteger( 1, MessageDigest.getInstance( "MD5" ).digest( p_value.getBytes() ) ).toString( 16 );
+        }
+        catch ( final NoSuchAlgorithmException p_exception )
+        {
+            return "";
         }
     }
 
