@@ -5,11 +5,11 @@
 Inspired by the project [rrd-antlr4](https://github.com/bkiers/rrd-antlr4) this project is a full refactored system to generate [railroad / syntax diagram](https://en.wikipedia.org/wiki/Syntax_diagram) of an [AntLR 4](http://www.antlr.org/) grammar.
 
 
-## Requirements
+## <a name="requirement">Requirements</a>
 
 * [JRE 1.8](http://www.java.com/)
 
-### Development
+### <a name="development">Development</a>
 
 * [JDK 1.8](http://www.oracle.com/technetwork/java/javase/downloads/)
 * [Maven 3 or higher](http://maven.apache.org/)
@@ -21,3 +21,7 @@ Inspired by the project [rrd-antlr4](https://github.com/bkiers/rrd-antlr4) this 
 ## <a name="download">Current Developer Download</a>
 
 * [Native Jar](https://github.com/flashpixx/RRD-AntLR4/raw/binary-master/RRD-AntLR4-0.1.jar)
+
+## <a name="todo">Todo</a>
+
+* http://www.sonatype.org/nexus/2015/01/08/deploy-to-maven-central-repository/

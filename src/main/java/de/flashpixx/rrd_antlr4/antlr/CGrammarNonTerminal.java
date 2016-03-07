@@ -29,7 +29,7 @@ import java.text.MessageFormat;
 /**
  * represenation of a terminal symbol
  */
-public class CGrammarNonTerminal implements IGrammarTerminal
+public final class CGrammarNonTerminal implements IGrammarTerminal
 {
     /**
      * ID

@@ -170,6 +170,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
         return this.choice(
                 p_context.alternative().stream()
                          .map( i -> this.visitAlternative( i ) )
+                         .filter( i -> i != null )
                          .collect( Collectors.toList() )
         );
     }
@@ -182,6 +183,17 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
     }
 
     @Override
+    public final IGrammarElement visitAlternative( final ANTLRv4Parser.AlternativeContext p_context )
+    {
+        return this.sequence(
+                p_context.element().stream()
+                         .map( i -> this.visitElement( i ) )
+                         .filter( i -> i != null )
+                         .collect( Collectors.toList() )
+        );
+    }
+
+    @Override
     public final IGrammarElement visitLexerAlt( final ANTLRv4Parser.LexerAltContext p_context )
     {
         // Sequence
@@ -190,14 +202,13 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
         return this.visitLexerElements( p_context.lexerElements() );
     }
 
-    // visitElements
-
     @Override
     public final IGrammarElement visitBlockSet( final ANTLRv4Parser.BlockSetContext p_context )
     {
         return this.choice(
                 p_context.setElement().stream()
                          .map( i -> this.visitSetElement( i ) )
+                         .filter( i -> i != null )
                          .collect( Collectors.toList() )
         );
     }
@@ -221,12 +232,8 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
                     this.visitAtom( p_context.atom() )
             );
 
-        /**
-         * @bug NPE
-         *
         if (p_context.ebnf() != null)
             return this.visitEbnf( p_context.ebnf() );
-        */
 
         return new CGrammarTerminalValue<>(
                 this.cleanString( p_context.getText() )
@@ -234,9 +241,14 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
     }
 
     @Override
-    public final IGrammarElement visitLexerElement( final ANTLRv4Parser.LexerElementContext p_context )
+    public final IGrammarElement visitEbnf( final ANTLRv4Parser.EbnfContext p_context )
     {
-        return new CGrammarTerminalValue<>( this.cleanString( p_context.getText() ) );
+        return this.cardinality(
+                p_context.blockSuffix() != null
+                ? p_context.blockSuffix().getText()
+                : "",
+                this.visitBlock( p_context.block() )
+        );
     }
 
     @Override
@@ -256,9 +268,23 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
     @Override
     public final IGrammarElement visitTerminal( final ANTLRv4Parser.TerminalContext p_context )
     {
-        return p_context.TOKEN_REF() != null
-               ? new CGrammarTerminalValue( p_context.TOKEN_REF().getText() )
-               : new CGrammarTerminalValue( p_context.STRING_LITERAL().getText() );
+        return new CGrammarTerminalValue(
+                p_context.TOKEN_REF() != null
+                ? p_context.TOKEN_REF().getText()
+                : p_context.STRING_LITERAL().getText()
+        );
+    }
+
+    @Override
+    public final IGrammarElement visitLexerElement( final ANTLRv4Parser.LexerElementContext p_context )
+    {
+        return new CGrammarTerminalValue<>( this.cleanString( p_context.getText() ) );
+    }
+
+    @Override
+    public final IGrammarElement visitRuleref( final ANTLRv4Parser.RulerefContext p_context )
+    {
+        return new CGrammarIdentifier( p_context.getText() );
     }
 
 
@@ -340,20 +366,16 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
      */
     private IGrammarElement cardinality( final String p_cardinality, final IGrammarElement p_element )
     {
-        switch ( p_cardinality )
-        {
-            case "+":
-                return p_element.cardinality( IGrammarElement.ECardinality.ONEORMORE );
+        if ( p_cardinality.contains( "+" ) )
+            return p_element.cardinality( IGrammarElement.ECardinality.ONEORMORE );
 
-            case "*":
-                return p_element.cardinality( IGrammarElement.ECardinality.ZEROORMORE );
+        if ( p_cardinality.contains( "*" ) )
+            return p_element.cardinality( IGrammarElement.ECardinality.ZEROORMORE );
 
-            case "?":
-                return p_element.cardinality( IGrammarElement.ECardinality.OPTIONAL );
+        if ( p_cardinality.contains( "?" ) )
+            return p_element.cardinality( IGrammarElement.ECardinality.OPTIONAL );
 
-            default:
-                return p_element;
-        }
+        return p_element;
     }
 
 }
