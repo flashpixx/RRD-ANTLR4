@@ -26,6 +26,14 @@ package de.flashpixx.rrd_antlr4.engine.template;
 import com.aol.cyclops.sequence.SequenceM;
 import de.flashpixx.rrd_antlr4.CCommon;
 import de.flashpixx.rrd_antlr4.CStringReplace;
+import de.flashpixx.rrd_antlr4.antlr.IGrammarChoice;
+import de.flashpixx.rrd_antlr4.antlr.IGrammarCollection;
+import de.flashpixx.rrd_antlr4.antlr.IGrammarElement;
+import de.flashpixx.rrd_antlr4.antlr.IGrammarGroup;
+import de.flashpixx.rrd_antlr4.antlr.IGrammarRule;
+import de.flashpixx.rrd_antlr4.antlr.IGrammarSequence;
+import de.flashpixx.rrd_antlr4.antlr.IGrammarSimpleElement;
+import de.flashpixx.rrd_antlr4.antlr.IGrammarTerminal;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -102,5 +110,94 @@ public abstract class IBaseTemplate implements ITemplate
                  .forEach( i -> l_content.replaceAll( p_replacepair[i.get( 0 ).intValue()], p_replacepair[i.get( 1 ).intValue()] ) );
         FileUtils.writeStringToFile( p_file, l_content.get() );
     }
+
+    /**
+     * create an element string
+     *
+     * @param p_element grammat element or string
+     * @return string representation
+     *
+     * @todo move to super class
+     */
+    @SuppressWarnings( "unchecked" )
+    protected String element( final IGrammarElement p_element )
+    {
+        if ( p_element instanceof IGrammarRule )
+            return this.rule( (IGrammarRule) p_element );
+
+        if ( p_element instanceof IGrammarSimpleElement<?> )
+            return this.terminal( (IGrammarSimpleElement<?>) p_element );
+
+        if ( p_element instanceof IGrammarTerminal )
+            return this.cardinality( p_element.cardinality(), this.terminal( ( (IGrammarTerminal) p_element ) ) );
+
+        if ( p_element instanceof IGrammarChoice )
+            return this.cardinality( p_element.cardinality(), this.choice( (IGrammarChoice) p_element ) );
+
+        if ( p_element instanceof IGrammarSequence )
+            return this.cardinality( p_element.cardinality(), this.sequence( (IGrammarSequence) p_element ) );
+
+        if ( p_element instanceof IGrammarGroup )
+            return this.cardinality( p_element.cardinality(), this.group( (IGrammarGroup) p_element ) );
+
+        throw new IllegalStateException( p_element.getClass().getSimpleName() );
+    }
+
+    /**
+     * creates a rule
+     *
+     * @param p_rule
+     * @return
+     */
+    protected abstract String rule( final IGrammarRule p_rule );
+
+    /**
+     * creates a terminal
+     *
+     * @param p_terminal terminal element
+     * @return string represenation
+     */
+    protected abstract String terminal( final IGrammarTerminal p_terminal );
+
+    /**
+     * sets the cardinality
+     *
+     * @param p_cardinality cardinality value
+     * @param p_inner inner string
+     * @return string represenation
+     */
+    protected abstract String cardinality( final IGrammarElement.ECardinality p_cardinality, final String p_inner );
+
+    /**
+     * creates a grammar sequence
+     *
+     * @param p_input element list
+     * @return string representation
+     */
+    protected abstract String sequence( final IGrammarCollection p_input );
+
+    /**
+     * creates a grammar choice
+     *
+     * @param p_input element list
+     * @return string representation
+     */
+    protected abstract String choice( final IGrammarChoice p_input );
+
+    /**
+     * crates a grammer group
+     *
+     * @param p_group group element
+     * @return string representation
+     */
+    protected abstract String group( final IGrammarGroup p_group );
+
+    /**
+     * creates a terminal
+     *
+     * @param p_value terminal value element
+     * @return string represenation
+     */
+    protected abstract String terminal( final IGrammarSimpleElement<?> p_value );
 
 }

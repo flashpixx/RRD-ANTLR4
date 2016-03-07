@@ -32,7 +32,6 @@ import de.flashpixx.rrd_antlr4.antlr.IGrammarComplexElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarGroup;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarRule;
-import de.flashpixx.rrd_antlr4.antlr.IGrammarSequence;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarSimpleElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarTerminal;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -186,57 +185,15 @@ public final class CHTML extends IBaseTemplate
         return p_element;
     }
 
-    /**
-     * create an element string
-     *
-     * @param p_element grammat element or string
-     * @return string representation
-     *
-     * @todo move to super class
-     */
-    @SuppressWarnings( "unchecked" )
-    private String element( final IGrammarElement p_element )
-    {
-        if ( p_element instanceof IGrammarRule )
-            return this.rule( (IGrammarRule) p_element );
 
-        if ( p_element instanceof IGrammarSimpleElement<?> )
-            return this.terminal( (IGrammarSimpleElement<?>) p_element );
-
-        if ( p_element instanceof IGrammarTerminal )
-            return this.cardinality( p_element.cardinality(), this.terminal( ( (IGrammarTerminal) p_element ) ) );
-
-        if ( p_element instanceof IGrammarChoice )
-            return this.cardinality( p_element.cardinality(), this.choice( (IGrammarChoice) p_element ) );
-
-        if ( p_element instanceof IGrammarSequence )
-            return this.cardinality( p_element.cardinality(), this.sequence( (IGrammarSequence) p_element ) );
-
-        if ( p_element instanceof IGrammarGroup )
-            return this.cardinality( p_element.cardinality(), this.group( (IGrammarGroup) p_element ) );
-
-        throw new IllegalStateException( p_element.getClass().getSimpleName() );
-    }
-
-
-    /**
-     * crates a grammer group
-     *
-     * @param p_group group element
-     * @return string representation
-     */
-    private String group( final IGrammarGroup p_group )
+    @Override
+    protected final String group( final IGrammarGroup p_group )
     {
         return MessageFormat.format( "({0})", this.element( p_group.element() ) );
     }
 
-    /**
-     * creates a grammar choice
-     *
-     * @param p_input element list
-     * @return string representation
-     */
-    private String choice( final IGrammarChoice p_input )
+    @Override
+    protected final String choice( final IGrammarChoice p_input )
     {
         final String l_child = StringUtils.join(
                 IntStream
@@ -251,13 +208,8 @@ public final class CHTML extends IBaseTemplate
         return p_input.get().size() == 1 ? l_child : MessageFormat.format( "Choice({0}, {1})", 0, l_child );
     }
 
-    /**
-     * creates a grammar sequence
-     *
-     * @param p_input element list
-     * @return string representation
-     */
-    private String sequence( final IGrammarCollection p_input )
+    @Override
+    protected final String sequence( final IGrammarCollection p_input )
     {
         final String l_child = StringUtils.join(
                 p_input.get().stream()
@@ -270,24 +222,14 @@ public final class CHTML extends IBaseTemplate
         return p_input.get().size() == 1 ? l_child : MessageFormat.format( "Sequence({0})", l_child );
     }
 
-    /**
-     * creates a terminal
-     *
-     * @param p_terminal terminal element
-     * @return string represenation
-     */
-    private String terminal( final IGrammarTerminal p_terminal )
+    @Override
+    protected final String terminal( final IGrammarTerminal p_terminal )
     {
         return this.element( p_terminal.children() );
     }
 
-    /**
-     * creates a terminal
-     *
-     * @param p_value terminal value element
-     * @return string represenation
-     */
-    private String terminal( final IGrammarSimpleElement<?> p_value )
+    @Override
+    protected final String terminal( final IGrammarSimpleElement<?> p_value )
     {
         return MessageFormat.format(
                 "Terminal({0})",
@@ -295,25 +237,14 @@ public final class CHTML extends IBaseTemplate
         );
     }
 
-    /**
-     * creates a rule
-     *
-     * @param p_rule
-     * @return
-     */
-    private String rule( final IGrammarRule p_rule )
+    @Override
+    protected final String rule( final IGrammarRule p_rule )
     {
         return this.element( p_rule.children() );
     }
 
-    /**
-     * sets the cardinality
-     *
-     * @param p_cardinality cardinality value
-     * @param p_inner inner string
-     * @return
-     */
-    private String cardinality( final IGrammarElement.ECardinality p_cardinality, final String p_inner )
+    @Override
+    protected final String cardinality( final IGrammarElement.ECardinality p_cardinality, final String p_inner )
     {
         switch ( p_cardinality )
         {
