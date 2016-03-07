@@ -31,6 +31,7 @@ import de.flashpixx.rrd_antlr4.antlr.IGrammarCollection;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarComplexElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarGroup;
+import de.flashpixx.rrd_antlr4.antlr.IGrammarIdentifier;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarRule;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarSimpleElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarTerminal;
@@ -164,7 +165,6 @@ public final class CHTML extends IBaseTemplate
     @Override
     public final IGrammarComplexElement element( final IGrammarComplexElement p_grammar, final IGrammarComplexElement p_element )
     {
-        //System.out.println( p_grammar + "          " + p_element );
         m_rules.put(
                 p_grammar.id(),
                 p_element.id(),
@@ -178,7 +178,7 @@ public final class CHTML extends IBaseTemplate
                         ( p_grammar.id() + "_" + p_element.id() ).toLowerCase(),
                         p_element.id(),
                         p_element.documentation(),
-                        this.element( p_element )
+                        this.map( p_grammar, p_element )
                 )
         );
 
@@ -187,19 +187,19 @@ public final class CHTML extends IBaseTemplate
 
 
     @Override
-    protected final String group( final IGrammarGroup p_group )
+    protected final String group( final IGrammarComplexElement p_grammar, final IGrammarGroup p_group )
     {
-        return MessageFormat.format( "({0})", this.element( p_group.element() ) );
+        return MessageFormat.format( "({0})", this.map( p_grammar, p_group.element() ) );
     }
 
     @Override
-    protected final String choice( final IGrammarChoice p_input )
+    protected final String choice( final IGrammarComplexElement p_grammar, final IGrammarChoice p_input )
     {
         final String l_child = StringUtils.join(
                 IntStream
                         .range( 0, p_input.get().size() )
                         .boxed()
-                        .map( i -> this.element( p_input.get().get( i ) ) )
+                        .map( i -> this.map( p_grammar, p_input.get().get( i ) ) )
                         .filter( i -> i != null )
                         .collect( Collectors.toList() ),
                 ", "
@@ -209,11 +209,11 @@ public final class CHTML extends IBaseTemplate
     }
 
     @Override
-    protected final String sequence( final IGrammarCollection p_input )
+    protected final String sequence( final IGrammarComplexElement p_grammar, final IGrammarCollection p_input )
     {
         final String l_child = StringUtils.join(
                 p_input.get().stream()
-                       .map( i -> this.element( i ) )
+                       .map( i -> this.map( p_grammar, i ) )
                        .filter( i -> i != null )
                        .collect( Collectors.toList() ),
                 ", "
@@ -223,13 +223,13 @@ public final class CHTML extends IBaseTemplate
     }
 
     @Override
-    protected final String terminal( final IGrammarTerminal p_terminal )
+    protected final String terminal( final IGrammarComplexElement p_grammar, final IGrammarTerminal p_terminal )
     {
-        return this.element( p_terminal.children() );
+        return this.map( p_grammar, p_terminal.children() );
     }
 
     @Override
-    protected final String terminal( final IGrammarSimpleElement<?> p_value )
+    protected final String terminal( final IGrammarComplexElement p_grammar, final IGrammarSimpleElement<?> p_value )
     {
         return MessageFormat.format(
                 "Terminal({0})",
@@ -238,13 +238,23 @@ public final class CHTML extends IBaseTemplate
     }
 
     @Override
-    protected final String rule( final IGrammarRule p_rule )
+    protected final String identifier( final IGrammarComplexElement p_grammar, final IGrammarIdentifier p_element )
     {
-        return this.element( p_rule.children() );
+        return MessageFormat.format(
+                "Terminal({0}, {1})",
+                "'" + p_element.get() + "'",
+                "'#" + ( p_grammar.id() + "_" + p_element.get() ).toLowerCase() + "'"
+        );
     }
 
     @Override
-    protected final String cardinality( final IGrammarElement.ECardinality p_cardinality, final String p_inner )
+    protected final String rule( final IGrammarComplexElement p_grammar, final IGrammarRule p_rule )
+    {
+        return this.map( p_grammar, p_rule.children() );
+    }
+
+    @Override
+    protected final String cardinality( final IGrammarComplexElement p_grammar, final IGrammarElement.ECardinality p_cardinality, final String p_inner )
     {
         switch ( p_cardinality )
         {

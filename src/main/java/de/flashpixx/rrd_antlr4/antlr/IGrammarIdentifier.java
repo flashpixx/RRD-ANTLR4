@@ -24,18 +24,8 @@
 package de.flashpixx.rrd_antlr4.antlr;
 
 /**
- * link class between two rules
+ *
  */
-public final class CGrammarIdentifier extends CGrammarTerminalValue<String> implements IGrammarIdentifier
+public interface IGrammarIdentifier extends IGrammarSimpleElement<String>
 {
-
-    /**
-     * ctor
-     *
-     * @param p_value value
-     */
-    public CGrammarIdentifier( final String p_value )
-    {
-        super( ECardinality.NONE, p_value );
-    }
 }

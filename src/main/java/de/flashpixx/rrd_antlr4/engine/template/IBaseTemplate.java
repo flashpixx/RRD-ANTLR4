@@ -28,8 +28,10 @@ import de.flashpixx.rrd_antlr4.CCommon;
 import de.flashpixx.rrd_antlr4.CStringReplace;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarChoice;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarCollection;
+import de.flashpixx.rrd_antlr4.antlr.IGrammarComplexElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarGroup;
+import de.flashpixx.rrd_antlr4.antlr.IGrammarIdentifier;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarRule;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarSequence;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarSimpleElement;
@@ -112,33 +114,36 @@ public abstract class IBaseTemplate implements ITemplate
     }
 
     /**
-     * create an element string
+     * calls the sub routines to format the lement
      *
      * @param p_element grammat element or string
      * @return string representation
-     *
-     * @todo move to super class
      */
     @SuppressWarnings( "unchecked" )
-    protected String element( final IGrammarElement p_element )
+    protected String map( final IGrammarComplexElement p_grammar, final IGrammarElement p_element )
     {
+        if ( p_element instanceof IGrammarIdentifier )
+            return this.identifier( p_grammar, (IGrammarIdentifier) p_element );
+
         if ( p_element instanceof IGrammarRule )
-            return this.rule( (IGrammarRule) p_element );
+            return this.rule( p_grammar, (IGrammarRule) p_element );
 
         if ( p_element instanceof IGrammarSimpleElement<?> )
-            return this.terminal( (IGrammarSimpleElement<?>) p_element );
+            return this.terminal( p_grammar, (IGrammarSimpleElement<?>) p_element );
 
         if ( p_element instanceof IGrammarTerminal )
-            return this.cardinality( p_element.cardinality(), this.terminal( ( (IGrammarTerminal) p_element ) ) );
+            return this.cardinality( p_grammar, p_element.cardinality(), this.terminal( p_grammar, ( (IGrammarTerminal) p_element ) ) );
 
-        if ( p_element instanceof IGrammarChoice )
-            return this.cardinality( p_element.cardinality(), this.choice( (IGrammarChoice) p_element ) );
-
-        if ( p_element instanceof IGrammarSequence )
-            return this.cardinality( p_element.cardinality(), this.sequence( (IGrammarSequence) p_element ) );
 
         if ( p_element instanceof IGrammarGroup )
-            return this.cardinality( p_element.cardinality(), this.group( (IGrammarGroup) p_element ) );
+            return this.cardinality( p_grammar, p_element.cardinality(), this.group( p_grammar, (IGrammarGroup) p_element ) );
+
+        if ( p_element instanceof IGrammarChoice )
+            return this.cardinality( p_grammar, p_element.cardinality(), this.choice( p_grammar, (IGrammarChoice) p_element ) );
+
+        if ( p_element instanceof IGrammarSequence )
+            return this.cardinality( p_grammar, p_element.cardinality(), this.sequence( p_grammar, (IGrammarSequence) p_element ) );
+
 
         throw new IllegalStateException( p_element.getClass().getSimpleName() );
     }
@@ -149,7 +154,7 @@ public abstract class IBaseTemplate implements ITemplate
      * @param p_rule
      * @return
      */
-    protected abstract String rule( final IGrammarRule p_rule );
+    protected abstract String rule( final IGrammarComplexElement p_grammar, final IGrammarRule p_rule );
 
     /**
      * creates a terminal
@@ -157,7 +162,7 @@ public abstract class IBaseTemplate implements ITemplate
      * @param p_terminal terminal element
      * @return string represenation
      */
-    protected abstract String terminal( final IGrammarTerminal p_terminal );
+    protected abstract String terminal( final IGrammarComplexElement p_grammar, final IGrammarTerminal p_terminal );
 
     /**
      * sets the cardinality
@@ -166,7 +171,7 @@ public abstract class IBaseTemplate implements ITemplate
      * @param p_inner inner string
      * @return string represenation
      */
-    protected abstract String cardinality( final IGrammarElement.ECardinality p_cardinality, final String p_inner );
+    protected abstract String cardinality( final IGrammarComplexElement p_grammar, final IGrammarElement.ECardinality p_cardinality, final String p_inner );
 
     /**
      * creates a grammar sequence
@@ -174,7 +179,7 @@ public abstract class IBaseTemplate implements ITemplate
      * @param p_input element list
      * @return string representation
      */
-    protected abstract String sequence( final IGrammarCollection p_input );
+    protected abstract String sequence( final IGrammarComplexElement p_grammar, final IGrammarCollection p_input );
 
     /**
      * creates a grammar choice
@@ -182,7 +187,7 @@ public abstract class IBaseTemplate implements ITemplate
      * @param p_input element list
      * @return string representation
      */
-    protected abstract String choice( final IGrammarChoice p_input );
+    protected abstract String choice( final IGrammarComplexElement p_grammar, final IGrammarChoice p_input );
 
     /**
      * crates a grammer group
@@ -190,7 +195,7 @@ public abstract class IBaseTemplate implements ITemplate
      * @param p_group group element
      * @return string representation
      */
-    protected abstract String group( final IGrammarGroup p_group );
+    protected abstract String group( final IGrammarComplexElement p_grammar, final IGrammarGroup p_group );
 
     /**
      * creates a terminal
@@ -198,6 +203,14 @@ public abstract class IBaseTemplate implements ITemplate
      * @param p_value terminal value element
      * @return string represenation
      */
-    protected abstract String terminal( final IGrammarSimpleElement<?> p_value );
+    protected abstract String terminal( final IGrammarComplexElement p_grammar, final IGrammarSimpleElement<?> p_value );
+
+    /**
+     * creates an identifier
+     *
+     * @param p_element identifier element
+     * @return string represenation
+     */
+    protected abstract String identifier( final IGrammarComplexElement p_grammar, final IGrammarIdentifier p_element );
 
 }

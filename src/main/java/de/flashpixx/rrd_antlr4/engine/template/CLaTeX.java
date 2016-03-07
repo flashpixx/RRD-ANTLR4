@@ -28,6 +28,7 @@ import de.flashpixx.rrd_antlr4.antlr.IGrammarCollection;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarComplexElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarGroup;
+import de.flashpixx.rrd_antlr4.antlr.IGrammarIdentifier;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarRule;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarSimpleElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarTerminal;
@@ -38,7 +39,7 @@ import java.nio.file.Path;
 /**
  * template for LaTeX export
  */
-public class CLaTeX extends IBaseTemplate
+public final class CLaTeX extends IBaseTemplate
 {
 
     /**
@@ -76,45 +77,52 @@ public class CLaTeX extends IBaseTemplate
     }
 
     @Override
-    protected final String rule( final IGrammarRule p_rule )
+    protected String rule( final IGrammarComplexElement p_grammar, final IGrammarRule p_rule )
     {
         return null;
     }
 
     @Override
-    protected final String terminal( final IGrammarTerminal p_terminal )
+    protected String terminal( final IGrammarComplexElement p_grammar, final IGrammarTerminal p_terminal )
     {
         return null;
     }
 
     @Override
-    protected final String cardinality( final IGrammarElement.ECardinality p_cardinality, final String p_inner )
+    protected String cardinality( final IGrammarComplexElement p_grammar, final IGrammarElement.ECardinality p_cardinality, final String p_inner )
     {
         return null;
     }
 
     @Override
-    protected final String sequence( final IGrammarCollection p_input )
+    protected String sequence( final IGrammarComplexElement p_grammar, final IGrammarCollection p_input )
     {
         return null;
     }
 
     @Override
-    protected final String choice( final IGrammarChoice p_input )
+    protected String choice( final IGrammarComplexElement p_grammar, final IGrammarChoice p_input )
     {
         return null;
     }
 
     @Override
-    protected final String group( final IGrammarGroup p_group )
+    protected String group( final IGrammarComplexElement p_grammar, final IGrammarGroup p_group )
     {
         return null;
     }
 
     @Override
-    protected final String terminal( final IGrammarSimpleElement<?> p_value )
+    protected String terminal( final IGrammarComplexElement p_grammar, final IGrammarSimpleElement<?> p_value )
     {
         return null;
     }
+
+    @Override
+    protected String identifier( final IGrammarComplexElement p_grammar, final IGrammarIdentifier p_element )
+    {
+        return null;
+    }
+
 
 }

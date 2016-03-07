@@ -284,7 +284,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
     @Override
     public final IGrammarElement visitRuleref( final ANTLRv4Parser.RulerefContext p_context )
     {
-        return new CGrammarIdentifier( p_context.getText() );
+        return new CGrammarIdentifier( p_context.RULE_REF().getText() );
     }
 
 
