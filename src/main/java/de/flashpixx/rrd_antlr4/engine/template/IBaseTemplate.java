@@ -122,7 +122,7 @@ public abstract class IBaseTemplate implements ITemplate
     protected String map( final IGrammarElement p_element )
     {
         if ( p_element instanceof IGrammarIdentifier )
-            return this.identifier( (IGrammarIdentifier) p_element );
+            return this.nonterminal( (IGrammarIdentifier) p_element );
 
         if ( p_element instanceof IGrammarRule )
             return this.rule( (IGrammarRule) p_element );
@@ -143,8 +143,7 @@ public abstract class IBaseTemplate implements ITemplate
         if ( p_element instanceof IGrammarSequence )
             return this.cardinality( p_element.cardinality(), this.sequence( (IGrammarSequence) p_element ) );
 
-
-        throw new IllegalStateException( p_element.getClass().getSimpleName() );
+        return "";
     }
 
     /**
@@ -154,14 +153,6 @@ public abstract class IBaseTemplate implements ITemplate
      * @return string represenation
      */
     protected abstract String rule( final IGrammarRule p_rule );
-
-    /**
-     * creates a terminal
-     *
-     * @param p_terminal terminal element
-     * @return string represenation
-     */
-    protected abstract String terminal( final IGrammarTerminal p_terminal );
 
     /**
      * sets the cardinality
@@ -205,11 +196,19 @@ public abstract class IBaseTemplate implements ITemplate
     protected abstract String terminal( final IGrammarSimpleElement<?> p_value );
 
     /**
-     * creates an identifier
+     * creates a terminal
+     *
+     * @param p_terminal terminal element
+     * @return string represenation
+     */
+    protected abstract String terminal( final IGrammarTerminal p_terminal );
+
+    /**
+     * creates an non-terminal
      *
      * @param p_element identifier element
      * @return string represenation
      */
-    protected abstract String identifier( final IGrammarIdentifier p_element );
+    protected abstract String nonterminal( final IGrammarIdentifier p_element );
 
 }

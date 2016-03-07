@@ -119,7 +119,7 @@ public final class CHTML extends IBaseTemplate
                                        StringUtils.join(
                                                i.getValue().keySet().stream()
                                                 .sorted( ( n, m ) -> n.compareToIgnoreCase( m ) )
-                                                .map( j -> MessageFormat.format( "<li><a href=\"#{0}\">{1}</a></li>\n", ( i.getKey() + "_" + j ).toLowerCase(),
+                                                .map( j -> MessageFormat.format( "<li><a href=\"#{0}\">{1}</a></li>\n", this.linkhash( j ),
                                                                                  j.toLowerCase()
                                                 ) )
                                                 .collect( Collectors.toList() ),
@@ -242,10 +242,10 @@ public final class CHTML extends IBaseTemplate
     }
 
     @Override
-    protected final String identifier( final IGrammarIdentifier p_element )
+    protected final String nonterminal( final IGrammarIdentifier p_element )
     {
         return MessageFormat.format(
-                "Terminal({0}, {1})",
+                "NonTerminal({0}, {1})",
                 "'" + p_element.get() + "'",
                 "'#" + this.linkhash( p_element.get() ) + "'"
         );

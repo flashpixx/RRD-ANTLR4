@@ -119,7 +119,7 @@ public final class CLaTeX extends IBaseTemplate
     }
 
     @Override
-    protected String identifier( final IGrammarIdentifier p_element )
+    protected String nonterminal( final IGrammarIdentifier p_element )
     {
         return null;
     }
