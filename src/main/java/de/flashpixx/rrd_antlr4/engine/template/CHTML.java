@@ -32,9 +32,7 @@ import de.flashpixx.rrd_antlr4.antlr.IGrammarComplexElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarGroup;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarIdentifier;
-import de.flashpixx.rrd_antlr4.antlr.IGrammarRule;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarSimpleElement;
-import de.flashpixx.rrd_antlr4.antlr.IGrammarTerminal;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -226,13 +224,7 @@ public final class CHTML extends IBaseTemplate
     }
 
     @Override
-    protected final String terminal( final IGrammarTerminal p_terminal )
-    {
-        return this.map( p_terminal.children() );
-    }
-
-    @Override
-    protected final String terminal( final IGrammarSimpleElement<?> p_value )
+    protected final String terminalvalue( final IGrammarSimpleElement<?> p_value )
     {
         return MessageFormat.format(
                 "Terminal({0}, {1})",
@@ -249,12 +241,6 @@ public final class CHTML extends IBaseTemplate
                 "'" + p_element.get() + "'",
                 "'#" + this.linkhash( p_element.get() ) + "'"
         );
-    }
-
-    @Override
-    protected final String rule( final IGrammarRule p_rule )
-    {
-        return this.map( p_rule.children() );
     }
 
     @Override

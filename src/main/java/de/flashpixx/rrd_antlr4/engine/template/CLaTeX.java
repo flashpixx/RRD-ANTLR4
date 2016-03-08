@@ -29,9 +29,7 @@ import de.flashpixx.rrd_antlr4.antlr.IGrammarComplexElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarGroup;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarIdentifier;
-import de.flashpixx.rrd_antlr4.antlr.IGrammarRule;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarSimpleElement;
-import de.flashpixx.rrd_antlr4.antlr.IGrammarTerminal;
 
 import java.nio.file.Path;
 
@@ -77,18 +75,6 @@ public final class CLaTeX extends IBaseTemplate
     }
 
     @Override
-    protected String rule( final IGrammarRule p_rule )
-    {
-        return null;
-    }
-
-    @Override
-    protected String terminal( final IGrammarTerminal p_terminal )
-    {
-        return null;
-    }
-
-    @Override
     protected String cardinality( final IGrammarElement.ECardinality p_cardinality, final String p_inner )
     {
         return null;
@@ -113,7 +99,7 @@ public final class CLaTeX extends IBaseTemplate
     }
 
     @Override
-    protected String terminal( final IGrammarSimpleElement<?> p_value )
+    protected String terminalvalue( final IGrammarSimpleElement<?> p_value )
     {
         return null;
     }

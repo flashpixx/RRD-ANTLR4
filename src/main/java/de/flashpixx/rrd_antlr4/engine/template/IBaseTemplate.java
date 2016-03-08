@@ -128,7 +128,7 @@ public abstract class IBaseTemplate implements ITemplate
             return this.rule( (IGrammarRule) p_element );
 
         if ( p_element instanceof IGrammarSimpleElement<?> )
-            return this.terminal( (IGrammarSimpleElement<?>) p_element );
+            return this.terminalvalue( (IGrammarSimpleElement<?>) p_element );
 
         if ( p_element instanceof IGrammarTerminal )
             return this.cardinality( p_element.cardinality(), this.terminal( ( (IGrammarTerminal) p_element ) ) );
@@ -152,7 +152,10 @@ public abstract class IBaseTemplate implements ITemplate
      * @param p_rule rule element
      * @return string represenation
      */
-    protected abstract String rule( final IGrammarRule p_rule );
+    protected String rule( final IGrammarRule p_rule )
+    {
+        return this.map( p_rule.children() );
+    }
 
     /**
      * sets the cardinality
@@ -193,7 +196,7 @@ public abstract class IBaseTemplate implements ITemplate
      * @param p_value terminal value element
      * @return string represenation
      */
-    protected abstract String terminal( final IGrammarSimpleElement<?> p_value );
+    protected abstract String terminalvalue( final IGrammarSimpleElement<?> p_value );
 
     /**
      * creates a terminal
@@ -201,7 +204,10 @@ public abstract class IBaseTemplate implements ITemplate
      * @param p_terminal terminal element
      * @return string represenation
      */
-    protected abstract String terminal( final IGrammarTerminal p_terminal );
+    protected String terminal( final IGrammarTerminal p_terminal )
+    {
+        return this.map( p_terminal.children() );
+    }
 
     /**
      * creates an non-terminal
