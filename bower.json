@@ -3,6 +3,7 @@
   "private": true,
   "dependencies": {
     "railroad-diagrams" : "https://github.com/tabatkins/railroad-diagrams.git#gh-pages",
-    "jquery" : "~2.2.1"
+    "jquery" : "~2.2.1",
+    "jquery-ui" : "~1.11.4"
   }
 }

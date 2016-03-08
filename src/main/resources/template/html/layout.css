@@ -172,6 +172,13 @@ svg.railroad-diagram rect[rx~="10"] {
     left: 0.5em;
     margin-right: -50%;
 }
+.ui-state-highlight {
+	border: 1px solid #fed22f;
+	background: #ffe45c;
+	color: #363636;
+	height: 65px;
+	opacity: 0.4;
+}
 @media print {
     #rulemenu {
         display: none !important;

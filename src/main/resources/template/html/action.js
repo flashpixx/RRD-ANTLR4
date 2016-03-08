@@ -11,4 +11,8 @@ jQuery( document ).ready(function() {
         jQuery("#"+jQuery(this).attr("data-ruleset") ).fadeToggle();
     });
 
+    // rule-elements are sortable
+    jQuery( ".ruleelements" ).sortable({ items: ".ruledetail", placeholder: "ui-state-highlight" });
+    jQuery( ".ruleelements" ).disableSelection();
+
 });
