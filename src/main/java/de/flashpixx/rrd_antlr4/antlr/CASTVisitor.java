@@ -228,7 +228,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
         if ( p_context.ebnf() != null )
             return this.visitEbnf( p_context.ebnf() );
 
-        return this.terminalvalue( p_context.getText() );
+        return null;
     }
 
     @Override
@@ -249,11 +249,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
         return new CGrammarGroup( this.visitAltList( p_context.altList() ) );
     }
 
-    @Override
-    public final IGrammarElement visitLexerAtom( final ANTLRv4Parser.LexerAtomContext p_context )
-    {
-        return this.terminalvalue( p_context.getText() );
-    }
+
 
     @Override
     public final IGrammarElement visitTerminal( final ANTLRv4Parser.TerminalContext p_context )
