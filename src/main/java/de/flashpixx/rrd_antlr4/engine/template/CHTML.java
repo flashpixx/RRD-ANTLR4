@@ -176,7 +176,12 @@ public final class CHTML extends IBaseTemplate
                         "<a name=\"{0}\"></a>" +
                         "<h5>{1}</h5>" +
                         "<p>{2}</p>" +
-                        "<p><script>Diagram({3}).addTo();</script></p>" +
+                        "<p><script>" +
+                        "var l_rrd = Diagram({3}).toSVG();" +
+                        "l_rrd.id = \"svg_{0}\";" +
+                        "var l_script = document.getElementsByTagName(\"script\");" +
+                        "l_script[l_script.length - 1].parentNode.appendChild(l_rrd);" +
+                        "</script></p>" +
                         "</div>",
                         this.linkhash( p_element.id() ),
                         p_element.id(),
