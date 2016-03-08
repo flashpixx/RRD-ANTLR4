@@ -122,13 +122,13 @@ public abstract class IBaseTemplate implements ITemplate
     protected String map( final IGrammarElement p_element )
     {
         if ( p_element instanceof IGrammarIdentifier )
-            return this.nonterminal( (IGrammarIdentifier) p_element );
+            return this.cardinality( p_element.cardinality(), this.nonterminal( (IGrammarIdentifier) p_element ) );
 
         if ( p_element instanceof IGrammarRule )
-            return this.rule( (IGrammarRule) p_element );
+            return this.cardinality( p_element.cardinality(), this.rule( (IGrammarRule) p_element ) );
 
         if ( p_element instanceof IGrammarSimpleElement<?> )
-            return this.terminalvalue( (IGrammarSimpleElement<?>) p_element );
+            return this.cardinality( p_element.cardinality(), this.terminalvalue( (IGrammarSimpleElement<?>) p_element ) );
 
         if ( p_element instanceof IGrammarTerminal )
             return this.cardinality( p_element.cardinality(), this.terminal( ( (IGrammarTerminal) p_element ) ) );

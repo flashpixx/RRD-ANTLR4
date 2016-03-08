@@ -92,15 +92,9 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
     }
 
     @Override
-    public final IGrammarElement visitId( final ANTLRv4Parser.IdContext p_context )
-    {
-        return new CGrammarIdentifier( p_context.getText() );
-    }
-
-    @Override
     public final IGrammarElement visitParserRuleSpec( final ANTLRv4Parser.ParserRuleSpecContext p_context )
     {
-        m_template.element(
+        return m_template.element(
                 m_grammar,
                 new CGrammarRule(
                         p_context.RULE_REF().getText(),
@@ -108,7 +102,6 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
                         this.visitRuleBlock( p_context.ruleBlock() )
                 )
         );
-        return null;
     }
 
     @Override
@@ -148,7 +141,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
     public final IGrammarElement visitLexerRuleSpec( final ANTLRv4Parser.LexerRuleSpecContext p_context )
     {
         // Element Push
-        m_template.element(
+        return m_template.element(
                 m_grammar,
                 new CGrammarNonTerminal(
                         p_context.TOKEN_REF().getText(),
@@ -156,7 +149,6 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
                         this.visitLexerRuleBlock( p_context.lexerRuleBlock() )
                 )
         );
-        return null;
     }
 
     @Override
@@ -217,6 +209,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
                     this.visitLabeledElement( p_context.labeledElement() )
             );
 
+
         if ( p_context.atom() != null )
             return this.cardinality(
                     p_context.ebnfSuffix() != null
@@ -227,6 +220,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
 
         if ( p_context.ebnf() != null )
             return this.visitEbnf( p_context.ebnf() );
+
 
         return null;
     }
@@ -271,6 +265,12 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
     public final IGrammarElement visitRuleref( final ANTLRv4Parser.RulerefContext p_context )
     {
         return new CGrammarIdentifier( p_context.RULE_REF().getText() );
+    }
+
+    @Override
+    public final IGrammarElement visitId( final ANTLRv4Parser.IdContext p_context )
+    {
+        return new CGrammarIdentifier( p_context.getText() );
     }
 
 
