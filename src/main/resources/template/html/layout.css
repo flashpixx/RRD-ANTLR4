@@ -156,7 +156,7 @@ svg.railroad-diagram rect[rx~="10"] {
 }
 .ruledetail h5:before,
 .ruledetail h5:after {
-    width: 75%;
+    width: 100%;
     content: "";
     height: 1px;
     position: relative;
@@ -166,7 +166,7 @@ svg.railroad-diagram rect[rx~="10"] {
 }
 .ruledetail h5:before {
     right: 0.5em;
-    margin-left: -70%;
+    margin-left: -97%;
 }
 .ruledetail h5:after {
     left: 0.5em;
