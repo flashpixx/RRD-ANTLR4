@@ -267,9 +267,11 @@ pre {
   overflow: auto;
   padding: 6px 10px;
   border-radius: 3px; }
-  pre code, pre tt {
+
+pre code, pre tt {
     background-color: transparent;
-    border: none; }
+    border: none;
+}
 
 sup {
     font-size: 0.83em;
@@ -278,10 +280,6 @@ sup {
 }
 * {
 	-webkit-print-color-adjust: exact;
-}
-
-svg.railroad-diagram {
-    background-color: transparent;
 }
 
 #grammartitle {
@@ -304,4 +302,14 @@ svg.railroad-diagram {
 .ruledetail {
     padding: 0.5em;
     border: 1px solid #cccccc;
+}
+
+
+
+svg.railroad-diagram {
+    background-color: transparent;
+}
+
+svg.railroad-diagram rect[rx~="10"] {
+    fill: hsl(210,100%,85%);
 }

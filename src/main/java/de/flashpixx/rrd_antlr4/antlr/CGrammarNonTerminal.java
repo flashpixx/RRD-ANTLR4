@@ -50,7 +50,8 @@ public final class CGrammarNonTerminal implements IGrammarTerminal
 
     /**
      * ctor
-     *  @param p_id ID
+     *
+     * @param p_id ID
      * @param p_documentation documentation
      * @param p_element elements
      */
@@ -65,7 +66,8 @@ public final class CGrammarNonTerminal implements IGrammarTerminal
 
     /**
      * ctor
-     *  @param p_id ID
+     *
+     * @param p_id ID
      * @param p_documentation documentation
      * @param p_cardinality cardinality
      * @param p_element elements

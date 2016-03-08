@@ -48,7 +48,8 @@ public final class CGrammarRule implements IGrammarRule
 
     /**
      * ctor
-     *  @param p_id rule ID
+     *
+     * @param p_id rule ID
      * @param p_documentation comment
      * @param p_element grammar elements
      */

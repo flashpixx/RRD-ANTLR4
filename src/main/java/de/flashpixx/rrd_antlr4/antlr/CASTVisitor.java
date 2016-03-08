@@ -29,6 +29,8 @@ import de.flashpixx.rrd_antlr4.engine.template.ITemplate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 
 
@@ -232,12 +234,10 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
                     this.visitAtom( p_context.atom() )
             );
 
-        if (p_context.ebnf() != null)
+        if ( p_context.ebnf() != null )
             return this.visitEbnf( p_context.ebnf() );
 
-        return new CGrammarTerminalValue<>(
-                this.cleanString( p_context.getText() )
-        );
+        return this.terminalvalue( p_context.getText() );
     }
 
     @Override
@@ -261,14 +261,13 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
     @Override
     public final IGrammarElement visitLexerAtom( final ANTLRv4Parser.LexerAtomContext p_context )
     {
-        // Terminal & NonTermial
-        return new CGrammarTerminalValue<>( p_context.getText() );
+        return this.terminalvalue( p_context.getText() );
     }
 
     @Override
     public final IGrammarElement visitTerminal( final ANTLRv4Parser.TerminalContext p_context )
     {
-        return new CGrammarTerminalValue(
+        return this.terminalvalue(
                 p_context.TOKEN_REF() != null
                 ? p_context.TOKEN_REF().getText()
                 : p_context.STRING_LITERAL().getText()
@@ -278,7 +277,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
     @Override
     public final IGrammarElement visitLexerElement( final ANTLRv4Parser.LexerElementContext p_context )
     {
-        return new CGrammarTerminalValue<>( this.cleanString( p_context.getText() ) );
+        return this.terminalvalue( p_context.getText() );
     }
 
     @Override
@@ -376,6 +375,28 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
             return p_element.cardinality( IGrammarElement.ECardinality.OPTIONAL );
 
         return p_element;
+    }
+
+    /**
+     * generates a terminal element with data
+     *
+     * @param p_value data string
+     * @return grammar terminal element
+     */
+    private IGrammarElement terminalvalue( final String p_value )
+    {
+        final String l_value = this.cleanString( p_value );
+
+        // try to compile string as regular expression pattern - otherwise use string
+        try
+        {
+            return new CGrammarTerminalValue<>( Pattern.compile( l_value ) );
+        }
+        catch ( final PatternSyntaxException p_exception )
+        {
+        }
+
+        return new CGrammarTerminalValue<>( l_value );
     }
 
 }

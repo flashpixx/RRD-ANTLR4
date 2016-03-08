@@ -49,10 +49,9 @@ public abstract class IGrammarBaseCollection implements IGrammarCollection
     /**
      * ctor
      *
-     * @note filtering of not-null values
-     *
      * @param p_cardinality cardinality
      * @param p_data data
+     * @note filtering of not-null values
      */
     protected IGrammarBaseCollection( final ECardinality p_cardinality, final List<IGrammarElement> p_data )
     {

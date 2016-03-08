@@ -227,9 +227,9 @@ public final class CHTML extends IBaseTemplate
     protected final String terminalvalue( final IGrammarSimpleElement<?> p_value )
     {
         return MessageFormat.format(
-                "Terminal({0}, {1})",
-                "'" + StringEscapeUtils.escapeEcmaScript( p_value.get() ) + "'",
-                "'#" + this.linkhash( p_value.get() ) + "'"
+                "Terminal(''{0}'', ''{1}'')",
+                StringEscapeUtils.escapeEcmaScript( StringEscapeUtils.escapeEcmaScript( p_value.get().toString() ) ),
+                this.linkhash( p_value.get().toString() )
         );
     }
 
@@ -237,9 +237,9 @@ public final class CHTML extends IBaseTemplate
     protected final String nonterminal( final IGrammarIdentifier p_element )
     {
         return MessageFormat.format(
-                "NonTerminal({0}, {1})",
-                "'" + p_element.get() + "'",
-                "'#" + this.linkhash( p_element.get() ) + "'"
+                "NonTerminal(''{0}'', ''#{1}'')",
+                p_element.get(),
+                this.linkhash( p_element.get() )
         );
     }
 
