@@ -126,14 +126,14 @@ public final class CHTML extends IBaseTemplate
                                      )
                                )
                                .collect( Collectors.toList() ),
-                        ""
+                        "\n\n"
                 ),
 
                 // set rules of diagrams
                 "%rules%", StringUtils.join(
                         m_rules.rowMap().entrySet().stream().sorted( ( n, m ) -> n.getKey().compareToIgnoreCase( m.getKey() ) )
                                .map( i -> MessageFormat.format(
-                                       "<div class=\"elements\" id=\"rules_{0}\">" +
+                                       "<div class=\"ruleelements\" id=\"rules_{0}\">" +
                                        "<h2>{0}</h2>" +
                                        "\n{1}\n" +
                                        "</div>",
@@ -148,7 +148,7 @@ public final class CHTML extends IBaseTemplate
                                      )
                                )
                                .collect( Collectors.toList() ),
-                        ""
+                        "\n\n"
                 )
         );
     }

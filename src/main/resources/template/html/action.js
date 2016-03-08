@@ -10,4 +10,5 @@ jQuery( document ).ready(function() {
     jQuery( ".grammarlisthead" ).click( function(p_event) {
         jQuery("#"+jQuery(this).attr("data-ruleset") ).fadeToggle();
     });
+
 });
