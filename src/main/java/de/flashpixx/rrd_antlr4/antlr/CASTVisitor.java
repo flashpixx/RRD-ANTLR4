@@ -145,13 +145,6 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
     }
 
     @Override
-    public final IGrammarElement visitRuleSpec( final ANTLRv4Parser.RuleSpecContext p_context )
-    {
-        // Element Push
-        return super.visitRuleSpec( p_context );
-    }
-
-    @Override
     public final IGrammarElement visitLexerRuleSpec( final ANTLRv4Parser.LexerRuleSpecContext p_context )
     {
         // Element Push
@@ -198,9 +191,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
     @Override
     public final IGrammarElement visitLexerAlt( final ANTLRv4Parser.LexerAltContext p_context )
     {
-        // Sequence
-
-        // ignoring lexer command rule
+        // Sequence - ignoring lexer command rule
         return this.visitLexerElements( p_context.lexerElements() );
     }
 

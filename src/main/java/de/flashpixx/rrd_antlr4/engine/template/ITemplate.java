@@ -67,6 +67,7 @@ public interface ITemplate
 
     /**
      * is called if any grammar element is completed
+     *
      * @param p_grammar grammar
      * @param p_element element
      * @return grammar object reference

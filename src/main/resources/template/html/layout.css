@@ -157,3 +157,11 @@ svg.railroad-diagram {
 svg.railroad-diagram rect[rx~="10"] {
     fill: hsl(210, 100%, 85%);
 }
+@media print
+{
+    #rulemenu
+    {
+        display: none !important;
+        height: 0;
+    }
+}
