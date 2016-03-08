@@ -164,7 +164,12 @@ public final class CCommon
     {
         if ( p_file.exists() )
             return p_file.toURI().normalize().toURL();
-        return CCommon.class.getClassLoader().getResource( p_file.toString().replace( File.separator, "/" ) ).toURI().normalize().toURL();
+
+        final URL l_url = CCommon.class.getClassLoader().getResource( p_file.toString().replace( File.separator, "/" ) );
+        if ( l_url == null )
+            throw new IllegalArgumentException( CCommon.getLanguageString( CCommon.class, "filenotfound", p_file ) );
+
+        return l_url.toURI().normalize().toURL();
     }
 
     /**
