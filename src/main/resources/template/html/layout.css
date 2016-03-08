@@ -144,12 +144,6 @@ ol:first-child {
 }
 .ruledetail {
     padding: 0.5em;
-    border: 1px solid #cccccc;
-    border-bottom: none;
-    border-collapse: collapse;
-}
-.ruledetail:last-child {
-    border-bottom: 1px solid #cccccc;
 }
 svg.railroad-diagram {
     background-color: transparent;
@@ -157,11 +151,36 @@ svg.railroad-diagram {
 svg.railroad-diagram rect[rx~="10"] {
     fill: hsl(210, 100%, 85%);
 }
-@media print
-{
-    #rulemenu
-    {
+.ruledetail h5 {
+    overflow: hidden;
+}
+.ruledetail h5:before,
+.ruledetail h5:after {
+    width: 75%;
+    content: "";
+    height: 1px;
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    background-color: #cccccc;
+}
+.ruledetail h5:before {
+    right: 0.5em;
+    margin-left: -70%;
+}
+.ruledetail h5:after {
+    left: 0.5em;
+    margin-right: -50%;
+}
+@media print {
+    #rulemenu {
         display: none !important;
         height: 0;
+    }
+    .ruledetail {
+        page-break-inside: avoid;
+    }
+    .ruledetail h5 {
+        border-bottom: 1px solid #cccccc;
     }
 }
