@@ -24,7 +24,11 @@
 package de.flashpixx.rrd_antlr4.antlr;
 
 import de.flashpixx.rrd_antlr4.CStringReplace;
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CommonTokenStream;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -111,6 +115,7 @@ public final class CCommon
      * @param p_value data string
      * @return grammar terminal element
      */
+    @SuppressWarnings( "unchecked" )
     public static IGrammarElement terminalvalue( final String p_value )
     {
         final String l_value = cleanString( p_value );
@@ -120,9 +125,7 @@ public final class CCommon
         {
             final Pattern l_pattern = Pattern.compile( l_value );
 
-            /*
-            @todo parse regular expression
-            new CASTPCRE().visit(
+            return (IGrammarElement) new CASTVisitorPCRE().visit(
                     new PCREParser(
                             new CommonTokenStream(
                                     new PCRELexer(
@@ -131,11 +134,11 @@ public final class CCommon
                             )
                     ).parse()
             );
-            */
 
-            return new CGrammarTerminalValue<>( l_pattern );
+
+            //return new CGrammarTerminalValue<>( l_pattern );
         }
-        catch ( final PatternSyntaxException p_exception )
+        catch ( final PatternSyntaxException | IOException p_exception )
         {
         }
 

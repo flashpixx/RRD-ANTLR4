@@ -25,7 +25,7 @@ package de.flashpixx.rrd_antlr4.engine;
 
 import de.flashpixx.rrd_antlr4.antlr.ANTLRv4Lexer;
 import de.flashpixx.rrd_antlr4.antlr.ANTLRv4Parser;
-import de.flashpixx.rrd_antlr4.antlr.CASTVisitor;
+import de.flashpixx.rrd_antlr4.antlr.CASTVisitorAntLR;
 import de.flashpixx.rrd_antlr4.engine.template.ITemplate;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -108,7 +108,7 @@ public final class CEngine
     throws IOException
     {
         // lexing and parsing the input grammar file
-        final CASTVisitor l_visitor = new CASTVisitor( p_template, p_docuclean );
+        final CASTVisitorAntLR l_visitor = new CASTVisitorAntLR( p_template, p_docuclean );
         l_visitor.visit(
                 new ANTLRv4Parser(
                         new CommonTokenStream(

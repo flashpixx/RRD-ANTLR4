@@ -98,17 +98,17 @@ public final class CLaTeX extends IBaseTemplate
                 "-rules-", StringUtils.join(
                         m_rulestext.rowMap().entrySet().stream().sorted( ( n, m ) -> n.getKey().compareToIgnoreCase( m.getKey() ) )
                                    .map( i -> MessageFormat.format(
-                                       "\\section*\\{{0}\\}\n{1}",
-                                       CCommon.getLanguageString( this, "subsection", i.getKey() ),
-                                       StringUtils.join(
-                                               i.getValue().entrySet().stream()
-                                                .sorted( ( n, m ) -> n.getKey().compareToIgnoreCase( m.getKey() ) )
-                                                .map( j -> j.getValue() )
-                                                .collect( Collectors.toList() ),
-                                               "\n"
-                                       ).trim()
-                                     )
-                               )
+                                           "\\section*\\{{0}\\}\n{1}",
+                                           CCommon.getLanguageString( this, "subsection", i.getKey() ),
+                                           StringUtils.join(
+                                                   i.getValue().entrySet().stream()
+                                                    .sorted( ( n, m ) -> n.getKey().compareToIgnoreCase( m.getKey() ) )
+                                                    .map( j -> j.getValue() )
+                                                    .collect( Collectors.toList() ),
+                                                   "\n"
+                                           ).trim()
+                                         )
+                                   )
                                    .collect( Collectors.toList() ),
                         "\n\n"
                 )

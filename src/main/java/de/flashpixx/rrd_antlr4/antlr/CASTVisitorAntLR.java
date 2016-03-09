@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
  * AntLR 4 AST visitor of AntLR 4 grammar file
  */
 @SuppressWarnings( {"all", "warnings", "unchecked", "unused", "cast"} )
-public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
+public final class CASTVisitorAntLR extends ANTLRv4ParserBaseVisitor<IGrammarElement>
 {
     /**
      * exporting template
@@ -59,7 +59,7 @@ public final class CASTVisitor extends ANTLRv4ParserBaseVisitor<IGrammarElement>
      * @param p_template template
      * @param p_docuclean set with regex for documentation cleanup
      */
-    public CASTVisitor( final ITemplate p_template, final Set<String> p_docuclean )
+    public CASTVisitorAntLR( final ITemplate p_template, final Set<String> p_docuclean )
     {
         m_template = p_template;
         m_docuclean = p_docuclean;
