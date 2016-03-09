@@ -109,9 +109,14 @@ public final class CEngine
     {
         // lexing and parsing the input grammar file
         final CASTVisitor l_visitor = new CASTVisitor( p_template, p_docuclean );
-        l_visitor.visit( new ANTLRv4Parser(
-                                 new CommonTokenStream( new ANTLRv4Lexer( new ANTLRInputStream( new FileInputStream( p_grammar ) ) ) )
-                         ).grammarSpec()
+        l_visitor.visit(
+                new ANTLRv4Parser(
+                        new CommonTokenStream(
+                                new ANTLRv4Lexer(
+                                        new ANTLRInputStream( new FileInputStream( p_grammar ) )
+                                )
+                        )
+                ).grammarSpec()
         );
 
         return l_visitor.getGrammarImports().stream()
