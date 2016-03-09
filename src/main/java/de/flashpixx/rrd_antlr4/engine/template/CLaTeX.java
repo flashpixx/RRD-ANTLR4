@@ -23,6 +23,8 @@
 
 package de.flashpixx.rrd_antlr4.engine.template;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarChoice;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarCollection;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarComplexElement;
@@ -31,6 +33,9 @@ import de.flashpixx.rrd_antlr4.antlr.IGrammarGroup;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarIdentifier;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarSimpleElement;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 
 
@@ -39,6 +44,14 @@ import java.nio.file.Path;
  */
 public final class CLaTeX extends IBaseTemplate
 {
+    /**
+     * main grammar
+     */
+    private IGrammarComplexElement m_grammar;
+    /**
+     * rules table
+     */
+    private final Table<String, String, String> m_rules = HashBasedTable.create();
 
     /**
      * ctor
@@ -50,21 +63,38 @@ public final class CLaTeX extends IBaseTemplate
         super( p_name );
     }
 
+
+
     @Override
-    public final void preprocess( final Path p_output )
+    public final void preprocess( final Path p_output ) throws IOException, URISyntaxException
     {
 
     }
 
     @Override
-    public final void postprocess( final Path p_output )
+    public final void postprocess( final Path p_output ) throws IOException, URISyntaxException
     {
+        this.copy( "index.tex", p_output );
 
+        // replace content
+        this.replace(
+                new File( p_output.toString(), "/index.tex" ),
+
+                // set title
+                "-title-", m_grammar.id(),
+
+                // set grammar documentation
+                "-grammardocumentation-", m_grammar.documentation()
+        );
     }
 
     @Override
     public final IGrammarComplexElement grammar( final IGrammarComplexElement p_grammar )
     {
+        // set only if is not net
+        if ( m_grammar == null )
+            m_grammar = p_grammar;
+
         return p_grammar;
     }
 
@@ -75,37 +105,37 @@ public final class CLaTeX extends IBaseTemplate
     }
 
     @Override
-    protected String cardinality( final IGrammarElement.ECardinality p_cardinality, final String p_inner )
+    protected final String cardinality( final IGrammarElement.ECardinality p_cardinality, final String p_inner )
     {
         return null;
     }
 
     @Override
-    protected String sequence( final IGrammarCollection p_input )
+    protected final String sequence( final IGrammarCollection p_input )
     {
         return null;
     }
 
     @Override
-    protected String choice( final IGrammarChoice p_input )
+    protected final String choice( final IGrammarChoice p_input )
     {
         return null;
     }
 
     @Override
-    protected String group( final IGrammarGroup p_group )
+    protected final String group( final IGrammarGroup p_group )
     {
         return null;
     }
 
     @Override
-    protected String terminalvalue( final IGrammarSimpleElement<?> p_value )
+    protected final String terminalvalue( final IGrammarSimpleElement<?> p_value )
     {
         return null;
     }
 
     @Override
-    protected String nonterminal( final IGrammarIdentifier p_element )
+    protected final String nonterminal( final IGrammarIdentifier p_element )
     {
         return null;
     }

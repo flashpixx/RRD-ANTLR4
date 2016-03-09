@@ -46,16 +46,16 @@ public interface ITemplate
     /**
      * preprocessing (before AST visiting)
      *
-     * @param p_outputdirectory output directory
+     * @param p_output output directory
      */
-    void preprocess( final Path p_outputdirectory ) throws IOException, URISyntaxException;
+    void preprocess( final Path p_output ) throws IOException, URISyntaxException;
 
     /**
      * postprocessing (after AST visiting)
      *
-     * @param p_outputdirectory working directory
+     * @param p_output working directory
      */
-    void postprocess( final Path p_outputdirectory ) throws IOException, URISyntaxException;
+    void postprocess( final Path p_output ) throws IOException, URISyntaxException;
 
     /**
      * is called on the grammar definition
