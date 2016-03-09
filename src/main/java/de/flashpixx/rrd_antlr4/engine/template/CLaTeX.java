@@ -25,6 +25,7 @@ package de.flashpixx.rrd_antlr4.engine.template;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
+import de.flashpixx.rrd_antlr4.CCommon;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarChoice;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarCollection;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarComplexElement;
@@ -32,11 +33,14 @@ import de.flashpixx.rrd_antlr4.antlr.IGrammarElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarGroup;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarIdentifier;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarSimpleElement;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
+import java.text.MessageFormat;
+import java.util.stream.Collectors;
 
 
 /**
@@ -81,10 +85,29 @@ public final class CLaTeX extends IBaseTemplate
                 new File( p_output.toString(), "/index.tex" ),
 
                 // set title
-                "-title-", m_grammar.id(),
+                "-title-", CCommon.getLanguageString( this, "section", m_grammar.id() ),
 
                 // set grammar documentation
-                "-grammardocumentation-", m_grammar.documentation()
+                "-grammardocumentation-", m_grammar.documentation(),
+
+                // set rules of diagrams
+                "-rules-", StringUtils.join(
+                        m_rules.rowMap().entrySet().stream().sorted( ( n, m ) -> n.getKey().compareToIgnoreCase( m.getKey() ) )
+                               .map( i -> MessageFormat.format(
+                                       "\\section*\\{{0}\\}\n{1}",
+                                       CCommon.getLanguageString( this, "subsection", i.getKey() ),
+                                       StringUtils.join(
+                                               i.getValue().entrySet().stream()
+                                                .sorted( ( n, m ) -> n.getKey().compareToIgnoreCase( m.getKey() ) )
+                                                .map( j -> j.getValue() )
+                                                .collect( Collectors.toList() ),
+                                               "\n"
+                                       ).trim()
+                                     )
+                               )
+                               .collect( Collectors.toList() ),
+                        "\n\n"
+                )
         );
     }
 
