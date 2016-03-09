@@ -53,9 +53,13 @@ public final class CLaTeX extends IBaseTemplate
      */
     private IGrammarComplexElement m_grammar;
     /**
-     * rules table
+     * rules table for text representation
      */
-    private final Table<String, String, String> m_rules = HashBasedTable.create();
+    private final Table<String, String, String> m_rulestext = HashBasedTable.create();
+    /**
+     * rules table for diagram representation
+     */
+    private final Table<String, String, String> m_rulesdiagram = HashBasedTable.create();
 
     /**
      * ctor
@@ -92,8 +96,8 @@ public final class CLaTeX extends IBaseTemplate
 
                 // set rules of diagrams
                 "-rules-", StringUtils.join(
-                        m_rules.rowMap().entrySet().stream().sorted( ( n, m ) -> n.getKey().compareToIgnoreCase( m.getKey() ) )
-                               .map( i -> MessageFormat.format(
+                        m_rulestext.rowMap().entrySet().stream().sorted( ( n, m ) -> n.getKey().compareToIgnoreCase( m.getKey() ) )
+                                   .map( i -> MessageFormat.format(
                                        "\\section*\\{{0}\\}\n{1}",
                                        CCommon.getLanguageString( this, "subsection", i.getKey() ),
                                        StringUtils.join(
@@ -105,7 +109,7 @@ public final class CLaTeX extends IBaseTemplate
                                        ).trim()
                                      )
                                )
-                               .collect( Collectors.toList() ),
+                                   .collect( Collectors.toList() ),
                         "\n\n"
                 )
         );
