@@ -33,95 +33,29 @@ import java.util.stream.IntStream;
  */
 public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
 {
-
     @Override
-    public final Object visitLetter( final PCREParser.LetterContext p_context )
+    public final Object visitCharacter_class( final PCREParser.Character_classContext p_context )
     {
-        return p_context.getText();
-    }
+        p_context.cc_atom().stream().forEach( i -> {
+            System.out.println( i.getText() );
+        } );
+        System.out.println();
 
-    @Override
-    public final Object visitDigits( final PCREParser.DigitsContext p_context )
-    {
-        return p_context.getText();
-    }
-
-    @Override
-    public final Object visitNumber( final PCREParser.NumberContext p_context )
-    {
-        return p_context.getText();
-    }
-
-    @Override
-    public final Object visitAlpha_nums( final PCREParser.Alpha_numsContext p_context )
-    {
-        return p_context.getText();
+        return null;
     }
 
     @Override
     public final Object visitAtom( final PCREParser.AtomContext p_context )
     {
-        return p_context.getText();
-    }
+        // string / character definition
+        if ( p_context.literal() != null )
+            return p_context.literal().getText();
 
-    @Override
-    public final Object visitDigit( final PCREParser.DigitContext p_context )
-    {
-        return p_context.getText();
-    }
+        // character class like [a-z]
+        if ( p_context.character_class() != null )
+            return this.visitCharacter_class( p_context.character_class() );
 
-    @Override
-    public final Object visitName( final PCREParser.NameContext p_context )
-    {
-        return p_context.getText();
-    }
-
-    @Override
-    public final Object visitCharacter_class( final PCREParser.Character_classContext p_context )
-    {
-        return p_context.getText();
-    }
-
-    @Override
-    public final Object visitLiteral( final PCREParser.LiteralContext p_context )
-    {
-        return p_context.getText();
-    }
-
-    @Override
-    public final Object visitCc_atom( final PCREParser.Cc_atomContext p_context )
-    {
-        return p_context.getText();
-    }
-
-    @Override
-    public final Object visitCc_literal( final PCREParser.Cc_literalContext p_context )
-    {
-        return p_context.getText();
-    }
-
-    @Override
-    public final Object visitShared_literal( final PCREParser.Shared_literalContext p_context )
-    {
-        return p_context.getText();
-    }
-
-    @Override
-    public final Object visitShared_atom( final PCREParser.Shared_atomContext p_context )
-    {
-        return p_context.getText();
-    }
-
-    @Override
-    public final Object visitOctal_char( final PCREParser.Octal_charContext p_context )
-    {
-        return p_context.getText();
-    }
-
-    @Override
-    public final Object visitOctal_digit( final PCREParser.Octal_digitContext p_context )
-    {
-        return p_context.getText();
+        return null;
     }
 
     @Override
@@ -131,124 +65,28 @@ public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
     }
 
     @Override
-    public final Object visitQuantifier_type( final PCREParser.Quantifier_typeContext p_context )
-    {
-        return p_context.getText();
-    }
-
-    @Override
-    public final Object visitBackreference( final PCREParser.BackreferenceContext p_context )
-    {
-        return p_context.getText();
-    }
-
-    @Override
-    public final Object visitBackreference_or_octal( final PCREParser.Backreference_or_octalContext p_context )
-    {
-        return p_context.getText();
-    }
-
-    @Override
-    public final Object visitCapture( final PCREParser.CaptureContext p_context )
-    {
-        return p_context.getText();
-    }
-
-    @Override
-    public final Object visitNon_capture( final PCREParser.Non_captureContext p_context )
-    {
-        return p_context.getText();
-    }
-
-    @Override
-    public final Object visitComment( final PCREParser.CommentContext p_context )
-    {
-        return p_context.getText();
-    }
-
-    @Override
-    public final Object visitOption( final PCREParser.OptionContext p_context )
-    {
-        return p_context.getText();
-    }
-
-    @Override
-    public final Object visitOption_flags( final PCREParser.Option_flagsContext p_context )
-    {
-        return p_context.getText();
-    }
-
-    @Override
-    public final Object visitOption_flag( final PCREParser.Option_flagContext p_context )
-    {
-        return p_context.getText();
-    }
-
-    @Override
-    public final Object visitLook_around( final PCREParser.Look_aroundContext p_context )
-    {
-        return p_context.getText();
-    }
-
-    @Override
-    public final Object visitSubroutine_reference( final PCREParser.Subroutine_referenceContext p_context )
-    {
-        return p_context.getText();
-    }
-
-    @Override
-    public final Object visitConditional( final PCREParser.ConditionalContext p_context )
-    {
-        return p_context.getText();
-    }
-
-    @Override
-    public final Object visitBacktrack_control( final PCREParser.Backtrack_controlContext p_context )
-    {
-        return p_context.getText();
-    }
-
-    @Override
-    public final Object visitNewline_convention( final PCREParser.Newline_conventionContext p_context )
-    {
-        return p_context.getText();
-    }
-
-    @Override
-    public final Object visitCallout( final PCREParser.CalloutContext p_context )
-    {
-        return p_context.getText();
-    }
-
-    @Override
-    public final Object visitNon_close_parens( final PCREParser.Non_close_parensContext p_context )
-    {
-        return p_context.getText();
-    }
-
-    @Override
-    public final Object visitNon_close_paren( final PCREParser.Non_close_parenContext p_context )
-    {
-        return p_context.getText();
-    }
-
-
-
-    @Override
     public final Object visitElement( final PCREParser.ElementContext p_context )
     {
+        //if (p_context.quantifier() != null)
+        //    System.out.println( this.visitQuantifier( p_context.quantifier() ) );
 
-        return super.visitElement( p_context );
+        return this.visitAtom( p_context.atom() );
     }
 
     @Override
     public final Object visitExpr( final PCREParser.ExprContext p_context )
     {
-        final List<?> l_elements = p_context.element().stream().map( i -> i.getText() ).collect( Collectors.toList() );
+        final List<?> l_elements = p_context.element().stream()
+                                            .map( i -> this.visitElement( i ) )
+                                            .filter( i -> i != null )
+                                            .collect( Collectors.toList() );
 
         // strings will be concat into one string, so get all position of grammar elements
-        final List<Integer> l_positiongrammar = IntStream.range( 0, l_elements.size() ).boxed().filter( i -> l_elements.get( i ) instanceof IGrammarElement )
+        final List<Integer> l_positiongrammar = IntStream.range( 0, l_elements.size() )
+                                                         .boxed()
+                                                         .filter( i -> l_elements.get( i ) instanceof IGrammarElement )
                                                          .collect( Collectors.toList() );
+
         if ( l_positiongrammar.isEmpty() )
             return new CGrammarTerminalValue<>( p_context.getText() );
 
