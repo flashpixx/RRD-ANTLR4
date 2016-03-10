@@ -134,9 +134,6 @@ public final class CCommon
                             )
                     ).parse()
             );
-
-
-            //return new CGrammarTerminalValue<>( l_pattern );
         }
         catch ( final PatternSyntaxException | IOException p_exception )
         {

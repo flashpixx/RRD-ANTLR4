@@ -36,6 +36,7 @@ import java.util.stream.IntStream;
  */
 public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
 {
+
     @Override
     public final Object visitCharacter_class( final PCREParser.Character_classContext p_context )
     {
@@ -49,13 +50,48 @@ public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
     @Override
     public final Object visitAtom( final PCREParser.AtomContext p_context )
     {
-        // string / character definition
-        if ( p_context.literal() != null )
-            return p_context.literal().getText();
+        if ( p_context.backreference() != null )
+            System.out.println( "backreference -> " + p_context.getText() );
+
+        if ( p_context.backtrack_control() != null )
+            System.out.println( "backtrack control -> " + p_context.getText() );
 
         // character class like [a-z]
         if ( p_context.character_class() != null )
             return this.visitCharacter_class( p_context.character_class() );
+
+        if ( p_context.callout() != null )
+            System.out.println( "callout -> " + p_context.getText() );
+
+        if ( p_context.Caret() != null )
+            System.out.println( "caret -> " + p_context.getText() );
+
+        if ( p_context.capture() != null )
+            System.out.println( "capture -> " + p_context.getText() );
+
+        if ( p_context.comment() != null )
+            System.out.println( "comment -> " + p_context.getText() );
+
+        if ( p_context.conditional() != null )
+            System.out.println( "conditional -> " + p_context.getText() );
+
+        // dot replaced with a fixed terminal
+        // @bug with =..
+        if ( p_context.Dot() != null )
+            return new CGrammarTerminalValue<>( de.flashpixx.rrd_antlr4.CCommon.getLanguageString( this, "anychar" ) );
+
+        // string / character definition
+        if ( p_context.literal() != null )
+            return p_context.literal().getText();
+
+        if ( p_context.option() != null )
+            System.out.println( "option -> " + p_context.getText() );
+
+        if ( p_context.OneDataUnit() != null )
+            System.out.println( "onedataunit -> " + p_context.getText() );
+
+        if ( p_context.WordBoundary() != null )
+            System.out.println( "word boundary -> " + p_context.getText() );
 
         return null;
     }
@@ -85,7 +121,7 @@ public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
                                  .filter( i -> i != null )
                                  .collect( Collectors.toList() )
                 ).stream()
-                    .map( i -> i instanceof String ? new CGrammarTerminalValue<>( i ) : (IGrammarElement) i )
+                    .map( i -> i instanceof String ? new CGrammarTerminalValue<>( i.toString() ) : (IGrammarElement) i )
                     .collect( Collectors.toList() )
         );
     }
@@ -103,7 +139,11 @@ public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
     @Override
     public final Object visitParse( final PCREParser.ParseContext p_context )
     {
-        return this.visitAlternation( p_context.alternation() );
+        final Object x = this.visitAlternation( p_context.alternation() );
+
+        System.out.println( x );
+        System.out.println( "--------" );
+        return x;
     }
 
     /**
