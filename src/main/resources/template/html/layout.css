@@ -131,14 +131,14 @@ ol:first-child {
     text-align: center;
 }
 #rulemenu {
-    width: 15%;
+    width: 18%;
     float: left;
     padding: 0.5em;
     border: 1px solid #cccccc;
     background: #fefefe;
 }
 #rules {
-    width: 83%;
+    width: 80%;
     float: left;
     margin-left: 1em;
 }
