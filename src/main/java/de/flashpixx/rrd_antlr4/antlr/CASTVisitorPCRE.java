@@ -37,6 +37,14 @@ import java.util.stream.IntStream;
 public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
 {
 
+    /*
+    @Override
+    public final Object visitCapture( final PCREParser.CaptureContext p_context )
+    {
+        return super.visitCapture( p_context );
+    }
+    */
+
     @Override
     public final Object visitCharacter_class( final PCREParser.Character_classContext p_context )
     {
@@ -50,39 +58,45 @@ public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
     @Override
     public final Object visitAtom( final PCREParser.AtomContext p_context )
     {
+        // character class like [a-z]
+        if ( p_context.character_class() != null )
+            return this.visitCharacter_class( p_context.character_class() );
+
+        // dot replaced with a fixed terminal
+        // @bug with =..
+        if ( p_context.Dot() != null )
+            return p_context.Dot().getText();
+        //return new CGrammarTerminalValue<>( de.flashpixx.rrd_antlr4.CCommon.getLanguageString( this, "anychar" ) );
+
+        // string / character definition
+        if ( p_context.literal() != null )
+            return p_context.literal().getText();
+
+        // defines ^
+        if ( p_context.Caret() != null )
+            return p_context.getText();
+
+        // defines a | b | c
+        if ( p_context.capture() != null )
+            return p_context.getText();
+
+
+
+
         if ( p_context.backreference() != null )
             System.out.println( "backreference -> " + p_context.getText() );
 
         if ( p_context.backtrack_control() != null )
             System.out.println( "backtrack control -> " + p_context.getText() );
 
-        // character class like [a-z]
-        if ( p_context.character_class() != null )
-            return this.visitCharacter_class( p_context.character_class() );
-
         if ( p_context.callout() != null )
             System.out.println( "callout -> " + p_context.getText() );
-
-        if ( p_context.Caret() != null )
-            System.out.println( "caret -> " + p_context.getText() );
-
-        if ( p_context.capture() != null )
-            System.out.println( "capture -> " + p_context.getText() );
 
         if ( p_context.comment() != null )
             System.out.println( "comment -> " + p_context.getText() );
 
         if ( p_context.conditional() != null )
             System.out.println( "conditional -> " + p_context.getText() );
-
-        // dot replaced with a fixed terminal
-        // @bug with =..
-        if ( p_context.Dot() != null )
-            return new CGrammarTerminalValue<>( de.flashpixx.rrd_antlr4.CCommon.getLanguageString( this, "anychar" ) );
-
-        // string / character definition
-        if ( p_context.literal() != null )
-            return p_context.literal().getText();
 
         if ( p_context.option() != null )
             System.out.println( "option -> " + p_context.getText() );
@@ -92,6 +106,27 @@ public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
 
         if ( p_context.WordBoundary() != null )
             System.out.println( "word boundary -> " + p_context.getText() );
+
+        if ( p_context.non_capture() != null )
+            System.out.println( "non capture -> " + p_context.getText() );
+
+        if ( p_context.NonWordBoundary() != null )
+            System.out.println( "nonwordboundary -> " + p_context.getText() );
+
+        if ( p_context.EndOfSubject() != null )
+            System.out.println( "endofsubject -> " + p_context.getText() );
+
+        if ( p_context.ExtendedUnicodeChar() != null )
+            System.out.println( "extendedunicodechar -> " + p_context.getText() );
+
+        if ( p_context.StartOfSubject() != null )
+            System.out.println( "startofsubject -> " + p_context.getText() );
+
+        if ( p_context.shared_atom() != null )
+            System.out.println( "sharedatom -> " + p_context.getText() );
+
+        if ( p_context.look_around() != null )
+            System.out.println( "lookaround -> " + p_context.getText() );
 
         return null;
     }
@@ -107,6 +142,8 @@ public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
     {
         //if (p_context.quantifier() != null)
         //    System.out.println( this.visitQuantifier( p_context.quantifier() ) );
+        // @bug quantifier cannot be set on a string, so return value of visitAtom
+        // can be a grammar element or a string
 
         return this.visitAtom( p_context.atom() );
     }
