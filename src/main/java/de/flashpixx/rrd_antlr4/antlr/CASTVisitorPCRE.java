@@ -37,13 +37,11 @@ import java.util.stream.IntStream;
 public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
 {
 
-    /*
     @Override
     public final Object visitCapture( final PCREParser.CaptureContext p_context )
     {
-        return super.visitCapture( p_context );
+        return this.visitAlternation( p_context.alternation() );
     }
-    */
 
     @Override
     public final Object visitCharacter_class( final PCREParser.Character_classContext p_context )
@@ -77,7 +75,7 @@ public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
 
         // defines a | b | c
         if ( p_context.capture() != null )
-            return p_context.getText();
+            return this.visitCapture( p_context.capture() );
 
 
 
