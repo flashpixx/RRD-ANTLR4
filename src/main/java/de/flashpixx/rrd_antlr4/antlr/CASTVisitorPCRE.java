@@ -73,57 +73,9 @@ public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
         if ( p_context.Caret() != null )
             return p_context.getText();
 
-        // defines a | b | c
+        // defines choice a | b | c
         if ( p_context.capture() != null )
             return this.visitCapture( p_context.capture() );
-
-
-
-
-        if ( p_context.backreference() != null )
-            System.out.println( "backreference -> " + p_context.getText() );
-
-        if ( p_context.backtrack_control() != null )
-            System.out.println( "backtrack control -> " + p_context.getText() );
-
-        if ( p_context.callout() != null )
-            System.out.println( "callout -> " + p_context.getText() );
-
-        if ( p_context.comment() != null )
-            System.out.println( "comment -> " + p_context.getText() );
-
-        if ( p_context.conditional() != null )
-            System.out.println( "conditional -> " + p_context.getText() );
-
-        if ( p_context.option() != null )
-            System.out.println( "option -> " + p_context.getText() );
-
-        if ( p_context.OneDataUnit() != null )
-            System.out.println( "onedataunit -> " + p_context.getText() );
-
-        if ( p_context.WordBoundary() != null )
-            System.out.println( "word boundary -> " + p_context.getText() );
-
-        if ( p_context.non_capture() != null )
-            System.out.println( "non capture -> " + p_context.getText() );
-
-        if ( p_context.NonWordBoundary() != null )
-            System.out.println( "nonwordboundary -> " + p_context.getText() );
-
-        if ( p_context.EndOfSubject() != null )
-            System.out.println( "endofsubject -> " + p_context.getText() );
-
-        if ( p_context.ExtendedUnicodeChar() != null )
-            System.out.println( "extendedunicodechar -> " + p_context.getText() );
-
-        if ( p_context.StartOfSubject() != null )
-            System.out.println( "startofsubject -> " + p_context.getText() );
-
-        if ( p_context.shared_atom() != null )
-            System.out.println( "sharedatom -> " + p_context.getText() );
-
-        if ( p_context.look_around() != null )
-            System.out.println( "lookaround -> " + p_context.getText() );
 
         return null;
     }
@@ -155,7 +107,9 @@ public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
                                  .filter( i -> i != null )
                                  .collect( Collectors.toList() )
                 ).stream()
-                    // a string kan be a single dot, so that is "any char"
+
+                    // a string can be a single dot, so that is "any character", but within the
+                    // element visitor rule cannot decide that is an "any character" element
                     .map( i -> i instanceof String
                                ? new CGrammarTerminalValue<>(
                                   i.toString().equals( "." )
@@ -174,6 +128,7 @@ public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
         return CCommon.choice(
                 p_context.expr().stream()
                          .map( i -> (IGrammarElement) this.visitExpr( i ) )
+                         .filter( i -> i != null )
                          .collect( Collectors.toList() )
         );
     }
@@ -182,7 +137,6 @@ public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
     public final Object visitParse( final PCREParser.ParseContext p_context )
     {
         final Object x = this.visitAlternation( p_context.alternation() );
-
         System.out.println( x );
         System.out.println( "--------" );
         return x;
