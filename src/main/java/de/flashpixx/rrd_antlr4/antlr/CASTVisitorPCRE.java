@@ -24,6 +24,8 @@
 package de.flashpixx.rrd_antlr4.antlr;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -81,20 +83,15 @@ public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
     }
 
     @Override
-    public final Object visitQuantifier( final PCREParser.QuantifierContext p_context )
-    {
-        return p_context.getText();
-    }
-
-    @Override
     public final Object visitElement( final PCREParser.ElementContext p_context )
     {
-        if ( p_context.quantifier() != null )
-            System.out.println( this.visitQuantifier( p_context.quantifier() ) );
-        // @bug quantifier cannot be set on a string, so return value of visitAtom
-        // can be a grammar element or a string
-
-        return this.visitAtom( p_context.atom() );
+        // return the atom and a quatifier of the atom
+        return new ImmutablePair<>(
+                this.visitAtom( p_context.atom() ),
+                p_context.quantifier() != null
+                ? p_context.quantifier().getText()
+                : ""
+        );
     }
 
     @Override
@@ -103,20 +100,26 @@ public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
         return CCommon.sequence(
                 this.implode(
                         p_context.element().stream()
-                                 .map( i -> this.visitElement( i ) )
+
+                                 // pair with grammar element or string and cardinality
+                                 .map( i -> (Pair<?, String>) this.visitElement( i ) )
                                  .filter( i -> i != null )
                                  .collect( Collectors.toList() )
                 ).stream()
-                    .map( i ->
-                                  // a string can be a single dot, so that is "any character", but within the
-                                  // element visitor rule cannot decide that is an "any character" element
-                                  i instanceof String
-                                  ? new CGrammarTerminalValue(
-                                          i.equals( "." )
-                                          ? de.flashpixx.rrd_antlr4.CCommon.getLanguageString( this, "anychar" )
-                                          : i
+                    .map( i -> CCommon.cardinality(
+                            i.getRight(),
+
+                            // a string can be a single dot, so that is "any character", but within the
+                            // element visitor rule cannot decide that is an "any character" element
+                            i.getLeft() instanceof String
+                            ? new CGrammarTerminalValue(
+                                    i.getLeft().equals( "." )
+                                    ? de.flashpixx.rrd_antlr4.CCommon.getLanguageString( this, "anychar" )
+                                    : i.getLeft()
                                   )
-                                  : (IGrammarElement) i )
+                            : (IGrammarElement) i.getLeft()
+                          )
+                    )
                     .collect( Collectors.toList() )
         );
     }
@@ -135,34 +138,52 @@ public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
     @Override
     public final Object visitParse( final PCREParser.ParseContext p_context )
     {
-        final Object x = this.visitAlternation( p_context.alternation() );
-        System.out.println( x );
-        System.out.println( "--------" );
-        return x;
+        return this.visitAlternation( p_context.alternation() );
     }
 
     /**
      * implodes a list of any objects, strings
      * will be concated into one string
      *
-     * @param p_list list of objects
-     * @return list with concated objects
+     * @param p_list list of pairs object & quantifier
+     * @return list with concated objects and used quantifier
      */
-    private List<?> implode( final List<?> p_list )
+    private List<Pair<?, String>> implode( final List<Pair<?, String>> p_list )
     {
-        final int l_start = IntStream.range( 0, p_list.size() ).boxed().filter( i -> p_list.get( i ) instanceof String ).findFirst().orElse( -1 );
+        final int l_start = this.filter( 0, p_list );
         if ( l_start < 0 )
             return p_list;
 
-        final int l_end = IntStream.range( l_start + 1, p_list.size() ).boxed().filter( i -> p_list.get( i ) instanceof String ).findFirst().orElse( -1 );
+        final int l_end = this.filter( l_start + 1, p_list );
         if ( l_end < 0 )
             return p_list;
 
-        return this.implode( new LinkedList<Object>()
+        return this.implode( new LinkedList<Pair<?, String>>()
         {{
-            add( StringUtils.join( p_list.subList( l_start, l_end + 1 ), "" ) );
+            add( new ImmutablePair<>(
+                    StringUtils.join( p_list.subList( l_start, l_end + 1 ).stream().map( i -> i.getLeft().toString() ).collect( Collectors.toList() ), "" ),
+                    p_list.get( l_end ).getRight()
+            ) );
+
             if ( l_end < p_list.size() )
                 addAll( CASTVisitorPCRE.this.implode( p_list.subList( l_end + 1, p_list.size() ) ) );
         }} );
     }
+
+    /**
+     * filters the pair list of string or quantifier
+     *
+     * @param p_start start index
+     * @param p_list list
+     * @return end position of a string or quantifier element, -1 on non found
+     */
+    private int filter( final int p_start, final List<Pair<?, String>> p_list )
+    {
+        return IntStream.range( p_start, p_list.size() )
+                        .boxed()
+                        .filter( i -> ( p_list.get( i ).getLeft() instanceof String ) || ( !p_list.get( i ).getRight().isEmpty() ) )
+                        .findFirst()
+                        .orElse( -1 );
+    }
+
 }
