@@ -97,13 +97,13 @@ public final class CCommon
      */
     public static IGrammarElement cardinality( final String p_cardinality, final IGrammarElement p_element )
     {
-        if ( p_cardinality.contains( "+" ) )
+        if ( p_cardinality.startsWith( "+" ) )
             return p_element.cardinality( IGrammarElement.ECardinality.ONEORMORE );
 
-        if ( p_cardinality.contains( "*" ) )
+        if ( p_cardinality.startsWith( "*" ) )
             return p_element.cardinality( IGrammarElement.ECardinality.ZEROORMORE );
 
-        if ( p_cardinality.contains( "?" ) )
+        if ( p_cardinality.startsWith( "?" ) )
             return p_element.cardinality( IGrammarElement.ECardinality.OPTIONAL );
 
         return p_element;

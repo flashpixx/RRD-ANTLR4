@@ -89,8 +89,8 @@ public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
     @Override
     public final Object visitElement( final PCREParser.ElementContext p_context )
     {
-        //if (p_context.quantifier() != null)
-        //    System.out.println( this.visitQuantifier( p_context.quantifier() ) );
+        if ( p_context.quantifier() != null )
+            System.out.println( this.visitQuantifier( p_context.quantifier() ) );
         // @bug quantifier cannot be set on a string, so return value of visitAtom
         // can be a grammar element or a string
 
