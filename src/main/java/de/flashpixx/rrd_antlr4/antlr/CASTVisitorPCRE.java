@@ -107,17 +107,16 @@ public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
                                  .filter( i -> i != null )
                                  .collect( Collectors.toList() )
                 ).stream()
-
-                    // a string can be a single dot, so that is "any character", but within the
-                    // element visitor rule cannot decide that is an "any character" element
-                    .map( i -> i instanceof String
-                               ? new CGrammarTerminalValue<>(
-                                  i.toString().equals( "." )
-                                  ? de.flashpixx.rrd_antlr4.CCommon.getLanguageString( this, "anychar" )
-                                  : i.toString()
-                          )
-                               : (IGrammarElement) i
-                    )
+                    .map( i ->
+                                  // a string can be a single dot, so that is "any character", but within the
+                                  // element visitor rule cannot decide that is an "any character" element
+                                  i instanceof String
+                                  ? new CGrammarTerminalValue(
+                                          i.equals( "." )
+                                          ? de.flashpixx.rrd_antlr4.CCommon.getLanguageString( this, "anychar" )
+                                          : i
+                                  )
+                                  : (IGrammarElement) i )
                     .collect( Collectors.toList() )
         );
     }

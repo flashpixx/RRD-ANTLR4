@@ -118,7 +118,12 @@ public final class CCommon
     @SuppressWarnings( "unchecked" )
     public static IGrammarElement terminalvalue( final String p_value )
     {
-        // try to compile string as regular expression pattern - otherwise use string
+        // a terminal-string starts and ends always with ', so we do
+        // not need to parse th string if this condition fits
+        if ( ( p_value.startsWith( "'" ) ) && ( p_value.endsWith( "'" ) ) )
+            return new CGrammarTerminalValue<>( p_value );
+
+        // try to compile string as regular expression pattern
         try
         {
             final Pattern l_pattern = Pattern.compile( p_value );
@@ -127,7 +132,7 @@ public final class CCommon
                     new PCREParser(
                             new CommonTokenStream(
                                     new PCRELexer(
-                                            new ANTLRInputStream( new ByteArrayInputStream( l_pattern.pattern().getBytes() ) )
+                                            new ANTLRInputStream( new ByteArrayInputStream( p_value.getBytes() ) )
                                     )
                             )
                     ).parse()
@@ -137,9 +142,9 @@ public final class CCommon
         {
         }
 
+        // if any fails, return it directly
         return new CGrammarTerminalValue<>( p_value );
     }
-
 
     /**
      * cleanup comment from doxygen structure
