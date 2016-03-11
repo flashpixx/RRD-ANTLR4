@@ -145,8 +145,8 @@ public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
      * implodes a list of any objects, strings
      * will be concated into one string
      *
-     * @param p_list
-     * @return
+     * @param p_list list of objects
+     * @return list with concated objects
      */
     private List<?> implode( final List<?> p_list )
     {

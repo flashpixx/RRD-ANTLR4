@@ -126,13 +126,11 @@ public final class CCommon
         // try to compile string as regular expression pattern
         try
         {
-            final Pattern l_pattern = Pattern.compile( p_value );
-
             return (IGrammarElement) new CASTVisitorPCRE().visit(
                     new PCREParser(
                             new CommonTokenStream(
                                     new PCRELexer(
-                                            new ANTLRInputStream( new ByteArrayInputStream( p_value.getBytes() ) )
+                                            new ANTLRInputStream( new ByteArrayInputStream( Pattern.compile( p_value ).pattern().getBytes() ) )
                                     )
                             )
                     ).parse()
