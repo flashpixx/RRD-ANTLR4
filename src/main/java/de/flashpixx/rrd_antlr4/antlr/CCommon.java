@@ -118,12 +118,10 @@ public final class CCommon
     @SuppressWarnings( "unchecked" )
     public static IGrammarElement terminalvalue( final String p_value )
     {
-        final String l_value = cleanString( p_value );
-
         // try to compile string as regular expression pattern - otherwise use string
         try
         {
-            final Pattern l_pattern = Pattern.compile( l_value );
+            final Pattern l_pattern = Pattern.compile( p_value );
 
             return (IGrammarElement) new CASTVisitorPCRE().visit(
                     new PCREParser(
@@ -139,7 +137,7 @@ public final class CCommon
         {
         }
 
-        return new CGrammarTerminalValue<>( l_value );
+        return new CGrammarTerminalValue<>( p_value );
     }
 
 

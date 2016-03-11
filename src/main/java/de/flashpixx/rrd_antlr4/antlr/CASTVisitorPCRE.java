@@ -62,11 +62,10 @@ public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
         if ( p_context.character_class() != null )
             return this.visitCharacter_class( p_context.character_class() );
 
-        // dot replaced with a fixed terminal
-        // @bug with =..
+        // dot replaced with a fixed terminal but in the visitor rule above,
+        // because other characters can be also returned
         if ( p_context.Dot() != null )
             return p_context.Dot().getText();
-        //return new CGrammarTerminalValue<>( de.flashpixx.rrd_antlr4.CCommon.getLanguageString( this, "anychar" ) );
 
         // string / character definition
         if ( p_context.literal() != null )
@@ -158,7 +157,15 @@ public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
                                  .filter( i -> i != null )
                                  .collect( Collectors.toList() )
                 ).stream()
-                    .map( i -> i instanceof String ? new CGrammarTerminalValue<>( i.toString() ) : (IGrammarElement) i )
+                    // a string kan be a single dot, so that is "any char"
+                    .map( i -> i instanceof String
+                               ? new CGrammarTerminalValue<>(
+                                  i.toString().equals( "." )
+                                  ? de.flashpixx.rrd_antlr4.CCommon.getLanguageString( this, "anychar" )
+                                  : i.toString()
+                          )
+                               : (IGrammarElement) i
+                    )
                     .collect( Collectors.toList() )
         );
     }
