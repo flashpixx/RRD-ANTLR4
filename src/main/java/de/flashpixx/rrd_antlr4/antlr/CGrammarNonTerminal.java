@@ -58,10 +58,7 @@ public final class CGrammarNonTerminal implements IGrammarTerminal
     public CGrammarNonTerminal( final String p_id, final String p_documentation, final IGrammarElement p_element
     )
     {
-        m_id = p_id;
-        m_element = p_element;
-        m_cardinality = ECardinality.NONE;
-        m_documentation = p_documentation == null ? "" : p_documentation;
+        this( p_id, p_documentation, ECardinality.NONE, p_element );
     }
 
     /**
