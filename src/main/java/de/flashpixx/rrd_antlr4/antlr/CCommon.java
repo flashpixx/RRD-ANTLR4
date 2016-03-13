@@ -106,6 +106,9 @@ public final class CCommon
         if ( p_cardinality.startsWith( "?" ) )
             return p_element.cardinality( IGrammarElement.ECardinality.OPTIONAL );
 
+        if ( ( p_cardinality.startsWith( "!" ) ) || ( p_cardinality.startsWith( "~" ) ) )
+            return p_element.cardinality( IGrammarElement.ECardinality.NEGATION );
+
         return p_element;
     }
 

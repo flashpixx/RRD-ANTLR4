@@ -52,7 +52,7 @@ public interface IGrammarElement
         OPTIONAL( "?" ),
         ZEROORMORE( "*" ),
         ONEORMORE( "+" ),
-        NEGATION( "!" );
+        NEGATION( "~" );
 
         /**
          * string definition

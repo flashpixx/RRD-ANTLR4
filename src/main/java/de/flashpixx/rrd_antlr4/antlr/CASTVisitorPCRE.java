@@ -85,13 +85,22 @@ public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
     @Override
     public final Object visitElement( final PCREParser.ElementContext p_context )
     {
+        // negation is part of a shared-literal, so a check is needed because
+        // the literal is returned as string and if the first character matches
+        // to "~" a negation is exists
+        Object l_atom = this.visitAtom( p_context.atom() );
+        String l_quantifier = p_context.quantifier() != null
+                              ? p_context.quantifier().getText()
+                              : "";
+
+        if ( ( l_atom instanceof String ) && ( l_atom.toString().startsWith( "~" ) ) )
+        {
+            l_atom = "";
+            l_quantifier = "~";
+        }
+
         // return the atom and a quatifier of the atom
-        return new ImmutablePair<>(
-                this.visitAtom( p_context.atom() ),
-                p_context.quantifier() != null
-                ? p_context.quantifier().getText()
-                : ""
-        );
+        return new ImmutablePair<>( l_atom, l_quantifier );
     }
 
     @Override

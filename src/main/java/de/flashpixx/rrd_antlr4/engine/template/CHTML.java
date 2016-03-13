@@ -263,6 +263,9 @@ public final class CHTML extends IBaseTemplate
             case ONEORMORE:
                 return MessageFormat.format( "OneOrMore({0})", p_inner );
 
+            case NEGATION:
+                return MessageFormat.format( "Sequence(Comment({0}, {1}))", "not", p_inner );
+
             default:
                 return p_inner;
         }
