@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.flashpixx</groupId>
-    <artifactId>RRD-AntLR4</artifactId>
+    <artifactId>RRD-ANTLR4</artifactId>
     <version>0.1</version>
 
     <!-- project meta information -->
@@ -20,9 +20,9 @@
     </issueManagement>
 
     <scm>
-        <url>https://github.com/flashpixx/RRD-AntLR4</url>
-        <connection>scm:git:git://github.com:flashpixx/RRD-AntLR4.git</connection>
-        <developerConnection>scm:git:git@github.com:flashpixx/RRD-AntLR4.git</developerConnection>
+        <url>https://github.com/flashpixx/RRD-ANTLR4</url>
+        <connection>scm:git:git://github.com:flashpixx/RRD-ANTLR4.git</connection>
+        <developerConnection>scm:git:git@github.com:flashpixx/RRD-ANTLR4.git</developerConnection>
     </scm>
 
     <developers>
