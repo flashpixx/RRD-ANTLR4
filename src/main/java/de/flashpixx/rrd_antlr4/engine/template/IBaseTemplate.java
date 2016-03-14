@@ -129,7 +129,7 @@ public abstract class IBaseTemplate implements ITemplate
             return this.cardinality( p_element.cardinality(), this.rule( (IGrammarRule) p_element ) );
 
         if ( p_element instanceof IGrammarNegation )
-            this.negation( ( (IGrammarNegation) p_element ).inner() );
+            return this.cardinality( p_element.cardinality(), this.negation( ( (IGrammarNegation) p_element ).inner() ) );
 
         if ( p_element instanceof IGrammarSimpleElement<?> )
             return this.cardinality( p_element.cardinality(), this.terminalvalue( (IGrammarSimpleElement<?>) p_element ) );

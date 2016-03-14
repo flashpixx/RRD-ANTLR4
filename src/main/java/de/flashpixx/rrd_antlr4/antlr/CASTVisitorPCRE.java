@@ -23,6 +23,7 @@
 
 package de.flashpixx.rrd_antlr4.antlr;
 
+import com.aol.cyclops.sequence.SequenceM;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -85,47 +86,50 @@ public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
     @Override
     public final Object visitElement( final PCREParser.ElementContext p_context )
     {
-        // negation is part of a shared-literal, so a check is needed because
-        // the literal is returned as string and if the first character matches
-        // to "~" a negation is exists
-        Object l_atom = this.visitAtom( p_context.atom() );
-        String l_quantifier = p_context.quantifier() != null
-                              ? p_context.quantifier().getText()
-                              : "";
-
-        if ( ( l_atom instanceof String ) && ( l_atom.toString().startsWith( "~" ) ) )
-        {
-            l_atom = "";
-            l_quantifier = "~";
-        }
-
+        // negation is part of a shared-literal, so a check is needed later,
         // return the atom and a quatifier of the atom
-        return new ImmutablePair<>( l_atom, l_quantifier );
+        return new ImmutablePair<>(
+                this.visitAtom( p_context.atom() ),
+                p_context.quantifier() != null
+                ? p_context.quantifier().getText()
+                : ""
+        );
     }
 
     @Override
     public final Object visitExpr( final PCREParser.ExprContext p_context )
     {
-        return CCommon.sequence(
-                this.implode(
-                        p_context.element().stream()
+        // iterate over elements
+        final List<Pair<?, String>> l_pairs = p_context.element().stream()
+                                                       // pair with grammar element or string and cardinality
+                                                       .map( i -> (Pair<?, String>) this.visitElement( i ) )
+                                                       .filter( i -> i != null )
+                                                       .collect( Collectors.toList() );
 
-                                 // pair with grammar element or string and cardinality
-                                 .map( i -> (Pair<?, String>) this.visitElement( i ) )
-                                 .filter( i -> i != null )
-                                 .collect( Collectors.toList() )
-                ).stream()
+        // get pairs and check if a negation "~" is followed by
+        // a grammar symbol so concat this first
+        final List<Pair<?, String>> l_clean = SequenceM.range( 0, l_pairs.size() )
+                                                       .sliding( 2 )
+                                                       .map( i -> l_pairs.get( i.get( 0 ) ).getLeft().equals( "~" )
+                                                                  ? new ImmutablePair<>(
+                                                                     new CGrammarNegation( (IGrammarElement) l_pairs.get( i.get( 1 ) ).getLeft() ),
+                                                                     l_pairs.get( i.get( 1 ) ).getRight()
+                                                             )
+                                                                  : l_pairs.get( i.get( 0 ) )
+                                                       )
+                                                       .collect( Collectors.toList() );
+
+        // build sequences and implode strings
+        return CCommon.sequence(
+                this.implode( l_clean ).stream()
                     .map( i -> CCommon.cardinality(
                             i.getRight(),
-
-                            // a string can be a single dot, so that is "any character", but within the
-                            // element visitor rule cannot decide that is an "any character" element
                             i.getLeft() instanceof String
-                            ? new CGrammarTerminalValue(
-                                    i.getLeft().equals( "." )
-                                    ? de.flashpixx.rrd_antlr4.CCommon.getLanguageString( this, "anychar" )
-                                    : i.getLeft()
-                                  )
+
+                            // terminal-value as string
+                            ? this.terminalvalue( i.getLeft().toString() )
+
+                            // native grammar element
                             : (IGrammarElement) i.getLeft()
                           )
                     )
@@ -151,6 +155,23 @@ public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
     }
 
     /**
+     * create a terminal value of a string
+     *
+     * @param p_string string
+     * @return grammar element
+     *
+     * @note the string can be a dot "." for "any character" or can start with "~" for negation
+     */
+    private IGrammarElement terminalvalue( final String p_string )
+    {
+        return new CGrammarTerminalValue(
+                p_string.equals( "." )
+                ? de.flashpixx.rrd_antlr4.CCommon.getLanguageString( this, "anychar" )
+                : p_string
+        );
+    }
+
+    /**
      * implodes a list of any objects, strings
      * will be concated into one string
      *
@@ -159,6 +180,7 @@ public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
      */
     private List<Pair<?, String>> implode( final List<Pair<?, String>> p_list )
     {
+        // search string within the list
         final int l_start = this.filter( 0, p_list );
         if ( l_start < 0 )
             return p_list;
