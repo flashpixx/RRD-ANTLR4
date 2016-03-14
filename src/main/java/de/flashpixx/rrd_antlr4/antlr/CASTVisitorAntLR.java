@@ -162,7 +162,7 @@ public final class CASTVisitorAntLR extends ANTLRv4ParserBaseVisitor<IGrammarEle
     public final IGrammarElement visitNotSet( final ANTLRv4Parser.NotSetContext p_context )
     {
         // Sequence with NOT
-        return this.visitChildren( p_context ).cardinality( IGrammarElement.ECardinality.NEGATION );
+        return new CGrammarNegation( this.visitChildren( p_context ) );
     }
 
     @Override

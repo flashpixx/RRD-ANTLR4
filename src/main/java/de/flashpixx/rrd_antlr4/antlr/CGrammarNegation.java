@@ -24,51 +24,60 @@
 package de.flashpixx.rrd_antlr4.antlr;
 
 /**
- * any grammar element
+ * negation
  */
-public interface IGrammarElement
+public final class CGrammarNegation implements IGrammarNegation
 {
     /**
-     * returns the cardinality
-     *
-     * @return cardinality
+     * grammar
+     * element
      */
-    ECardinality cardinality();
+    private final IGrammarElement m_element;
+    /**
+     * cardinality
+     */
+    private ECardinality m_cardinality;
 
     /**
-     * changes the cardinality
+     * ctor
      *
-     * @param p_cardinality cardinality value
-     * @return self reference
+     * @param p_element grammar element
      */
-    IGrammarElement cardinality( final ECardinality p_cardinality );
-
-    /**
-     * enum define cardinalities
-     */
-    enum ECardinality
+    public CGrammarNegation( final IGrammarElement p_element )
     {
-        NONE( "" ),
-        OPTIONAL( "?" ),
-        ZEROORMORE( "*" ),
-        ONEORMORE( "+" );
+        this( ECardinality.NONE, p_element );
+    }
 
-        /**
-         * string definition
-         */
-        private String m_text;
+    /**
+     * ctor
+     *
+     * @param p_cardinality cardinality
+     * @param p_element grammar element
+     */
+    public CGrammarNegation( final ECardinality p_cardinality, final IGrammarElement p_element )
+    {
+        m_element = p_element;
+        m_cardinality = p_cardinality;
+    }
 
-        ECardinality( final String p_text )
-        {
-            m_text = p_text;
-        }
 
+    @Override
+    public final IGrammarElement inner()
+    {
+        return m_element;
+    }
 
-        @Override
-        public final String toString()
-        {
-            return m_text;
-        }
+    @Override
+    public final ECardinality cardinality()
+    {
+        return m_cardinality;
+    }
+
+    @Override
+    public final IGrammarElement cardinality( final ECardinality p_cardinality )
+    {
+        m_cardinality = p_cardinality;
+        return this;
     }
 
 }

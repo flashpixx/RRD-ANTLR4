@@ -31,6 +31,7 @@ import de.flashpixx.rrd_antlr4.antlr.IGrammarCollection;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarGroup;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarIdentifier;
+import de.flashpixx.rrd_antlr4.antlr.IGrammarNegation;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarRule;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarSequence;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarSimpleElement;
@@ -127,6 +128,9 @@ public abstract class IBaseTemplate implements ITemplate
         if ( p_element instanceof IGrammarRule )
             return this.cardinality( p_element.cardinality(), this.rule( (IGrammarRule) p_element ) );
 
+        if ( p_element instanceof IGrammarNegation )
+            this.negation( ( (IGrammarNegation) p_element ).inner() );
+
         if ( p_element instanceof IGrammarSimpleElement<?> )
             return this.cardinality( p_element.cardinality(), this.terminalvalue( (IGrammarSimpleElement<?>) p_element ) );
 
@@ -210,11 +214,19 @@ public abstract class IBaseTemplate implements ITemplate
     }
 
     /**
-     * creates an non-terminal
+     * creates a non-terminal
      *
      * @param p_element identifier element
      * @return string represenation
      */
     protected abstract String nonterminal( final IGrammarIdentifier p_element );
+
+    /**
+     * creates a negation structure
+     *
+     * @param p_element inner negation element
+     * @return string represenation
+     */
+    protected abstract String negation( final IGrammarElement p_element );
 
 }

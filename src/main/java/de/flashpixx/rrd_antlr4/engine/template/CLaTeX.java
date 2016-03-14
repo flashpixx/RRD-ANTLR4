@@ -167,4 +167,10 @@ public final class CLaTeX extends IBaseTemplate
         return null;
     }
 
+    @Override
+    protected final String negation( final IGrammarElement p_element )
+    {
+        return null;
+    }
+
 }

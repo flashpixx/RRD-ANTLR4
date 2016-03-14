@@ -250,6 +250,12 @@ public final class CHTML extends IBaseTemplate
     }
 
     @Override
+    protected final String negation( final IGrammarElement p_element )
+    {
+        return MessageFormat.format( "Sequence(Comment({0}, {1}))", "not", this.map( p_element ) );
+    }
+
+    @Override
     protected final String cardinality( final IGrammarElement.ECardinality p_cardinality, final String p_inner )
     {
         switch ( p_cardinality )
@@ -262,9 +268,6 @@ public final class CHTML extends IBaseTemplate
 
             case ONEORMORE:
                 return MessageFormat.format( "OneOrMore({0})", p_inner );
-
-            case NEGATION:
-                return MessageFormat.format( "Sequence(Comment({0}, {1}))", "not", p_inner );
 
             default:
                 return p_inner;

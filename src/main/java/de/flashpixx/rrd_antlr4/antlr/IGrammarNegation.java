@@ -24,51 +24,16 @@
 package de.flashpixx.rrd_antlr4.antlr;
 
 /**
- * any grammar element
+ * a negation element
  */
-public interface IGrammarElement
+public interface IGrammarNegation extends IGrammarElement
 {
+
     /**
-     * returns the cardinality
+     * return the inner value
      *
-     * @return cardinality
+     * @return grammar element
      */
-    ECardinality cardinality();
-
-    /**
-     * changes the cardinality
-     *
-     * @param p_cardinality cardinality value
-     * @return self reference
-     */
-    IGrammarElement cardinality( final ECardinality p_cardinality );
-
-    /**
-     * enum define cardinalities
-     */
-    enum ECardinality
-    {
-        NONE( "" ),
-        OPTIONAL( "?" ),
-        ZEROORMORE( "*" ),
-        ONEORMORE( "+" );
-
-        /**
-         * string definition
-         */
-        private String m_text;
-
-        ECardinality( final String p_text )
-        {
-            m_text = p_text;
-        }
-
-
-        @Override
-        public final String toString()
-        {
-            return m_text;
-        }
-    }
+    IGrammarElement inner();
 
 }
