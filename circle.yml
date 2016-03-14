@@ -33,9 +33,9 @@ test:
         # move build components
         - git checkout master
         - mv target/documentation/html /tmp
-        - mv target/RRD-AntLR4-0.1.jar /tmp
-        #- mv target/RRD-AntLR4-0.1.exe /tmp
-        #- mv target/RRD-AntLR4-0.1.dmg /tmp
+        - mv target/RRD-ANTLR4-0.1.jar /tmp
+        #- mv target/RRD-ANTLR4-0.1.exe /tmp
+        #- mv target/RRD-ANTLR4-0.1.dmg /tmp
 
         # create documentation branch
         - git checkout gh-pages
@@ -64,9 +64,9 @@ test:
         - rm -Rf *
         - mv /tmp/.gitignore .
         - mv /tmp/circle.yml .
-        - mv /tmp/RRD-AntLR4-0.1.jar .
-        #- mv /tmp/RRD-AntLR4-0.1.exe .
-        #- mv /tmp/RRD-AntLR4-0.1.dmg .
+        - mv /tmp/RRD-ANTLR4-0.1.jar .
+        #- mv /tmp/RRD-ANTLR4-0.1.exe .
+        #- mv /tmp/RRD-ANTLR4-0.1.dmg .
         - git add --all .
         - git commit -m "binaries master branch"
         - git push origin binary-master
