@@ -24,7 +24,7 @@
 package de.flashpixx.rrd_antlr4.antlr;
 
 /**
- * link class between two rules
+ * identifier of a rule for referencing
  */
 public final class CGrammarIdentifier extends CGrammarTerminalValue<String> implements IGrammarIdentifier
 {
