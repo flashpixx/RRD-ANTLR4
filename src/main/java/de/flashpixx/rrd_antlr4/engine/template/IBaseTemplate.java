@@ -153,64 +153,64 @@ public abstract class IBaseTemplate implements ITemplate
     /**
      * creates a rule
      *
-     * @param p_rule rule element
+     * @param p_element rule element
      * @return string represenation
      */
-    protected String rule( final IGrammarRule p_rule )
+    protected String rule( final IGrammarRule p_element )
     {
-        return this.map( p_rule.children() );
+        return this.map( p_element.children() );
     }
 
     /**
      * sets the cardinality
      *
      * @param p_cardinality cardinality value
-     * @param p_inner inner string
+     * @param p_element inner string
      * @return string represenation
      */
-    protected abstract String cardinality( final IGrammarElement.ECardinality p_cardinality, final String p_inner );
+    protected abstract String cardinality( final IGrammarElement.ECardinality p_cardinality, final String p_element );
 
     /**
      * creates a grammar sequence
      *
-     * @param p_input element list
+     * @param p_element element list
      * @return string representation
      */
-    protected abstract String sequence( final IGrammarCollection p_input );
+    protected abstract String sequence( final IGrammarCollection p_element );
 
     /**
      * creates a grammar choice
      *
-     * @param p_input element list
+     * @param p_element element list
      * @return string representation
      */
-    protected abstract String choice( final IGrammarChoice p_input );
+    protected abstract String choice( final IGrammarChoice p_element );
 
     /**
      * crates a grammer group
      *
-     * @param p_group group element
+     * @param p_element group element
      * @return string representation
      */
-    protected abstract String group( final IGrammarGroup p_group );
+    protected abstract String group( final IGrammarGroup p_element );
 
     /**
      * creates a terminal
      *
-     * @param p_value terminal value element
+     * @param p_element terminal value element
      * @return string represenation
      */
-    protected abstract String terminalvalue( final IGrammarSimpleElement<?> p_value );
+    protected abstract String terminalvalue( final IGrammarSimpleElement<?> p_element );
 
     /**
      * creates a terminal
      *
-     * @param p_terminal terminal element
+     * @param p_element terminal element
      * @return string represenation
      */
-    protected String terminal( final IGrammarTerminal p_terminal )
+    protected String terminal( final IGrammarTerminal p_element )
     {
-        return this.map( p_terminal.children() );
+        return this.map( p_element.children() );
     }
 
     /**

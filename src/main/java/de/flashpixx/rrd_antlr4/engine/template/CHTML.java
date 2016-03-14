@@ -194,48 +194,48 @@ public final class CHTML extends IBaseTemplate
 
 
     @Override
-    protected final String group( final IGrammarGroup p_group )
+    protected final String group( final IGrammarGroup p_element )
     {
-        return MessageFormat.format( "({0})", this.map( p_group.element() ) );
+        return MessageFormat.format( "({0})", this.map( p_element.element() ) );
     }
 
     @Override
-    protected final String choice( final IGrammarChoice p_input )
+    protected final String choice( final IGrammarChoice p_element )
     {
         final String l_child = StringUtils.join(
                 IntStream
-                        .range( 0, p_input.get().size() )
+                        .range( 0, p_element.get().size() )
                         .boxed()
-                        .map( i -> this.map( p_input.get().get( i ) ) )
+                        .map( i -> this.map( p_element.get().get( i ) ) )
                         .filter( i -> i != null )
                         .collect( Collectors.toList() ),
                 ", "
         );
 
-        return p_input.get().size() == 1 ? l_child : MessageFormat.format( "Choice({0}, {1})", 0, l_child );
+        return p_element.get().size() == 1 ? l_child : MessageFormat.format( "Choice({0}, {1})", 0, l_child );
     }
 
     @Override
-    protected final String sequence( final IGrammarCollection p_input )
+    protected final String sequence( final IGrammarCollection p_element )
     {
         final String l_child = StringUtils.join(
-                p_input.get().stream()
-                       .map( i -> this.map( i ) )
-                       .filter( i -> i != null )
-                       .collect( Collectors.toList() ),
+                p_element.get().stream()
+                         .map( i -> this.map( i ) )
+                         .filter( i -> i != null )
+                         .collect( Collectors.toList() ),
                 ", "
         );
 
-        return p_input.get().size() == 1 ? l_child : MessageFormat.format( "Sequence({0})", l_child );
+        return p_element.get().size() == 1 ? l_child : MessageFormat.format( "Sequence({0})", l_child );
     }
 
     @Override
-    protected final String terminalvalue( final IGrammarSimpleElement<?> p_value )
+    protected final String terminalvalue( final IGrammarSimpleElement<?> p_element )
     {
         return MessageFormat.format(
                 "Terminal(''{0}'', ''#{1}'')",
-                StringEscapeUtils.escapeEcmaScript( StringEscapeUtils.escapeEcmaScript( p_value.get().toString() ) ),
-                this.linkhash( p_value.get().toString() )
+                StringEscapeUtils.escapeEcmaScript( StringEscapeUtils.escapeEcmaScript( p_element.get().toString() ) ),
+                this.linkhash( p_element.get().toString() )
         );
     }
 
@@ -260,21 +260,21 @@ public final class CHTML extends IBaseTemplate
     }
 
     @Override
-    protected final String cardinality( final IGrammarElement.ECardinality p_cardinality, final String p_inner )
+    protected final String cardinality( final IGrammarElement.ECardinality p_cardinality, final String p_element )
     {
         switch ( p_cardinality )
         {
             case OPTIONAL:
-                return MessageFormat.format( "Optional({0})", p_inner );
+                return MessageFormat.format( "Optional({0})", p_element );
 
             case ZEROORMORE:
-                return MessageFormat.format( "ZeroOrMore({0})", p_inner );
+                return MessageFormat.format( "ZeroOrMore({0})", p_element );
 
             case ONEORMORE:
-                return MessageFormat.format( "OneOrMore({0})", p_inner );
+                return MessageFormat.format( "OneOrMore({0})", p_element );
 
             default:
-                return p_inner;
+                return p_element;
         }
     }
 

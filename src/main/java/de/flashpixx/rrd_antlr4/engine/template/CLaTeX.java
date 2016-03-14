@@ -33,6 +33,7 @@ import de.flashpixx.rrd_antlr4.antlr.IGrammarElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarGroup;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarIdentifier;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarSimpleElement;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
@@ -89,7 +90,7 @@ public final class CLaTeX extends IBaseTemplate
                 new File( p_output.toString(), "/index.tex" ),
 
                 // set title
-                "-title-", CCommon.getLanguageString( this, "section", m_grammar.id() ),
+                "-grammartitle-", CCommon.getLanguageString( this, "section", m_grammar.id() ),
 
                 // set grammar documentation
                 "-grammardocumentation-", m_grammar.documentation(),
@@ -98,7 +99,10 @@ public final class CLaTeX extends IBaseTemplate
                 "-rules-", StringUtils.join(
                         m_rulestext.rowMap().entrySet().stream().sorted( ( n, m ) -> n.getKey().compareToIgnoreCase( m.getKey() ) )
                                    .map( i -> MessageFormat.format(
-                                           "\\section*\\{{0}\\}\n{1}",
+                                           "\\\\subsection*'{'{0}'}'\n" +
+                                           "\\\\begin'{'grammar'}'" +
+                                           "\n{1}\n" +
+                                           "\\\\end'{'grammar'}'",
                                            CCommon.getLanguageString( this, "subsection", i.getKey() ),
                                            StringUtils.join(
                                                    i.getValue().entrySet().stream()
@@ -128,49 +132,64 @@ public final class CLaTeX extends IBaseTemplate
     @Override
     public final IGrammarComplexElement element( final IGrammarComplexElement p_grammar, final IGrammarComplexElement p_element )
     {
-        return p_grammar;
+        m_rulestext.put(
+                p_grammar.id(),
+                p_element.id(),
+                MessageFormat.format(
+                        "<{0}> ::= {1}\n",
+                        p_element.id(),
+                        this.map( p_element )
+                )
+        );
+        return p_element;
     }
 
     @Override
-    protected final String cardinality( final IGrammarElement.ECardinality p_cardinality, final String p_inner )
+    protected final String cardinality( final IGrammarElement.ECardinality p_cardinality, final String p_element )
     {
-        return null;
+        return p_element;
     }
 
     @Override
-    protected final String sequence( final IGrammarCollection p_input )
+    protected final String sequence( final IGrammarCollection p_element )
     {
-        return null;
+        return StringUtils.join( p_element.get().stream().map( i -> this.map( i ) ).collect( Collectors.toList() ), " " );
     }
 
     @Override
-    protected final String choice( final IGrammarChoice p_input )
+    protected final String choice( final IGrammarChoice p_element )
     {
-        return null;
+        return StringUtils.join(
+                p_element.get().stream()
+                         .map( i -> this.map( i ) )
+                         .collect( Collectors.toList() ),
+                " \\\\alt "
+        );
     }
 
     @Override
-    protected final String group( final IGrammarGroup p_group )
+    protected final String group( final IGrammarGroup p_element )
     {
-        return null;
+        return "";
     }
 
     @Override
-    protected final String terminalvalue( final IGrammarSimpleElement<?> p_value )
+    protected final String terminalvalue( final IGrammarSimpleElement<?> p_element )
     {
-        return null;
+        // terminal symbols are masked with '
+        return MessageFormat.format( "''{0}''", StringEscapeUtils.escapeJava( p_element.get().toString().replace( "'", "" ) ) );
     }
 
     @Override
     protected final String nonterminal( final IGrammarIdentifier p_element )
     {
-        return null;
+        return MessageFormat.format( "<{0}>", p_element.get().toString() );
     }
 
     @Override
     protected final String negation( final IGrammarElement p_element )
     {
-        return null;
+        return "";
     }
 
 }
