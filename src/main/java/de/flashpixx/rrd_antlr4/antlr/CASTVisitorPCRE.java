@@ -32,11 +32,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 
 /**
  * AntLR 4 AST visitor of perl regular expressions
  */
+@SuppressWarnings( {"all", "warnings", "unchecked", "unused", "cast"} )
 public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
 {
 
@@ -51,7 +53,7 @@ public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
     {
         return CCommon.choice(
                 p_context.cc_atom().stream()
-                         .map( i -> new CGrammarTerminalValue( i.getText() ) )
+                         .map( i -> new CGrammarTerminalValue<>( i.getText() ) )
                          .collect( Collectors.toList() )
         );
     }
@@ -109,13 +111,16 @@ public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
         // get pairs and check if a negation "~" is followed by
         // a grammar symbol so concat this first
         final List<Pair<?, String>> l_clean = SequenceM.range( 0, l_pairs.size() )
-                                                       .sliding( 2 )
-                                                       .map( i -> l_pairs.get( i.get( 0 ) ).getLeft().equals( "~" )
-                                                                  ? new ImmutablePair<>(
-                                                                     new CGrammarNegation( (IGrammarElement) l_pairs.get( i.get( 1 ) ).getLeft() ),
-                                                                     l_pairs.get( i.get( 1 ) ).getRight()
+                                                       .sliding( 2, 2 )
+                                                       .flatMap( i -> l_pairs.get( i.get( 0 ) ).getLeft().equals( "~" )
+                                                                      ? Stream.of( new ImmutablePair<>(
+                                                                         new CGrammarNegation( (IGrammarElement) l_pairs.get( i.get( 1 ) ).getLeft() ),
+                                                                         l_pairs.get( i.get( 1 ) ).getRight()
+                                                                 )
                                                              )
-                                                                  : l_pairs.get( i.get( 0 ) )
+                                                                      : i.get( 1 ) != null
+                                                                        ? Stream.of( l_pairs.get( i.get( 0 ) ), l_pairs.get( i.get( 1 ) ) )
+                                                                        : Stream.of( l_pairs.get( i.get( 0 ) ) )
                                                        )
                                                        .collect( Collectors.toList() );
 
@@ -164,7 +169,7 @@ public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
      */
     private IGrammarElement terminalvalue( final String p_string )
     {
-        return new CGrammarTerminalValue(
+        return new CGrammarTerminalValue<>(
                 p_string.equals( "." )
                 ? de.flashpixx.rrd_antlr4.CCommon.getLanguageString( this, "anychar" )
                 : p_string
