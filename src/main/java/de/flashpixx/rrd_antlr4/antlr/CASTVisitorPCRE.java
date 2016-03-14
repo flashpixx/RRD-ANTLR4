@@ -167,8 +167,6 @@ public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
         if ( l_end < 0 )
             return p_list;
 
-        System.out.println( p_list );
-
         return this.implode( new LinkedList<Pair<?, String>>()
         {{
             add( new ImmutablePair<>(

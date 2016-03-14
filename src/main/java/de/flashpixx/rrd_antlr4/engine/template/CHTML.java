@@ -252,7 +252,7 @@ public final class CHTML extends IBaseTemplate
     @Override
     protected final String negation( final IGrammarElement p_element )
     {
-        return MessageFormat.format( "Sequence(Comment({0}, {1}))", "not", this.map( p_element ) );
+        return MessageFormat.format( "Sequence(Comment({0}, {1}))", CCommon.getLanguageString( this, "htmlnegation" ), this.map( p_element ) );
     }
 
     @Override

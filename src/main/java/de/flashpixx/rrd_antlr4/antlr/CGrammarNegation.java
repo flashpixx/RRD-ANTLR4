@@ -23,6 +23,9 @@
 
 package de.flashpixx.rrd_antlr4.antlr;
 
+import java.text.MessageFormat;
+
+
 /**
  * negation
  */
@@ -80,4 +83,21 @@ public final class CGrammarNegation implements IGrammarNegation
         return this;
     }
 
+    @Override
+    public final int hashCode()
+    {
+        return m_element.hashCode() + 37991;
+    }
+
+    @Override
+    public final boolean equals( final Object p_object )
+    {
+        return this.hashCode() == p_object.hashCode();
+    }
+
+    @Override
+    public final String toString()
+    {
+        return MessageFormat.format( "Negation( {0} ){1}", m_element, m_cardinality ).trim();
+    }
 }
