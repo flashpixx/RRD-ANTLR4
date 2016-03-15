@@ -47,7 +47,7 @@ import java.util.stream.Collectors;
 /**
  * template for LaTeX export
  */
-public final class CLaTeX extends IBaseTemplate
+public final class CLaTeXSyntax extends IBaseTemplate
 {
     /**
      * main grammar
@@ -56,18 +56,14 @@ public final class CLaTeX extends IBaseTemplate
     /**
      * rules table for text representation
      */
-    private final Table<String, String, String> m_rulestext = HashBasedTable.create();
-    /**
-     * rules table for diagram representation
-     */
-    private final Table<String, String, String> m_rulesdiagram = HashBasedTable.create();
+    private final Table<String, String, String> m_rules = HashBasedTable.create();
 
     /**
      * ctor
      *
      * @param p_name template name
      */
-    public CLaTeX( final String p_name )
+    public CLaTeXSyntax( final String p_name )
     {
         super( p_name );
     }
@@ -95,15 +91,15 @@ public final class CLaTeX extends IBaseTemplate
                 // set grammar documentation
                 "-grammardocumentation-", m_grammar.documentation(),
 
-                // set rules of diagrams
+                // set text rules
                 "-rules-", StringUtils.join(
-                        m_rulestext.rowMap().entrySet().stream().sorted( ( n, m ) -> n.getKey().compareToIgnoreCase( m.getKey() ) )
-                                   .map( i -> MessageFormat.format(
+                        m_rules.rowMap().entrySet().stream().sorted( ( n, m ) -> n.getKey().compareToIgnoreCase( m.getKey() ) )
+                               .map( i -> MessageFormat.format(
                                            "\\\\subsection*'{'{0}'}'\n" +
                                            "\\\\begin'{'grammar'}'" +
                                            "\n{1}\n" +
                                            "\\\\end'{'grammar'}'",
-                                           CCommon.getLanguageString( this, "subsection", i.getKey() ),
+                                           CCommon.getLanguageString( this, "subsectiongrammar", i.getKey() ),
                                            StringUtils.join(
                                                    i.getValue().entrySet().stream()
                                                     .sorted( ( n, m ) -> n.getKey().compareToIgnoreCase( m.getKey() ) )
@@ -113,7 +109,7 @@ public final class CLaTeX extends IBaseTemplate
                                            ).trim()
                                          )
                                    )
-                                   .collect( Collectors.toList() ),
+                               .collect( Collectors.toList() ),
                         "\n\n"
                 )
         );
@@ -132,7 +128,7 @@ public final class CLaTeX extends IBaseTemplate
     @Override
     public final IGrammarComplexElement element( final IGrammarComplexElement p_grammar, final IGrammarComplexElement p_element )
     {
-        m_rulestext.put(
+        m_rules.put(
                 p_grammar.id(),
                 p_element.id(),
                 MessageFormat.format(
