@@ -147,7 +147,20 @@ public final class CLaTeX extends IBaseTemplate
     @Override
     protected final String cardinality( final IGrammarElement.ECardinality p_cardinality, final String p_element )
     {
-        return p_element;
+        switch ( p_cardinality )
+        {
+            case OPTIONAL:
+                return MessageFormat.format( "{0}{1}", p_element, "?" ).trim();
+
+            case ZEROORMORE:
+                return MessageFormat.format( "{0}{1}", p_element, "*" ).trim();
+
+            case ONEORMORE:
+                return MessageFormat.format( "{0}{1}", p_element, "+" ).trim();
+
+            default:
+                return p_element;
+        }
     }
 
     @Override
@@ -170,7 +183,7 @@ public final class CLaTeX extends IBaseTemplate
     @Override
     protected final String group( final IGrammarGroup p_element )
     {
-        return "";
+        return MessageFormat.format( "[ {0} ]", this.map( p_element.element() ) );
     }
 
     @Override
@@ -206,6 +219,8 @@ public final class CLaTeX extends IBaseTemplate
                         .replace( "'", "" )
 
                         .replace( "&", "\\&" )
+
+                        .replace( "$", "\\$" )
 
                         .replace( "<", "\\textless " )
                         .replace( ">", "\\textgreater " )
