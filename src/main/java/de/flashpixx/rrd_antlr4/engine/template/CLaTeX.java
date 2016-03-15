@@ -166,7 +166,8 @@ public final class CLaTeX extends IBaseTemplate
     @Override
     protected final String sequence( final IGrammarCollection p_element )
     {
-        return StringUtils.join( p_element.get().stream().map( i -> this.map( i ) ).collect( Collectors.toList() ), " " );
+        final String l_child = StringUtils.join( p_element.get().stream().map( i -> this.map( i ) ).collect( Collectors.toList() ), " " ).trim();
+        return p_element.get().size() == 1 ? l_child : MessageFormat.format( "[ {0} ]", l_child );
     }
 
     @Override
@@ -201,7 +202,7 @@ public final class CLaTeX extends IBaseTemplate
     @Override
     protected final String negation( final IGrammarElement p_element )
     {
-        return "";
+        return MessageFormat.format( "({0} {1})", CCommon.getLanguageString( this, "latexnegation" ), this.map( p_element ) ).trim();
     }
 
     /**
@@ -213,10 +214,12 @@ public final class CLaTeX extends IBaseTemplate
     private String escapelatex( final String p_string )
     {
         return StringEscapeUtils.escapeJava(
-                p_string
+                (
+                        p_string.startsWith( "'" ) && p_string.endsWith( "'" )
+                        ? p_string.substring( 1, p_string.length() - 1 )
+                        : p_string
+                )
                         .replace( "\\", "\\textbackslash " )
-
-                        .replace( "'", "" )
 
                         .replace( "&", "\\&" )
 
@@ -233,6 +236,8 @@ public final class CLaTeX extends IBaseTemplate
                         .replace( "~", "\\textasciitilde" )
 
                         .replace( "^", "\\^{}" )
+
+                        .replace( "\"", "\\\"{}" )
         );
     }
 
