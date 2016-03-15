@@ -176,8 +176,7 @@ public final class CLaTeX extends IBaseTemplate
     @Override
     protected final String terminalvalue( final IGrammarSimpleElement<?> p_element )
     {
-        // terminal symbols are masked with '
-        return MessageFormat.format( "''{0}''", StringEscapeUtils.escapeJava( p_element.get().toString().replace( "'", "" ) ) );
+        return MessageFormat.format( "''{0}''", this.escapelatex( p_element.get().toString() ) );
     }
 
     @Override
@@ -190,6 +189,36 @@ public final class CLaTeX extends IBaseTemplate
     protected final String negation( final IGrammarElement p_element )
     {
         return "";
+    }
+
+    /**
+     * escape string with correct LaTeX definition
+     *
+     * @param p_string input string
+     * @return escaped string
+     */
+    private String escapelatex( final String p_string )
+    {
+        return StringEscapeUtils.escapeJava(
+                p_string
+                        .replace( "\\", "\\textbackslash " )
+
+                        .replace( "'", "" )
+
+                        .replace( "&", "\\&" )
+
+                        .replace( "<", "\\textless " )
+                        .replace( ">", "\\textgreater " )
+
+                        .replace( "{", "\\{" )
+                        .replace( "}", "\\}" )
+
+                        .replace( "#", "\\#" )
+
+                        .replace( "~", "\\textasciitilde" )
+
+                        .replace( "^", "\\^{}" )
+        );
     }
 
 }

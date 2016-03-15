@@ -38,7 +38,7 @@ import java.util.stream.Stream;
 /**
  * AntLR 4 AST visitor of perl regular expressions
  */
-@SuppressWarnings( {"all", "warnings", "unchecked", "unused", "cast"} )
+@SuppressWarnings( {"all", "warnings", "unchecked", "unused", "cast", "serial"} )
 public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
 {
 

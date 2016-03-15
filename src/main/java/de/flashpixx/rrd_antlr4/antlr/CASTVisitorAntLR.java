@@ -244,7 +244,7 @@ public final class CASTVisitorAntLR extends ANTLRv4ParserBaseVisitor<IGrammarEle
     @Override
     public final IGrammarElement visitTerminal( final ANTLRv4Parser.TerminalContext p_context )
     {
-        return CCommon.terminalvalue(
+        return new CGrammarIdentifier(
                 p_context.TOKEN_REF() != null
                 ? p_context.TOKEN_REF().getText()
                 : p_context.STRING_LITERAL().getText()

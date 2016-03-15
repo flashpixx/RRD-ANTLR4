@@ -128,15 +128,15 @@ public abstract class IBaseTemplate implements ITemplate
         if ( p_element instanceof IGrammarRule )
             return this.cardinality( p_element.cardinality(), this.rule( (IGrammarRule) p_element ) );
 
-        if ( p_element instanceof IGrammarNegation )
-            return this.cardinality( p_element.cardinality(), this.negation( ( (IGrammarNegation) p_element ).inner() ) );
-
         if ( p_element instanceof IGrammarSimpleElement<?> )
             return this.cardinality( p_element.cardinality(), this.terminalvalue( (IGrammarSimpleElement<?>) p_element ) );
 
         if ( p_element instanceof IGrammarTerminal )
             return this.cardinality( p_element.cardinality(), this.terminal( ( (IGrammarTerminal) p_element ) ) );
 
+
+        if ( p_element instanceof IGrammarNegation )
+            return this.cardinality( p_element.cardinality(), this.negation( ( (IGrammarNegation) p_element ).inner() ) );
 
         if ( p_element instanceof IGrammarGroup )
             return this.cardinality( p_element.cardinality(), this.group( (IGrammarGroup) p_element ) );
