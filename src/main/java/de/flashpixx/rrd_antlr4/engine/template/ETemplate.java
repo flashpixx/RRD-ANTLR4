@@ -32,7 +32,8 @@ import de.flashpixx.rrd_antlr4.CCommon;
 public enum ETemplate
 {
     HTML,
-    LATEXSYNTAX;
+    LATEXSYNTAX,
+    LATEXDIAGRAM;
 
     /**
      * creates a new template
@@ -46,6 +47,9 @@ public enum ETemplate
 
             case LATEXSYNTAX:
                 return new CLaTeXSyntax( LATEXSYNTAX.toString() );
+
+            case LATEXDIAGRAM:
+                return new CLaTeXDiagram( LATEXDIAGRAM.toString() );
 
             default:
                 throw new IllegalStateException( CCommon.getLanguageString( this, "unknowntype" ) );

@@ -45,9 +45,9 @@ import java.util.stream.Collectors;
 
 
 /**
- * template for LaTeX text export
+ * template for LaTeX diagram export
  */
-public final class CLaTeXSyntax extends IBaseTemplate
+public final class CLaTeXDiagram extends IBaseTemplate
 {
     /**
      * main grammar
@@ -63,7 +63,7 @@ public final class CLaTeXSyntax extends IBaseTemplate
      *
      * @param p_name template name
      */
-    public CLaTeXSyntax( final String p_name )
+    public CLaTeXDiagram( final String p_name )
     {
         super( p_name );
     }
@@ -95,20 +95,20 @@ public final class CLaTeXSyntax extends IBaseTemplate
                 "-rules-", StringUtils.join(
                         m_rules.rowMap().entrySet().stream().sorted( ( n, m ) -> n.getKey().compareToIgnoreCase( m.getKey() ) )
                                .map( i -> MessageFormat.format(
-                                           "\\\\subsection*'{'{0}'}'\n" +
-                                           "\\\\begin'{'grammar'}'" +
-                                           "\n{1}\n" +
-                                           "\\\\end'{'grammar'}'",
-                                           CCommon.getLanguageString( this, "subsectiongrammar", i.getKey() ),
-                                           StringUtils.join(
-                                                   i.getValue().entrySet().stream()
-                                                    .sorted( ( n, m ) -> n.getKey().compareToIgnoreCase( m.getKey() ) )
-                                                    .map( j -> j.getValue() )
-                                                    .collect( Collectors.toList() ),
-                                                   "\n"
-                                           ).trim()
-                                         )
-                                   )
+                                       "\\\\subsection*'{'{0}'}'\n" +
+                                       "\\\\begin'{'Syntaxdiagramm'}'" +
+                                       "\n{1}\n" +
+                                       "\\\\end'{'Syntaxdiagramm'}'",
+                                       CCommon.getLanguageString( this, "subsection", i.getKey() ),
+                                       StringUtils.join(
+                                               i.getValue().entrySet().stream()
+                                                .sorted( ( n, m ) -> n.getKey().compareToIgnoreCase( m.getKey() ) )
+                                                .map( j -> j.getValue() )
+                                                .collect( Collectors.toList() ),
+                                               "\n"
+                                       ).trim()
+                                     )
+                               )
                                .collect( Collectors.toList() ),
                         "\n\n"
                 )
@@ -128,15 +128,17 @@ public final class CLaTeXSyntax extends IBaseTemplate
     @Override
     public final IGrammarComplexElement element( final IGrammarComplexElement p_grammar, final IGrammarComplexElement p_element )
     {
+        /*
         m_rules.put(
                 p_grammar.id(),
                 p_element.id(),
                 MessageFormat.format(
-                        "<{0}> ::= {1}\n",
+                        "\\\\SynVar'{'{0}'}'\n",
                         p_element.id(),
-                        this.map( p_element )
+                        ""
                 )
         );
+        */
         return p_element;
     }
 
