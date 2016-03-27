@@ -46,6 +46,8 @@ import java.util.stream.Collectors;
 
 /**
  * template for LaTeX diagram export
+ *
+ * @bug incomplete
  */
 public final class CLaTeXDiagram extends IBaseTemplate
 {
