@@ -234,7 +234,7 @@ public final class CHTML extends IBaseTemplate
     {
         return MessageFormat.format(
                 "Terminal(''{0}'', ''#{1}'')",
-                StringEscapeUtils.escapeEcmaScript( StringEscapeUtils.escapeEcmaScript( p_element.get().toString() ) ),
+                StringEscapeUtils.escapeEcmaScript( p_element.get().toString() ),
                 this.linkhash( p_element.get().toString() )
         );
     }
