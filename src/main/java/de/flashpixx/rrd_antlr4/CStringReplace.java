@@ -1,5 +1,8 @@
 package de.flashpixx.rrd_antlr4;
 
+import java.util.regex.Matcher;
+
+
 /**
  * class for replacing string content
  */
@@ -29,7 +32,7 @@ public final class CStringReplace
      */
     public final CStringReplace replaceAll( final String p_search, final String p_replace )
     {
-        m_data = m_data.replaceAll( p_search, p_replace );
+        m_data = m_data.replaceAll( p_search, Matcher.quoteReplacement( p_replace ) );
         return this;
     }
 

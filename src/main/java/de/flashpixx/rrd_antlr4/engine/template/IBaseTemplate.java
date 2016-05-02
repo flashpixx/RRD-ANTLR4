@@ -41,6 +41,7 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -106,11 +107,11 @@ public abstract class IBaseTemplate implements ITemplate
         if ( ( p_replacepair == null ) || ( p_replacepair.length % 2 != 0 ) )
             throw new IllegalArgumentException( CCommon.getLanguageString( IBaseTemplate.class, "replaceerror" ) );
 
-        final CStringReplace l_content = new CStringReplace( FileUtils.readFileToString( p_file ) );
+        final CStringReplace l_content = new CStringReplace( FileUtils.readFileToString( p_file, Charset.forName( "UTF-8" ) ) );
         SequenceM.rangeLong( 0, p_replacepair.length )
                  .sliding( 2, 2 )
                  .forEach( i -> l_content.replaceAll( p_replacepair[i.get( 0 ).intValue()], p_replacepair[i.get( 1 ).intValue()] ) );
-        FileUtils.writeStringToFile( p_file, l_content.get() );
+        FileUtils.write( p_file, l_content.get(), Charset.forName( "UTF-8" ) );
     }
 
     /**
