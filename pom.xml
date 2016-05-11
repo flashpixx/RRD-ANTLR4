@@ -44,7 +44,7 @@
 
     <!-- project build configuration -->
     <prerequisites>
-        <maven>3.0.0</maven>
+        <maven>3.0.1</maven>
     </prerequisites>
 
     <properties>
@@ -157,7 +157,7 @@
     <!-- main build -->
     <build>
         <!-- default goal is set to package and checking dependency updates -->
-        <defaultGoal>package versions:display-dependency-updates</defaultGoal>
+        <defaultGoal>package versions:display-dependency-updates versions:display-plugin-updates</defaultGoal>
 
         <!-- include resource directory with replacing configuration variables -->
         <resources>
@@ -180,7 +180,7 @@
                         <dependency>
                             <groupId>com.puppycrawl.tools</groupId>
                             <artifactId>checkstyle</artifactId>
-                            <version>6.14.1</version>
+                            <version>6.17</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -194,7 +194,7 @@
             <!-- GPG Sign plugin -->
             <plugin>
                 <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.4</version>
+                <version>1.6</version>
                 <executions>
                     <execution>
                         <id>sign-artifacts</id>
@@ -210,7 +210,7 @@
             <plugin>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4-maven-plugin</artifactId>
-                <version>4.5.1-1</version>
+                <version>4.5.3</version>
                 <configuration>
                     <visitor>true</visitor>
                     <listener>true</listener>
