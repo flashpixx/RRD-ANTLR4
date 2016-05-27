@@ -125,10 +125,7 @@ public final class CMain extends AbstractMojo
         l_clioptions.addOption( "excludes", true, CCommon.getLanguageString( CMain.class, "exclude" ) );
         l_clioptions.addOption( "grammar", true, CCommon.getLanguageString( CMain.class, "grammar" ) );
         l_clioptions.addOption( "docclean", true, CCommon.getLanguageString( CMain.class, "documentationclean" ) );
-        l_clioptions.addOption(
-                "templates", true, CCommon.getLanguageString( CMain.class, "de/flashpixx/rrd_antlr4/template", Arrays.asList( ETemplate.values() ),
-                                                              DEFAULTTEMPLATE
-                ) );
+        l_clioptions.addOption( "templates", true, CCommon.getLanguageString( CMain.class, "template", Arrays.asList( ETemplate.values() ), DEFAULTTEMPLATE ) );
 
 
         final CommandLine l_cli;

@@ -28,7 +28,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -194,16 +193,17 @@ public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
         if ( l_end < 0 )
             return p_list;
 
-        return this.implode( new LinkedList<Pair<?, String>>()
-        {{
-            add( new ImmutablePair<>(
-                    StringUtils.join( p_list.subList( l_start, l_end + 1 ).stream().map( i -> i.getLeft().toString() ).collect( Collectors.toList() ), "" ),
-                    p_list.get( l_end ).getRight()
-            ) );
-
-            if ( l_end < p_list.size() )
-                addAll( CASTVisitorPCRE.this.implode( p_list.subList( l_end + 1, p_list.size() ) ) );
-        }} );
+        return this.implode(
+            Stream.concat(
+                Stream.of(
+                    new ImmutablePair<>(
+                        StringUtils.join( p_list.subList( l_start, l_end + 1 ).stream().map( i -> i.getLeft().toString() ).collect( Collectors.toList() ), "" ),
+                        p_list.get( l_end ).getRight()
+                    )
+                ),
+                CASTVisitorPCRE.this.implode( p_list.subList( l_end + 1, p_list.size() ) ).stream()
+            ).collect( Collectors.toList() )
+        );
     }
 
     /**

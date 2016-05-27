@@ -51,7 +51,7 @@ public final class CCommon
     /**
      * package name
      **/
-    private static final String PACKAGEROOT = "de.flashpixx.rrd_antlr4";
+    public static final String PACKAGEROOT = "de.flashpixx.rrd_antlr4";
     /**
      * language resource bundle
      **/
