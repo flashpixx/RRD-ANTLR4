@@ -70,26 +70,25 @@ public final class CEngine
 
                 // create output directory if not exists
                 .flatMap( i ->
-                          {
-                              try
-                              {
-                                  final Path l_directory = Files.createDirectories(
-                                          Paths.get( p_outputdirectory, i.name(), p_grammar.getName().toLowerCase() ) );
+                {
+                    try
+                    {
+                        final Path l_directory = Files.createDirectories( Paths.get( p_outputdirectory, i.name(), p_grammar.getName().toLowerCase() ) );
 
-                                  // run exporting process
-                                  i.preprocess( l_directory );
-                                  final Collection<String> l_errors = this.parse( p_grammar, p_docuclean, p_imports, i );
-                                  if ( !l_errors.isEmpty() )
-                                      return l_errors.stream();
+                        // run exporting process
+                        i.preprocess( l_directory );
+                        final Collection<String> l_errors = this.parse( p_grammar, p_docuclean, p_imports, i );
+                        if ( !l_errors.isEmpty() )
+                            return l_errors.stream();
 
-                                  i.postprocess( l_directory );
-                                  return Stream.<String>of();
-                              }
-                              catch ( final URISyntaxException | IOException l_exception )
-                              {
-                                  return Stream.of( l_exception.getMessage() );
-                              }
-                          } )
+                        i.postprocess( l_directory );
+                        return Stream.<String>of();
+                    }
+                    catch ( final URISyntaxException | IOException l_exception )
+                    {
+                        return Stream.of( l_exception.getMessage() );
+                    }
+                } )
 
                 // collect error messages
                 .collect( Collectors.toList() );
@@ -126,16 +125,16 @@ public final class CEngine
                         .map( i -> p_imports.get( i.get() ) )
                         .filter( i -> i != null )
                         .flatMap( i ->
-                                  {
-                                      try
-                                      {
-                                          return this.parse( i, p_docuclean, p_imports, p_template ).stream();
-                                      }
-                                      catch ( final IOException l_exception )
-                                      {
-                                          return Stream.of( l_exception.getMessage() );
-                                      }
-                                  } ).collect( Collectors.toList() );
+                        {
+                            try
+                            {
+                                return this.parse( i, p_docuclean, p_imports, p_template ).stream();
+                            }
+                            catch ( final IOException l_exception )
+                            {
+                                return Stream.of( l_exception.getMessage() );
+                            }
+                        } ).collect( Collectors.toList() );
     }
 
 }

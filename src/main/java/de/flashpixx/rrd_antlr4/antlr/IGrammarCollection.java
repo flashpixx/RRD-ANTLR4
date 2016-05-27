@@ -21,11 +21,9 @@
  * @endcond
  */
 
-
 package de.flashpixx.rrd_antlr4.antlr;
 
 import java.util.List;
-
 
 /**
  * interface of grammar collection elements
