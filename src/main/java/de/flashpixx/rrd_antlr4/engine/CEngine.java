@@ -58,6 +58,7 @@ public final class CEngine
      * @param p_docuclean set with documentation clean regex
      * @param p_imports map with grammar imported grammar files
      * @param p_templates exporting templates  @return list with error messages
+     * @return list with error messages
      * @throws IOException on IO error
      */
     public Collection<String> generate( final String p_outputdirectory, final File p_grammar, final Set<String> p_docuclean,
@@ -68,7 +69,8 @@ public final class CEngine
                 .parallelStream()
 
                 // create output directory if not exists
-                .flatMap( i -> {
+                .flatMap( i ->
+                {
                     try
                     {
                         final Path l_directory = Files.createDirectories( Paths.get( p_outputdirectory, i.name(), p_grammar.getName().toLowerCase() ) );
@@ -82,9 +84,9 @@ public final class CEngine
                         i.postprocess( l_directory );
                         return Stream.<String>of();
                     }
-                    catch ( final URISyntaxException | IOException p_exception )
+                    catch ( final URISyntaxException | IOException l_exception )
                     {
-                        return Stream.of( p_exception.getMessage() );
+                        return Stream.of( l_exception.getMessage() );
                     }
                 } )
 
@@ -122,14 +124,15 @@ public final class CEngine
         return l_visitor.getGrammarImports().stream()
                         .map( i -> p_imports.get( i.get() ) )
                         .filter( i -> i != null )
-                        .flatMap( i -> {
+                        .flatMap( i ->
+                        {
                             try
                             {
                                 return this.parse( i, p_docuclean, p_imports, p_template ).stream();
                             }
-                            catch ( final IOException p_exception )
+                            catch ( final IOException l_exception )
                             {
-                                return Stream.of( p_exception.getMessage() );
+                                return Stream.of( l_exception.getMessage() );
                             }
                         } ).collect( Collectors.toList() );
     }

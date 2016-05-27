@@ -21,7 +21,6 @@
  * @endcond
  */
 
-
 package de.flashpixx.rrd_antlr4;
 
 import de.flashpixx.rrd_antlr4.engine.CEngine;
@@ -114,6 +113,7 @@ public final class CMain extends AbstractMojo
      * main
      *
      * @param p_args command-line arguments
+     * @throws IOException on any io error
      */
     public static void main( final String[] p_args ) throws IOException
     {
@@ -145,8 +145,7 @@ public final class CMain extends AbstractMojo
         if ( l_cli.hasOption( "help" ) )
         {
             final HelpFormatter l_formatter = new HelpFormatter();
-            l_formatter.printHelp(
-                    ( new java.io.File( CMain.class.getProtectionDomain().getCodeSource().getLocation().getPath() ).getName() ), l_clioptions );
+            l_formatter.printHelp( new java.io.File( CMain.class.getProtectionDomain().getCodeSource().getLocation().getPath() ).getName(), l_clioptions );
             System.exit( 0 );
         }
 
@@ -233,23 +232,24 @@ public final class CMain extends AbstractMojo
                                                     .collect( Collectors.toMap( i -> FilenameUtils.removeExtension( i.getName() ), j -> j ) );
 
         return getFileList( p_grammar, p_exclude )
-                .flatMap( i -> {
-                    try
-                    {
-                        return ENGINE.generate(
-                                p_outputdirectory,
-                                i, p_docuclean,
-                                l_imports,
-                                Arrays.stream( p_template )
-                                      .map( j -> ETemplate.valueOf( j.trim().toUpperCase() ).generate() )
-                                      .collect( Collectors.toSet() )
-                        ).stream();
-                    }
-                    catch ( final IOException p_exception )
-                    {
-                        return Stream.of( p_exception.getMessage() );
-                    }
-                } )
+                .flatMap( i ->
+                          {
+                              try
+                              {
+                                  return ENGINE.generate(
+                                          p_outputdirectory,
+                                          i, p_docuclean,
+                                          l_imports,
+                                          Arrays.stream( p_template )
+                                                .map( j -> ETemplate.valueOf( j.trim().toUpperCase() ).generate() )
+                                                .collect( Collectors.toSet() )
+                                  ).stream();
+                              }
+                              catch ( final IOException p_exception )
+                              {
+                                  return Stream.of( p_exception.getMessage() );
+                              }
+                          } )
                 .filter( i -> i != null )
                 .collect( Collectors.toList() );
 

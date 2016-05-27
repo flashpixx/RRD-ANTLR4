@@ -77,8 +77,7 @@ public abstract class IBaseTemplate implements ITemplate
     }
 
     /**
-     * copies files from the template directory of the template
-     * to the output directory
+     * copies files from the directory of the template to the output directory
      *
      * @param p_templatefile file within the template directory
      * @param p_output output directory
@@ -90,7 +89,7 @@ public abstract class IBaseTemplate implements ITemplate
         final Path l_target = Paths.get( p_output.toString(), p_templatefile );
         Files.createDirectories( l_target.getParent() );
         Files.copy(
-                CCommon.getResourceURL( MessageFormat.format( "{0}{1}{2}{3}", "template/", m_name, "/", p_templatefile ) ).openStream(),
+                CCommon.getResourceURL( MessageFormat.format( "{0}{1}{2}{3}", "de/flashpixx/rrd_antlr4/template/", m_name, "/", p_templatefile ) ).openStream(),
                 l_target,
                 StandardCopyOption.REPLACE_EXISTING
         );
@@ -105,7 +104,7 @@ public abstract class IBaseTemplate implements ITemplate
     protected final void replace( final File p_file, final String... p_replacepair ) throws IOException
     {
         if ( ( p_replacepair == null ) || ( p_replacepair.length % 2 != 0 ) )
-            throw new IllegalArgumentException( CCommon.getLanguageString( IBaseTemplate.class, "replaceerror" ) );
+            throw new IllegalArgumentException( CCommon.getLanguageString( IBaseTemplate.class, "replaceerror", p_file ) );
 
         final CStringReplace l_content = new CStringReplace( FileUtils.readFileToString( p_file, Charset.forName( "UTF-8" ) ) );
         SequenceM.rangeLong( 0, p_replacepair.length )
@@ -133,7 +132,7 @@ public abstract class IBaseTemplate implements ITemplate
             return this.cardinality( p_element.cardinality(), this.terminalvalue( (IGrammarSimpleElement<?>) p_element ) );
 
         if ( p_element instanceof IGrammarTerminal )
-            return this.cardinality( p_element.cardinality(), this.terminal( ( (IGrammarTerminal) p_element ) ) );
+            return this.cardinality( p_element.cardinality(), this.terminal( (IGrammarTerminal) p_element ) );
 
 
         if ( p_element instanceof IGrammarNegation )

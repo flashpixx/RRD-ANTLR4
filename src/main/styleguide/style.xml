@@ -1,7 +1,5 @@
 <?xml version="1.0"?>
-<!DOCTYPE module PUBLIC
-        "-//Puppy Crawl//DTD Check Configuration 1.2//EN"
-        "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
+<!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.2//EN" "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
 
 <!--
 
@@ -9,7 +7,7 @@
     and is realigned at a hungarian notation and excerpts of
     the Google styleguide
 
-    @see http://checkstyle.sourceforge.net/availablechecks.html
+    @see http://checkstyle.sourceforge.net/checks.html
 
 -->
 
@@ -20,7 +18,6 @@
     <property name = "charset" value = "UTF-8" />
 
     <property name = "fileExtensions" value = "java, properties" />
-
 
     <!-- <modul name="FileLength"/> -->
 
@@ -50,6 +47,10 @@
 
     <!-- <module name="RegexpSinglelineJava"/> -->
 
+    <module name="SuppressionFilter">
+        <property name="file" value="src/main/styleguide/suppressions.xml"/>
+    </module>
+
     <module name = "Translation" />
 
     <module name = "UniqueProperties" />
@@ -57,7 +58,9 @@
 
     <module name = "TreeWalker">
 
-        <module name = "AbbreviationAsWordInName" />
+        <module name = "AbbreviationAsWordInName">
+            <property name = "allowedAbbreviationLength" value = "5" />
+        </module>
 
         <module name = "AbstractClassName">
             <property name = "format" value = "I[A-Z]{1,3}([a-z0-9]+[A-Z]{0,2})*$" />
@@ -65,6 +68,10 @@
 
         <module name = "AnnotationLocation">
             <property name = "allowSamelineSingleParameterlessAnnotation" value = "false" />
+        </module>
+
+        <module name = "AnonInnerLengthCheck">
+            <property name = "max" value = "25" />
         </module>
 
         <module name = "AnnotationUseStyle" />
@@ -79,7 +86,7 @@
 
         <module name = "AtclauseOrder">
             <property name = "tagOrder"
-                      value = " @param, @return, @exception, @throws, @see, @deprecated, @bug, @todo, @author, @version,  @since, @serial, @serialField, @serialData" />
+                      value = " @param, @return, @exception, @throws, @bug, @todo, @see, @deprecated, @author, @version, @since, @serial, @serialField, @serialData" />
         </module>
 
         <module name = "AvoidEscapedUnicodeCharacters" />
@@ -95,14 +102,18 @@
         </module>
 
         <module name = "AvoidStaticImport">
-            <property name = "excludes" value = "org.junit.Assert.*" />
+            <property name = "excludes" value = "org.junit.Assert.*, org.junit.Assume.*" />
         </module>
 
         <module name = "BooleanExpressionComplexity">
-            <property name = "max" value = "4" />
+            <property name = "max" value = "5" />
         </module>
 
-        <!-- <module name="ClassDataAbstractionCoupling" /> -->
+        <!-- <module name = "CatchParameterName" /> -->
+
+        <module name = "ClassDataAbstractionCoupling">
+            <property name = "max" value = "45" />
+        </module>
 
         <!-- <module name="ClassFanOutComplexity"/> -->
 
@@ -111,7 +122,7 @@
         </module>
 
         <module name = "ConstantName">
-            <property name = "format" value = "[A-Z0-9]{3,}$" />
+            <property name = "format" value = "[A-Z0-9]{2,}$" />
         </module>
 
         <module name = "CovariantEquals" />
@@ -119,7 +130,13 @@
         <!-- <module name="CustomImportOrder"/> -->
 
         <module name = "CyclomaticComplexity">
-            <property name = "max" value = "6" />
+            <property name = "max" value = "15" />
+            <property name = "tokens" value = "LITERAL_WHILE, LITERAL_DO, LITERAL_FOR, LITERAL_IF, LITERAL_SWITCH, LITERAL_CATCH, QUESTION, LAND, LOR" />
+        </module>
+
+        <module name = "CyclomaticComplexity">
+            <property name = "max" value = "20" />
+            <property name = "tokens" value = "LITERAL_CASE" />
         </module>
 
         <module name = "DeclarationOrder" />
@@ -128,7 +145,7 @@
 
         <!-- <module name="DescendantToken"/> -->
 
-        <module name = "DesignForExtension" />
+        <!-- <module name = "DesignForExtension" /> -->
 
         <module name = "EmptyBlock" />
 
@@ -160,21 +177,24 @@
 
         <module name = "FinalLocalVariable" />
 
-        <module name = "FinalParameters" />
+        <module name = "FinalParameters">
+            <property name = "tokens" value = "METHOD_DEF, CTOR_DEF, LITERAL_CATCH, FOR_EACH_CLAUSE" />
+            <property name = "ignorePrimitiveTypes" value = "true" />
+        </module>
 
         <module name = "GenericWhitespace" />
 
         <module name = "HiddenField" />
 
-        <!-- <module name="HideUtilityClassConstructor"/> -->
+        <module name = "HideUtilityClassConstructor" />
 
-        <module name = "IllegalCatch" />
+        <!-- <module name = "IllegalCatch" /> -->
 
         <module name = "IllegalImport" />
 
         <module name = "IllegalInstantiation" />
 
-        <module name = "IllegalThrows" />
+        <!-- <module name = "IllegalThrows" /> -->
 
         <module name = "IllegalToken">
             <property name = "tokens" value = "LITERAL_NATIVE" />
@@ -203,6 +223,8 @@
         <module name = "JavadocMethod">
             <property name = "minLineCount" value = "1" />
             <property name = "scope" value = "public" />
+            <!-- @param is substitute with @tparam so allow missing tags -->
+            <property name = "allowMissingParamTags" value = "true" />
         </module>
 
         <!-- <module name="JavadocPackage"/> -->
@@ -220,7 +242,7 @@
         <module name = "JavadocType">
             <property name = "scope" value = "public" />
             <property name = "allowUnknownTags" value = "true" />
-            <!-- Doxygen @tparam tag must be ignored -->
+            <!-- @param is substitute with @tparam so allow missing tags -->
             <property name = "allowMissingParamTags" value = "true" />
         </module>
 
@@ -232,7 +254,7 @@
         </module>
 
         <module name = "LineLength">
-            <property name = "max" value = "160" />
+            <property name = "max" value = "175" />
         </module>
 
         <module name = "LocalFinalVariableName">
@@ -244,21 +266,18 @@
             <property name = "allowOneCharVarInForLoop" value = "true" />
         </module>
 
-        <module name = "MagicNumber">
-            <property name = "ignoreAnnotation" value = "true" />
-            <property name = "ignoreHashCodeMethod" value = "true" />
-        </module>
+        <!-- <module name = "MagicNumber" /> -->
 
         <module name = "MemberName">
             <property name = "format" value = "^m_[a-zA-Z0-9]{2,}$" />
         </module>
 
         <module name = "MethodCount">
-            <property name = "maxTotal" value = "20" />
+            <property name = "maxTotal" value = "85" />
         </module>
 
         <module name = "MethodLength">
-            <property name = "max" value = "35" />
+            <property name = "max" value = "100" />
             <property name = "countEmpty" value = "false" />
         </module>
 
@@ -289,7 +308,7 @@
         <module name = "ModifierOrder" />
 
         <module name = "MultipleStringLiterals">
-            <property name = "allowedDuplicates" value = "2" />
+            <property name = "allowedDuplicates" value = "5" />
         </module>
 
         <module name = "MultipleVariableDeclarations" />
@@ -297,7 +316,7 @@
         <module name = "MutableException" />
 
         <module name = "NPathComplexity">
-            <property name = "max" value = "20" />
+            <property name = "max" value = "275" />
         </module>
 
         <!-- <module name="NeedBraces">
@@ -338,17 +357,18 @@
         <module name = "PackageDeclaration" />
 
         <module name = "PackageName">
-            <property name = "format" value = "^[a-z]{3,}(\.[a-z]{2,}[a-z0-9]*)*$" />
+            <property name = "format" value = "^[a-z]{2,}(\.[a-z]{2,}[a-z_0-9]*)*$" />
         </module>
 
         <module name = "ParameterAssignment" />
 
         <module name = "ParameterName">
-            <property name = "format" value = "^p_[a-zA-Z0-9]{2,}$" />
+            <!-- lambda expression must defined only one-letter name -->
+            <property name = "format" value = "^((p_[a-zA-Z0-9]{2,})|[a-z])$" />
         </module>
 
         <module name = "ParameterNumber">
-            <property name = "max" value = "7" />
+            <property name = "max" value = "10" />
         </module>
 
         <module name = "ParenPad">
@@ -367,7 +387,7 @@
         </module>
 
         <module name = "ReturnCount">
-            <property name = "max" value = "3" />
+            <property name = "max" value = "20" />
         </module>
 
         <module name = "RightCurly">
@@ -402,7 +422,7 @@
         <!--  <module name="SuppressWarningsHolder"/> -->
 
         <module name = "ThrowsCount">
-            <property name = "max" value = "3" />
+            <property name = "max" value = "5" />
         </module>
 
         <!-- <module name="TodoComment"/> -->
@@ -426,7 +446,9 @@
 
         <module name = "TypecastParenPad" />
 
-        <module name = "UncommentedMain" />
+        <module name = "UncommentedMain">
+            <property name = "excludedClasses" value = "Test.*$" />
+        </module>
 
         <module name = "UnnecessaryParentheses" />
 

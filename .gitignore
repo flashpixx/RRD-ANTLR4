@@ -27,4 +27,4 @@
 target/**
 rrd-output/**
 dependency-reduced-pom.xml
-src/main/resources/template/html/lib/**
+src/main/java/de/flashpixx/rrd_antlr4/template/html/lib/**

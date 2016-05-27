@@ -47,6 +47,9 @@ public interface ITemplate
      * preprocessing (before AST visiting)
      *
      * @param p_output output directory
+     *
+     * @throws IOException on io errors
+     * @throws URISyntaxException on uri syntax
      */
     void preprocess( final Path p_output ) throws IOException, URISyntaxException;
 
@@ -54,6 +57,9 @@ public interface ITemplate
      * postprocessing (after AST visiting)
      *
      * @param p_output working directory
+     *
+     * @throws IOException on io errors
+     * @throws URISyntaxException on uri syntax
      */
     void postprocess( final Path p_output ) throws IOException, URISyntaxException;
 

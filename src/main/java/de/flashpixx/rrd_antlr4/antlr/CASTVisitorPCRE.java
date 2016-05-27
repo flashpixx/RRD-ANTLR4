@@ -28,7 +28,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -114,10 +113,10 @@ public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
                                                        .sliding( 2, 2 )
                                                        .flatMap( i -> l_pairs.get( i.get( 0 ) ).getLeft().equals( "~" )
                                                                       ? Stream.of( new ImmutablePair<>(
-                                                                         new CGrammarNegation( (IGrammarElement) l_pairs.get( i.get( 1 ) ).getLeft() ),
-                                                                         l_pairs.get( i.get( 1 ) ).getRight()
+                                                                                           new CGrammarNegation( (IGrammarElement) l_pairs.get( i.get( 1 ) ).getLeft() ),
+                                                                                           l_pairs.get( i.get( 1 ) ).getRight()
+                                                                                   )
                                                                  )
-                                                             )
                                                                       : i.get( 1 ) != null
                                                                         ? Stream.of( l_pairs.get( i.get( 0 ) ), l_pairs.get( i.get( 1 ) ) )
                                                                         : Stream.of( l_pairs.get( i.get( 0 ) ) )
@@ -170,7 +169,7 @@ public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
     private IGrammarElement terminalvalue( final String p_string )
     {
         return new CGrammarTerminalValue<>(
-                p_string.equals( "." )
+                ".".equals( p_string )
                 ? de.flashpixx.rrd_antlr4.CCommon.getLanguageString( this, "anychar" )
                 : p_string
         );
@@ -194,16 +193,17 @@ public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
         if ( l_end < 0 )
             return p_list;
 
-        return this.implode( new LinkedList<Pair<?, String>>()
-        {{
-            add( new ImmutablePair<>(
-                    StringUtils.join( p_list.subList( l_start, l_end + 1 ).stream().map( i -> i.getLeft().toString() ).collect( Collectors.toList() ), "" ),
-                    p_list.get( l_end ).getRight()
-            ) );
-
-            if ( l_end < p_list.size() )
-                addAll( CASTVisitorPCRE.this.implode( p_list.subList( l_end + 1, p_list.size() ) ) );
-        }} );
+        return this.implode(
+            Stream.concat(
+                Stream.of(
+                    new ImmutablePair<>(
+                        StringUtils.join( p_list.subList( l_start, l_end + 1 ).stream().map( i -> i.getLeft().toString() ).collect( Collectors.toList() ), "" ),
+                        p_list.get( l_end ).getRight()
+                    )
+                ),
+                CASTVisitorPCRE.this.implode( p_list.subList( l_end + 1, p_list.size() ) ).stream()
+            ).collect( Collectors.toList() )
+        );
     }
 
     /**

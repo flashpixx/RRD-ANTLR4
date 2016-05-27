@@ -39,7 +39,7 @@
 lexer grammar ANTLRv4Lexer;
 
 options {
-	superClass = de.flashpixx.rrd_antlr4.antlr.LexerAdaptor ;
+	superClass = de.flashpixx.rrd_antlr4.antlr.IAntLRv4LexerAdaptor ;
 }
 
 import LexBasic;	// Standard set of fragments

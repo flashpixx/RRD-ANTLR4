@@ -1,4 +1,4 @@
 {
-  "directory" : "src/main/resources/template/html/lib",
+  "directory" : "src/main/resources/de/flashpixx/rrd_antlr4/template/html/lib",
   "analytics": false
 }
