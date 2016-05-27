@@ -66,7 +66,7 @@ public final class CHTML extends IBaseTemplate
     /**
      * ctor
      *
-     * @param p_name de.flashpixx.rrd_antlr4.template name
+     * @param p_name template name
      */
     public CHTML( final String p_name )
     {

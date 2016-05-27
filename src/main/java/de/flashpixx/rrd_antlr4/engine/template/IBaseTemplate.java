@@ -56,14 +56,14 @@ public abstract class IBaseTemplate implements ITemplate
 {
 
     /**
-     * de.flashpixx.rrd_antlr4.template name
+     * template name
      */
     private final String m_name;
 
     /**
      * ctor
      *
-     * @param p_name de.flashpixx.rrd_antlr4.template name
+     * @param p_name template name
      */
     public IBaseTemplate( final String p_name )
     {
@@ -77,10 +77,9 @@ public abstract class IBaseTemplate implements ITemplate
     }
 
     /**
-     * copies files from the de.flashpixx.rrd_antlr4.template directory of the de.flashpixx.rrd_antlr4.template
-     * to the output directory
+     * copies files from the directory of the template to the output directory
      *
-     * @param p_templatefile file within the de.flashpixx.rrd_antlr4.template directory
+     * @param p_templatefile file within the template directory
      * @param p_output output directory
      * @throws IOException on IO error
      * @throws URISyntaxException on URL syntax error
@@ -105,7 +104,7 @@ public abstract class IBaseTemplate implements ITemplate
     protected final void replace( final File p_file, final String... p_replacepair ) throws IOException
     {
         if ( ( p_replacepair == null ) || ( p_replacepair.length % 2 != 0 ) )
-            throw new IllegalArgumentException( CCommon.getLanguageString( IBaseTemplate.class, "replaceerror" ) );
+            throw new IllegalArgumentException( CCommon.getLanguageString( IBaseTemplate.class, "replaceerror", p_file ) );
 
         final CStringReplace l_content = new CStringReplace( FileUtils.readFileToString( p_file, Charset.forName( "UTF-8" ) ) );
         SequenceM.rangeLong( 0, p_replacepair.length )

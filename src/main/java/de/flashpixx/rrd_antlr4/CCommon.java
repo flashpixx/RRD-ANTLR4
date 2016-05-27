@@ -35,9 +35,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.text.MessageFormat;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
@@ -126,6 +124,9 @@ public final class CCommon
      *
      * @param p_file file
      * @return URL of file or null
+     *
+     * @throws URISyntaxException thrown on syntax error
+     * @throws MalformedURLException thrown on malformat
      */
     public static URL getResourceURL( final String p_file ) throws URISyntaxException, MalformedURLException
     {
@@ -218,33 +219,6 @@ public final class CCommon
         p_collection.toArray( l_return );
         return l_return;
     }
-
-
-    /**
-     * creates a map from parameters
-     *
-     * @param p_objects list with pairs of string and object
-     * @return map with data
-     */
-    public static Map<String, Object> getMap( final Object... p_objects )
-    {
-        if ( p_objects.length % 2 != 0 )
-            throw new IllegalArgumentException( CCommon.getLanguageString( CCommon.class, "argumentsnoteven" ) );
-
-        String l_name = null;
-        final Map<String, Object> l_return = new HashMap<>();
-
-        for ( int i = 0; i < p_objects.length; ++i )
-            if ( i % 2 == 0 )
-                l_name = (String) p_objects[i];
-            else
-                l_return.put( l_name, p_objects[i] );
-
-
-        return l_return;
-    }
-
-
 
     /**
      * class to read UTF-8 encoded property file

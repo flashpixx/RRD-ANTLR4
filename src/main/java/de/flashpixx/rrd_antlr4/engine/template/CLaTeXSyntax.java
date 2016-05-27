@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 
 
 /**
- * de.flashpixx.rrd_antlr4.template for LaTeX text export
+ * template for LaTeX text export
  */
 public final class CLaTeXSyntax extends IBaseTemplate
 {
@@ -61,7 +61,7 @@ public final class CLaTeXSyntax extends IBaseTemplate
     /**
      * ctor
      *
-     * @param p_name de.flashpixx.rrd_antlr4.template name
+     * @param p_name template name
      */
     public CLaTeXSyntax( final String p_name )
     {

@@ -212,7 +212,7 @@ public final class CMain extends AbstractMojo
 
 
     /**
-     * generating export (generate de.flashpixx.rrd_antlr4.template instances and call engine)
+     * generating export (generate template instances and call engine)
      *
      * @param p_outputdirectory output directory
      * @param p_exclude file names which are ignored

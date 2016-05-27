@@ -209,7 +209,7 @@ ruleModifiers
 // is an internal indication for lexer rules that they do not match
 // from the input but are like subroutines for other lexer rules to
 // reuse for certain lexical patterns. The other modifiers are passed
-// to the code generation templates and may be ignored by the de.flashpixx.rrd_antlr4.template
+// to the code generation templates and may be ignored by the template
 // if they are of no use in that language.
 ruleModifier
 	:	PUBLIC

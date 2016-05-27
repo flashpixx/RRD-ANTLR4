@@ -45,7 +45,7 @@ import java.util.stream.Stream;
 
 
 /**
- * de.flashpixx.rrd_antlr4.template engine
+ * template engine
  */
 public final class CEngine
 {
@@ -53,7 +53,7 @@ public final class CEngine
     /**
      * generator call
      *
-     * @param p_outputdirectory output directory - the de.flashpixx.rrd_antlr4.template name and grammar file name will be appended
+     * @param p_outputdirectory output directory - the template name and grammar file name will be appended
      * @param p_grammar grammar input file
      * @param p_docuclean set with documentation clean regex
      * @param p_imports map with grammar imported grammar files
@@ -101,7 +101,7 @@ public final class CEngine
      * @param p_grammar grammar file
      * @param p_docuclean set with documentation clean regex
      * @param p_imports map with grammar imported grammar files
-     * @param p_template de.flashpixx.rrd_antlr4.template which will be passend
+     * @param p_template template which will be passend
      * @return colleciton with error messages
      *
      * @throws IOException thrown on IO errors

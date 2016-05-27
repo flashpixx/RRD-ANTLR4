@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 public final class CASTVisitorAntLR extends ANTLRv4ParserBaseVisitor<IGrammarElement>
 {
     /**
-     * exporting de.flashpixx.rrd_antlr4.template
+     * exporting template
      */
     private final ITemplate m_template;
     /**
@@ -54,9 +54,9 @@ public final class CASTVisitorAntLR extends ANTLRv4ParserBaseVisitor<IGrammarEle
     private final Set<String> m_docuclean;
 
     /**
-     * exporting de.flashpixx.rrd_antlr4.template
+     * exporting template
      *
-     * @param p_template de.flashpixx.rrd_antlr4.template
+     * @param p_template template
      * @param p_docuclean set with regex for documentation cleanup
      */
     public CASTVisitorAntLR( final ITemplate p_template, final Set<String> p_docuclean )
