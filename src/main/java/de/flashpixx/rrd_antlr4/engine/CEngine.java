@@ -45,7 +45,7 @@ import java.util.stream.Stream;
 
 
 /**
- * template engine
+ * de.flashpixx.rrd_antlr4.template engine
  */
 public final class CEngine
 {
@@ -53,11 +53,12 @@ public final class CEngine
     /**
      * generator call
      *
-     * @param p_outputdirectory output directory - the template name and grammar file name will be appended
+     * @param p_outputdirectory output directory - the de.flashpixx.rrd_antlr4.template name and grammar file name will be appended
      * @param p_grammar grammar input file
      * @param p_docuclean set with documentation clean regex
      * @param p_imports map with grammar imported grammar files
      * @param p_templates exporting templates  @return list with error messages
+     * @return list with error messages
      * @throws IOException on IO error
      */
     public Collection<String> generate( final String p_outputdirectory, final File p_grammar, final Set<String> p_docuclean,
@@ -68,25 +69,27 @@ public final class CEngine
                 .parallelStream()
 
                 // create output directory if not exists
-                .flatMap( i -> {
-                    try
-                    {
-                        final Path l_directory = Files.createDirectories( Paths.get( p_outputdirectory, i.name(), p_grammar.getName().toLowerCase() ) );
+                .flatMap( i ->
+                          {
+                              try
+                              {
+                                  final Path l_directory = Files.createDirectories(
+                                          Paths.get( p_outputdirectory, i.name(), p_grammar.getName().toLowerCase() ) );
 
-                        // run exporting process
-                        i.preprocess( l_directory );
-                        final Collection<String> l_errors = this.parse( p_grammar, p_docuclean, p_imports, i );
-                        if ( !l_errors.isEmpty() )
-                            return l_errors.stream();
+                                  // run exporting process
+                                  i.preprocess( l_directory );
+                                  final Collection<String> l_errors = this.parse( p_grammar, p_docuclean, p_imports, i );
+                                  if ( !l_errors.isEmpty() )
+                                      return l_errors.stream();
 
-                        i.postprocess( l_directory );
-                        return Stream.<String>of();
-                    }
-                    catch ( final URISyntaxException | IOException p_exception )
-                    {
-                        return Stream.of( p_exception.getMessage() );
-                    }
-                } )
+                                  i.postprocess( l_directory );
+                                  return Stream.<String>of();
+                              }
+                              catch ( final URISyntaxException | IOException l_exception )
+                              {
+                                  return Stream.of( l_exception.getMessage() );
+                              }
+                          } )
 
                 // collect error messages
                 .collect( Collectors.toList() );
@@ -99,7 +102,7 @@ public final class CEngine
      * @param p_grammar grammar file
      * @param p_docuclean set with documentation clean regex
      * @param p_imports map with grammar imported grammar files
-     * @param p_template template which will be passend
+     * @param p_template de.flashpixx.rrd_antlr4.template which will be passend
      * @return colleciton with error messages
      *
      * @throws IOException thrown on IO errors
@@ -122,16 +125,17 @@ public final class CEngine
         return l_visitor.getGrammarImports().stream()
                         .map( i -> p_imports.get( i.get() ) )
                         .filter( i -> i != null )
-                        .flatMap( i -> {
-                            try
-                            {
-                                return this.parse( i, p_docuclean, p_imports, p_template ).stream();
-                            }
-                            catch ( final IOException p_exception )
-                            {
-                                return Stream.of( p_exception.getMessage() );
-                            }
-                        } ).collect( Collectors.toList() );
+                        .flatMap( i ->
+                                  {
+                                      try
+                                      {
+                                          return this.parse( i, p_docuclean, p_imports, p_template ).stream();
+                                      }
+                                      catch ( final IOException l_exception )
+                                      {
+                                          return Stream.of( l_exception.getMessage() );
+                                      }
+                                  } ).collect( Collectors.toList() );
     }
 
 }

@@ -31,15 +31,15 @@ import java.nio.file.Path;
 
 
 /**
- * interface of a template
+ * interface of a de.flashpixx.rrd_antlr4.template
  */
 public interface ITemplate
 {
 
     /**
-     * returns the name of the template
+     * returns the name of the de.flashpixx.rrd_antlr4.template
      *
-     * @return template name
+     * @return de.flashpixx.rrd_antlr4.template name
      */
     String name();
 

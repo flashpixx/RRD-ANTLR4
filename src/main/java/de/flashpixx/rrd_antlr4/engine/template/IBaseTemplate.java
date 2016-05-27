@@ -56,14 +56,14 @@ public abstract class IBaseTemplate implements ITemplate
 {
 
     /**
-     * template name
+     * de.flashpixx.rrd_antlr4.template name
      */
     private final String m_name;
 
     /**
      * ctor
      *
-     * @param p_name template name
+     * @param p_name de.flashpixx.rrd_antlr4.template name
      */
     public IBaseTemplate( final String p_name )
     {
@@ -77,10 +77,10 @@ public abstract class IBaseTemplate implements ITemplate
     }
 
     /**
-     * copies files from the template directory of the template
+     * copies files from the de.flashpixx.rrd_antlr4.template directory of the de.flashpixx.rrd_antlr4.template
      * to the output directory
      *
-     * @param p_templatefile file within the template directory
+     * @param p_templatefile file within the de.flashpixx.rrd_antlr4.template directory
      * @param p_output output directory
      * @throws IOException on IO error
      * @throws URISyntaxException on URL syntax error
@@ -90,7 +90,7 @@ public abstract class IBaseTemplate implements ITemplate
         final Path l_target = Paths.get( p_output.toString(), p_templatefile );
         Files.createDirectories( l_target.getParent() );
         Files.copy(
-                CCommon.getResourceURL( MessageFormat.format( "{0}{1}{2}{3}", "template/", m_name, "/", p_templatefile ) ).openStream(),
+                CCommon.getResourceURL( MessageFormat.format( "{0}{1}{2}{3}", "de/flashpixx/rrd_antlr4/template/", m_name, "/", p_templatefile ) ).openStream(),
                 l_target,
                 StandardCopyOption.REPLACE_EXISTING
         );
@@ -133,7 +133,7 @@ public abstract class IBaseTemplate implements ITemplate
             return this.cardinality( p_element.cardinality(), this.terminalvalue( (IGrammarSimpleElement<?>) p_element ) );
 
         if ( p_element instanceof IGrammarTerminal )
-            return this.cardinality( p_element.cardinality(), this.terminal( ( (IGrammarTerminal) p_element ) ) );
+            return this.cardinality( p_element.cardinality(), this.terminal( (IGrammarTerminal) p_element ) );
 
 
         if ( p_element instanceof IGrammarNegation )

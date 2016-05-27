@@ -24,7 +24,7 @@
 package de.flashpixx.rrd_antlr4.antlr;
 
 /**
- *
+ * grammar identifier - for linkage between elements
  */
 public interface IGrammarIdentifier extends IGrammarSimpleElement<String>
 {

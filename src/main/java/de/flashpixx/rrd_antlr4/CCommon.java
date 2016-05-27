@@ -39,7 +39,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
-import java.util.Properties;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
@@ -50,33 +49,25 @@ import java.util.ResourceBundle;
 public final class CCommon
 {
     /**
-     * properties of the package
-     */
-    private static final Properties PROPERTIES;
-    /**
      * package name
      **/
-    private static final String PACKAGEROOT;
+    private static final String PACKAGEROOT = "de.flashpixx.rrd_antlr4";
     /**
      * language resource bundle
      **/
-    private static final ResourceBundle LANGUAGE = ResourceBundle.getBundle( "language", Locale.getDefault(), new CUTF8Control() );
-
-    static
-    {
-        String l_packageroot = "";
-        PROPERTIES = new Properties();
-        try
-        {
-            PROPERTIES.load( CCommon.class.getClassLoader().getResourceAsStream( "configuration.properties" ) );
-            l_packageroot = PROPERTIES.getProperty( "rootpackage" );
-        }
-        catch ( final IOException p_exception )
-        {
-        }
-
-        PACKAGEROOT = l_packageroot;
-    }
+    private static final ResourceBundle LANGUAGE = ResourceBundle.getBundle(
+            MessageFormat.format( "{0}.{1}", PACKAGEROOT, "language" ),
+            Locale.getDefault(),
+            new CUTF8Control()
+    );
+    /**
+     * properties of the package
+     */
+    private static final ResourceBundle PROPERTIES = ResourceBundle.getBundle(
+            MessageFormat.format( "{0}.{1}", PACKAGEROOT, "configuration" ),
+            Locale.getDefault(),
+            new CUTF8Control()
+    );
 
     /**
      * private ctor - avoid instantiation
@@ -100,19 +91,9 @@ public final class CCommon
      *
      * @return property object
      */
-    public static Properties getConfiguration()
+    public static ResourceBundle getConfiguration()
     {
         return PROPERTIES;
-    }
-
-    /**
-     * returns the root package path
-     *
-     * @return string package path
-     */
-    public static String getPackage()
-    {
-        return PACKAGEROOT;
     }
 
     /**
@@ -201,7 +182,7 @@ public final class CCommon
         {
             return MessageFormat.format( LANGUAGE.getString( getLanguageLabel( p_class, p_label ) ), p_parameter );
         }
-        catch ( final MissingResourceException p_exception )
+        catch ( final MissingResourceException l_exception )
         {
         }
 
@@ -302,7 +283,7 @@ public final class CCommon
                 return new PropertyResourceBundle( new InputStreamReader( l_stream, "UTF-8" ) );
 
             }
-            catch ( final Exception p_exception )
+            catch ( final Exception l_exception )
             {
             }
             finally

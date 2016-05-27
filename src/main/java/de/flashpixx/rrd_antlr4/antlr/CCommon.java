@@ -136,7 +136,7 @@ public final class CCommon
                     ).parse()
             );
         }
-        catch ( final PatternSyntaxException | IOException p_exception )
+        catch ( final PatternSyntaxException | IOException l_exception )
         {
         }
 

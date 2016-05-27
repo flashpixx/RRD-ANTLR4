@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 
 
 /**
- * template for LaTeX text export
+ * de.flashpixx.rrd_antlr4.template for LaTeX text export
  */
 public final class CLaTeXSyntax extends IBaseTemplate
 {
@@ -61,7 +61,7 @@ public final class CLaTeXSyntax extends IBaseTemplate
     /**
      * ctor
      *
-     * @param p_name template name
+     * @param p_name de.flashpixx.rrd_antlr4.template name
      */
     public CLaTeXSyntax( final String p_name )
     {
@@ -95,20 +95,20 @@ public final class CLaTeXSyntax extends IBaseTemplate
                 "-rules-", StringUtils.join(
                         m_rules.rowMap().entrySet().stream().sorted( ( n, m ) -> n.getKey().compareToIgnoreCase( m.getKey() ) )
                                .map( i -> MessageFormat.format(
-                                           "\\\\subsection*'{'{0}'}'\n" +
-                                           "\\\\begin'{'grammar'}'" +
-                                           "\n{1}\n" +
-                                           "\\\\end'{'grammar'}'",
-                                           CCommon.getLanguageString( this, "subsectiongrammar", i.getKey() ),
-                                           StringUtils.join(
-                                                   i.getValue().entrySet().stream()
-                                                    .sorted( ( n, m ) -> n.getKey().compareToIgnoreCase( m.getKey() ) )
-                                                    .map( j -> j.getValue() )
-                                                    .collect( Collectors.toList() ),
-                                                   "\n"
-                                           ).trim()
-                                         )
-                                   )
+                                       "\\\\subsection*'{'{0}'}'\n"
+                                       + "\\\\begin'{'grammar'}'"
+                                       + "\n{1}\n"
+                                       + "\\\\end'{'grammar'}'",
+                                       CCommon.getLanguageString( this, "subsectiongrammar", i.getKey() ),
+                                       StringUtils.join(
+                                               i.getValue().entrySet().stream()
+                                                .sorted( ( n, m ) -> n.getKey().compareToIgnoreCase( m.getKey() ) )
+                                                .map( j -> j.getValue() )
+                                                .collect( Collectors.toList() ),
+                                               "\n"
+                                       ).trim()
+                                     )
+                               )
                                .collect( Collectors.toList() ),
                         "\n\n"
                 )

@@ -114,10 +114,10 @@ public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
                                                        .sliding( 2, 2 )
                                                        .flatMap( i -> l_pairs.get( i.get( 0 ) ).getLeft().equals( "~" )
                                                                       ? Stream.of( new ImmutablePair<>(
-                                                                         new CGrammarNegation( (IGrammarElement) l_pairs.get( i.get( 1 ) ).getLeft() ),
-                                                                         l_pairs.get( i.get( 1 ) ).getRight()
+                                                                                           new CGrammarNegation( (IGrammarElement) l_pairs.get( i.get( 1 ) ).getLeft() ),
+                                                                                           l_pairs.get( i.get( 1 ) ).getRight()
+                                                                                   )
                                                                  )
-                                                             )
                                                                       : i.get( 1 ) != null
                                                                         ? Stream.of( l_pairs.get( i.get( 0 ) ), l_pairs.get( i.get( 1 ) ) )
                                                                         : Stream.of( l_pairs.get( i.get( 0 ) ) )
@@ -170,7 +170,7 @@ public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
     private IGrammarElement terminalvalue( final String p_string )
     {
         return new CGrammarTerminalValue<>(
-                p_string.equals( "." )
+                ".".equals( p_string )
                 ? de.flashpixx.rrd_antlr4.CCommon.getLanguageString( this, "anychar" )
                 : p_string
         );

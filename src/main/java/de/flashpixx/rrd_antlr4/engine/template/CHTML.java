@@ -66,7 +66,7 @@ public final class CHTML extends IBaseTemplate
     /**
      * ctor
      *
-     * @param p_name template name
+     * @param p_name de.flashpixx.rrd_antlr4.template name
      */
     public CHTML( final String p_name )
     {
@@ -110,10 +110,10 @@ public final class CHTML extends IBaseTemplate
                 "%rulelist%", StringUtils.join(
                         m_rules.rowMap().entrySet().stream().sorted( ( n, m ) -> n.getKey().compareToIgnoreCase( m.getKey() ) )
                                .map( i -> MessageFormat.format(
-                                       "<div class=\"rulelist\" id=\"list_{0}\">\n" +
-                                       "<h5 data-ruleset=\"rules_{0}\" class=\"grammarlisthead\">{0}</h5>\n" +
-                                       "<ul>\n{1}</ul>\n" +
-                                       "</div>",
+                                       "<div class=\"rulelist\" id=\"list_{0}\">\n"
+                                       + "<h5 data-ruleset=\"rules_{0}\" class=\"grammarlisthead\">{0}</h5>\n"
+                                       + "<ul>\n{1}</ul>\n"
+                                       + "</div>",
                                        i.getKey(),
                                        StringUtils.join(
                                                i.getValue().keySet().stream()
@@ -134,10 +134,10 @@ public final class CHTML extends IBaseTemplate
                 "%rules%", StringUtils.join(
                         m_rules.rowMap().entrySet().stream().sorted( ( n, m ) -> n.getKey().compareToIgnoreCase( m.getKey() ) )
                                .map( i -> MessageFormat.format(
-                                       "<div class=\"ruleelements\" id=\"rules_{0}\">" +
-                                       "<h2>{0}</h2>" +
-                                       "\n{1}\n" +
-                                       "</div>",
+                                       "<div class=\"ruleelements\" id=\"rules_{0}\">"
+                                       + "<h2>{0}</h2>"
+                                       + "\n{1}\n"
+                                       + "</div>",
                                        i.getKey(),
                                        StringUtils.join(
                                                i.getValue().entrySet().stream()
@@ -171,17 +171,17 @@ public final class CHTML extends IBaseTemplate
                 p_grammar.id(),
                 p_element.id(),
                 MessageFormat.format(
-                        "<div class=\"ruledetail\">" +
-                        "<a name=\"{0}\"></a>" +
-                        "<h5>{1}</h5>" +
-                        "<p>{2}</p>" +
-                        "<p><script>" +
-                        "var l_rrd = Diagram({3}).toSVG();" +
-                        "l_rrd.id = \"svg_{0}\";" +
-                        "var l_script = document.getElementsByTagName(\"script\");" +
-                        "l_script[l_script.length - 1].parentNode.appendChild(l_rrd);" +
-                        "</script></p>" +
-                        "</div>",
+                        "<div class=\"ruledetail\">"
+                        + "<a name=\"{0}\"></a>"
+                        + "<h5>{1}</h5>"
+                        + "<p>{2}</p>"
+                        + "<p><script>"
+                        + "var l_rrd = Diagram({3}).toSVG();"
+                        + "l_rrd.id = \"svg_{0}\";"
+                        + "var l_script = document.getElementsByTagName(\"script\");"
+                        + "l_script[l_script.length - 1].parentNode.appendChild(l_rrd);"
+                        + "</script></p>"
+                        + "</div>",
                         this.linkhash( p_element.id() ),
                         p_element.id(),
                         p_element.documentation(),
@@ -290,7 +290,7 @@ public final class CHTML extends IBaseTemplate
         {
             return new BigInteger( 1, MessageDigest.getInstance( "MD5" ).digest( p_value.getBytes() ) ).toString( 16 );
         }
-        catch ( final NoSuchAlgorithmException p_exception )
+        catch ( final NoSuchAlgorithmException l_exception )
         {
             return "";
         }

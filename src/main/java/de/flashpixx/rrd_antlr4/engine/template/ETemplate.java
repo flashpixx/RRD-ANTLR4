@@ -36,7 +36,9 @@ public enum ETemplate
     LATEXDIAGRAM;
 
     /**
-     * creates a new template
+     * creates a new de.template
+     *
+     * @return template
      */
     public ITemplate generate()
     {
@@ -47,9 +49,6 @@ public enum ETemplate
 
             case LATEXSYNTAX:
                 return new CLaTeXSyntax( LATEXSYNTAX.toString() );
-
-            case LATEXDIAGRAM:
-                return new CLaTeXDiagram( LATEXDIAGRAM.toString() );
 
             default:
                 throw new IllegalStateException( CCommon.getLanguageString( this, "unknowntype" ) );
