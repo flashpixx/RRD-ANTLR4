@@ -40,6 +40,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -168,20 +169,25 @@ public final class CMain extends AbstractMojo
                 ? Locale.forLanguageTag( l_cli.getOptionValue( "language" ) )
                 : Locale.getDefault()
         );
-        CCommon.setLanguage( Locale.ENGLISH );
 
         final Set<String> l_doclean = !l_cli.hasOption( "docclean" )
                                       ? Collections.<String>emptySet()
-                                      : FileUtils.readLines( new File( l_cli.getOptionValue( "docclean" ) ) ).stream().map( i -> i.trim() ).collect(
-                                              Collectors.toSet() );
+                                      : FileUtils.readLines( new File( l_cli.getOptionValue( "docclean" ) ), Charset.defaultCharset() )
+                                                 .stream()
+                                                 .map( String::trim )
+                                                 .collect( Collectors.toSet() );
 
         final Set<String> l_exclude = !l_cli.hasOption( "excludes" )
                                       ? Collections.<String>emptySet()
-                                      : Arrays.stream( l_cli.getOptionValue( "excludes" ).split( "," ) ).map( i -> i.trim() ).collect( Collectors.toSet() );
+                                      : Arrays.stream( l_cli.getOptionValue( "excludes" ).split( "," ) )
+                                              .map( String::trim )
+                                              .collect( Collectors.toSet() );
 
         final Set<String> l_import = !l_cli.hasOption( "imports" )
                                      ? Collections.<String>emptySet()
-                                     : Arrays.stream( l_cli.getOptionValue( "imports" ).split( "," ) ).map( i -> i.trim() ).collect( Collectors.toSet() );
+                                     : Arrays.stream( l_cli.getOptionValue( "imports" ).split( "," ) )
+                                             .map( String::trim )
+                                             .collect( Collectors.toSet() );
 
         final String[] l_templates = l_cli.hasOption( "templates" )
                                      ? l_cli.getOptionValue( "templates" ).split( "," )
@@ -191,15 +197,13 @@ public final class CMain extends AbstractMojo
                                          ? l_cli.getOptionValue( "output" )
                                          : DEFAULTOUTPUT;
 
-        System.out.println( CCommon.getLanguageBundle().getLocale() );
-
 
         // --- run generating ------------------------------------------------------------------------------------------
         final Collection<String> l_errors = Arrays.stream( l_cli.getOptionValue( "grammar" ).split( "," ) )
                                                   .parallel()
-                                                  .flatMap( i -> generate( l_outputdirectory, l_exclude, l_import,
-                                                                           new File( i ), l_doclean, l_templates
-                                                  ).stream() )
+                                                  .flatMap( i -> generate( l_outputdirectory, l_exclude, l_import, new File( i ), l_doclean, l_templates )
+                                                          .stream()
+                                                  )
                                                   .collect( Collectors.toList() );
 
         if ( !l_errors.isEmpty() )
@@ -212,9 +216,9 @@ public final class CMain extends AbstractMojo
     @Override
     public final void execute() throws MojoExecutionException, MojoFailureException
     {
-        final Set<String> l_doclean = Arrays.stream( docclean ).map( i -> i.trim() ).collect( Collectors.toSet() );
-        final Set<String> l_exclude = Arrays.stream( excludes ).map( i -> i.trim() ).collect( Collectors.toSet() );
-        final Set<String> l_import = Arrays.stream( imports ).map( i -> i.trim() ).collect( Collectors.toSet() );
+        final Set<String> l_doclean = Arrays.stream( docclean ).map( String::trim ).collect( Collectors.toSet() );
+        final Set<String> l_exclude = Arrays.stream( excludes ).map( String::trim ).collect( Collectors.toSet() );
+        final Set<String> l_import = Arrays.stream( imports ).map( String::trim ).collect( Collectors.toSet() );
 
         // language definition set on runtime
         Locale.setDefault( Locale.forLanguageTag( language ) );
