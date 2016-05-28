@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -81,6 +82,11 @@ public final class CMain extends AbstractMojo
      */
     @Parameter( defaultValue = "target/" + DEFAULTOUTPUT )
     private String output;
+    /**
+     * Maven plugin parameter for language
+     */
+    @Parameter( defaultValue = "en" )
+    private String language;
     /**
      * Maven plugin used templates option
      */
@@ -124,6 +130,7 @@ public final class CMain extends AbstractMojo
         l_clioptions.addOption( "imports", true, CCommon.getLanguageString( CMain.class, "import" ) );
         l_clioptions.addOption( "excludes", true, CCommon.getLanguageString( CMain.class, "exclude" ) );
         l_clioptions.addOption( "grammar", true, CCommon.getLanguageString( CMain.class, "grammar" ) );
+        l_clioptions.addOption( "language", true, CCommon.getLanguageString( CMain.class, "language" ) );
         l_clioptions.addOption( "docclean", true, CCommon.getLanguageString( CMain.class, "documentationclean" ) );
         l_clioptions.addOption( "templates", true, CCommon.getLanguageString( CMain.class, "template", Arrays.asList( ETemplate.values() ), DEFAULTTEMPLATE ) );
 
@@ -156,6 +163,13 @@ public final class CMain extends AbstractMojo
             System.exit( -1 );
         }
 
+        CCommon.setLanguage(
+                l_cli.hasOption( "language" )
+                ? Locale.forLanguageTag( l_cli.getOptionValue( "language" ) )
+                : Locale.getDefault()
+        );
+        CCommon.setLanguage( Locale.ENGLISH );
+
         final Set<String> l_doclean = !l_cli.hasOption( "docclean" )
                                       ? Collections.<String>emptySet()
                                       : FileUtils.readLines( new File( l_cli.getOptionValue( "docclean" ) ) ).stream().map( i -> i.trim() ).collect(
@@ -176,6 +190,8 @@ public final class CMain extends AbstractMojo
         final String l_outputdirectory = l_cli.hasOption( "output" )
                                          ? l_cli.getOptionValue( "output" )
                                          : DEFAULTOUTPUT;
+
+        System.out.println( CCommon.getLanguageBundle().getLocale() );
 
 
         // --- run generating ------------------------------------------------------------------------------------------
@@ -199,6 +215,9 @@ public final class CMain extends AbstractMojo
         final Set<String> l_doclean = Arrays.stream( docclean ).map( i -> i.trim() ).collect( Collectors.toSet() );
         final Set<String> l_exclude = Arrays.stream( excludes ).map( i -> i.trim() ).collect( Collectors.toSet() );
         final Set<String> l_import = Arrays.stream( imports ).map( i -> i.trim() ).collect( Collectors.toSet() );
+
+        // language definition set on runtime
+        Locale.setDefault( Locale.forLanguageTag( language ) );
 
         final Collection<String> l_errors = Arrays.stream( grammar ).parallel()
                                                   .flatMap( i -> generate( output, l_exclude, l_import,

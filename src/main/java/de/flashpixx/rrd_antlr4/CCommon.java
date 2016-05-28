@@ -51,14 +51,6 @@ public final class CCommon
      **/
     public static final String PACKAGEROOT = "de.flashpixx.rrd_antlr4";
     /**
-     * language resource bundle
-     **/
-    private static final ResourceBundle LANGUAGE = ResourceBundle.getBundle(
-            MessageFormat.format( "{0}.{1}", PACKAGEROOT, "language" ),
-            Locale.getDefault(),
-            new CUTF8Control()
-    );
-    /**
      * properties of the package
      */
     private static final ResourceBundle PROPERTIES = ResourceBundle.getBundle(
@@ -66,12 +58,33 @@ public final class CCommon
             Locale.getDefault(),
             new CUTF8Control()
     );
+    /**
+     * language resource bundle
+     **/
+    private static ResourceBundle s_language = ResourceBundle.getBundle(
+            MessageFormat.format( "{0}.{1}", PACKAGEROOT, "language" ),
+            Locale.getDefault(),
+            new CUTF8Control()
+    );
 
     /**
-     * private ctor - avoid instantiation
+     * ctor - avoid instantiation
      */
     private CCommon()
     {
+    }
+
+    /**
+     * sets the language
+     * @param p_language language
+     */
+    public static void setLanguage( final Locale p_language )
+    {
+        s_language = ResourceBundle.getBundle(
+                MessageFormat.format( "{0}.{1}", PACKAGEROOT, "language" ),
+                p_language,
+                new CUTF8Control()
+        );
     }
 
     /**
@@ -81,7 +94,7 @@ public final class CCommon
      */
     public static ResourceBundle getLanguageBundle()
     {
-        return LANGUAGE;
+        return s_language;
     }
 
     /**
@@ -181,7 +194,7 @@ public final class CCommon
     {
         try
         {
-            return MessageFormat.format( LANGUAGE.getString( getLanguageLabel( p_class, p_label ) ), p_parameter );
+            return MessageFormat.format( s_language.getString( getLanguageLabel( p_class, p_label ) ), p_parameter );
         }
         catch ( final MissingResourceException l_exception )
         {
