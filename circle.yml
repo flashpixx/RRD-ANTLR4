@@ -1,11 +1,15 @@
 general:
-  branches:
-      only:
-        - master
-      ignore:
-        - /dev-.*/
-        - /gh-.*/
-        - /binary-.*/
+    branches:
+        only:
+            - master
+        ignore:
+            - developing
+            - /hotfix-.*/
+            - /release-.*/
+            - /support-.*/
+            - /dev-.*/
+            - /gh-.*/
+            - /binary-.*/
 
 machine:
     timezone:
