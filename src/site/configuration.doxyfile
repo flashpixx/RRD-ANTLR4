@@ -8,7 +8,7 @@ PROJECT_NAME           = "RRD-ANTLR4"
 PROJECT_NUMBER         =
 PROJECT_BRIEF          = "Railroad Diagram Generator for ANTLR 4"
 PROJECT_LOGO           =
-OUTPUT_DIRECTORY       = target/documentation
+OUTPUT_DIRECTORY       = target/site
 CREATE_SUBDIRS         = YES
 ALLOW_UNICODE_NAMES    = YES
 OUTPUT_LANGUAGE        = English
@@ -30,7 +30,7 @@ INLINE_INHERITED_MEMB  = NO
 FULL_PATH_NAMES        = NO
 STRIP_FROM_PATH        =
 STRIP_FROM_INC_PATH    =
-SHORT_NAMES            = YES
+SHORT_NAMES            = NO
 JAVADOC_AUTOBRIEF      = YES
 QT_AUTOBRIEF           = NO
 MULTILINE_CPP_IS_BRIEF = NO
@@ -111,6 +111,7 @@ WARN_LOGFILE           =
 # Configuration options related to the input files
 #---------------------------------------------------------------------------
 INPUT                  = src/main/java \
+                         src/test/java \
                          readme.md \
                          license.md
 INPUT_ENCODING         = UTF-8
@@ -135,7 +136,7 @@ USE_MDFILE_AS_MAINPAGE = readme.md
 #---------------------------------------------------------------------------
 SOURCE_BROWSER         = YES
 INLINE_SOURCES         = NO
-STRIP_CODE_COMMENTS    = NO
+STRIP_CODE_COMMENTS    = YES
 REFERENCED_BY_RELATION = YES
 REFERENCES_RELATION    = YES
 REFERENCES_LINK_SOURCE = YES
@@ -152,12 +153,12 @@ IGNORE_PREFIX          =
 # Configuration options related to the HTML output
 #---------------------------------------------------------------------------
 GENERATE_HTML          = YES
-HTML_OUTPUT            =
-HTML_FILE_EXTENSION    = .htm
+HTML_OUTPUT            = sources
+HTML_FILE_EXTENSION    = .html
 HTML_HEADER            =
-HTML_FOOTER            = src/main/documentation/footer.htm
+HTML_FOOTER            = src/site/footer.htm
 HTML_STYLESHEET        =
-HTML_EXTRA_STYLESHEET  = src/main/documentation/layout.css
+HTML_EXTRA_STYLESHEET  = src/site/layout.css
 HTML_EXTRA_FILES       =
 HTML_COLORSTYLE_HUE    = 220
 HTML_COLORSTYLE_SAT    = 94

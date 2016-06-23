@@ -3,6 +3,4 @@
 
 <suppressions>
     <suppress files="[/\\]target[/\\]" checks=".*"/>
-    <suppress files="[\\/]CMain.java" checks=".*"/>
-    <suppress files="[\\/]IAntLRv4LexerAdaptor.java" checks=".*"/>
 </suppressions>

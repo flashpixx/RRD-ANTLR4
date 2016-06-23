@@ -16,13 +16,15 @@
 !*.js
 !*.txt
 
-!src/main/documentation/*.doxyfile
-!src/main/documentation/*.htm
-!src/main/documentation/*.css
+!src/site/*.doxyfile
+!src/site/*.htm*
+!src/site/*.css
+!src/site/*.xml
+!src/site/*.graffle
 
-!src/main/styleguide/**/*.xml
-!src/main/styleguide/**/*.txt
-!src/main/styleguide/**/*.md
+!src/analysis/**/*.xml
+!src/analysis/**/*.txt
+!src/analysis/**/*.md
 
 target/**
 rrd-output/**

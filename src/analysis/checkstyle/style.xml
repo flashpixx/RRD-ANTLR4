@@ -26,7 +26,7 @@
     </module>
 
     <module name = "Header">
-        <property name = "headerFile" value = "src/main/styleguide/header.txt" />
+        <property name = "headerFile" value = "src/analysis/checkstyle/header.txt" />
         <property name = "fileExtensions" value = "java" />
     </module>
 
@@ -48,7 +48,7 @@
     <!-- <module name="RegexpSinglelineJava"/> -->
 
     <module name="SuppressionFilter">
-        <property name="file" value="src/main/styleguide/suppressions.xml"/>
+        <property name="file" value="src/analysis/checkstyle/suppressions.xml"/>
     </module>
 
     <module name = "Translation" />
@@ -357,7 +357,7 @@
         <module name = "PackageDeclaration" />
 
         <module name = "PackageName">
-            <property name = "format" value = "^[a-z]{2,}(\.[a-z]{2,}[a-z_0-9]*)*$" />
+            <property name = "format" value = "^[a-z]{3,}(\.[a-z]{2,}[a-z_0-9]*)*$" />
         </module>
 
         <module name = "ParameterAssignment" />
