@@ -286,12 +286,13 @@ public final class CMain extends AbstractMojo
      */
     private static Stream<File> getFileList( final File p_input, final Set<String> p_exclude )
     {
-        return p_input == null
-            ? Stream.of()
-            : (
-                    p_input.isFile()
-                    ? Stream.of( p_input )
-                    : Arrays.stream( p_input.listFiles( ( p_dir, p_name ) -> p_name.endsWith( GRAMMARFILEEXTENSION ) ) )
-            ).filter( i -> !p_exclude.contains( i.getName() ) );
+        if ( !p_input.exists() )
+            throw new RuntimeException( CCommon.languagestring( CMain.class, "notexist", p_input ) );
+
+        return (
+            p_input.isFile()
+            ? Stream.of( p_input )
+            : Arrays.stream( p_input.listFiles( ( p_dir, p_name ) -> p_name.endsWith( GRAMMARFILEEXTENSION ) ) )
+        ).filter( i -> !p_exclude.contains( i.getName() ) );
     }
 }
