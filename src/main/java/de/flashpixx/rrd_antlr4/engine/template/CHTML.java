@@ -38,12 +38,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.Map;
@@ -120,7 +116,7 @@ public final class CHTML extends IBaseTemplate
                                        StringUtils.join(
                                                i.getValue().keySet().stream()
                                                 .sorted( String::compareToIgnoreCase )
-                                                .map( j -> MessageFormat.format( "<li><a href=\"#{0}\">{1}</a></li>\n", this.linkhash( j ),
+                                                .map( j -> MessageFormat.format( "<li><a href=\"#{0}\">{1}</a></li>\n", CHTML.linkhash( j ),
                                                                                  j.toLowerCase()
                                                 ) )
                                                 .collect( Collectors.toList() ),
@@ -184,7 +180,7 @@ public final class CHTML extends IBaseTemplate
                         + "l_script[l_script.length - 1].parentNode.appendChild(l_rrd);"
                         + "</script></p>"
                         + "</div>",
-                        this.linkhash( p_element.id() ),
+                        CHTML.linkhash( p_element.id() ),
                         p_element.id(),
                         p_element.documentation(),
                         this.map( p_element )
@@ -236,8 +232,8 @@ public final class CHTML extends IBaseTemplate
     {
         return MessageFormat.format(
                 "Terminal(''{0}'', ''#{1}'')",
-                StringEscapeUtils.escapeEcmaScript( p_element.get().toString() ),
-                this.linkhash( p_element.get().toString() )
+                StringEscapeUtils.escapeEcmaScript( CHTML.removequotes( p_element.get() ) ),
+                CHTML.linkhash( p_element.get() )
         );
     }
 
@@ -246,8 +242,8 @@ public final class CHTML extends IBaseTemplate
     {
         return MessageFormat.format(
                 "NonTerminal(''{0}'', ''#{1}'')",
-                p_element.get(),
-                this.linkhash( p_element.get() )
+                CHTML.removequotes( p_element.get() ),
+                CHTML.linkhash( p_element.get() )
         );
     }
 
@@ -277,24 +273,6 @@ public final class CHTML extends IBaseTemplate
 
             default:
                 return p_element;
-        }
-    }
-
-    /**
-     * create a hash of a link
-     *
-     * @param p_value ID element
-     * @return hash
-     */
-    private String linkhash( final String p_value )
-    {
-        try
-        {
-            return new BigInteger( 1, MessageDigest.getInstance( "MD5" ).digest( p_value.getBytes( "UTF-8" ) ) ).toString( 16 );
-        }
-        catch ( final UnsupportedEncodingException | NoSuchAlgorithmException l_exception )
-        {
-            return "";
         }
     }
 

@@ -40,12 +40,16 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 
 
@@ -148,6 +152,37 @@ public abstract class IBaseTemplate implements ITemplate
             return this.cardinality( p_element.cardinality(), this.sequence( (IGrammarSequence) p_element ) );
 
         return "";
+    }
+
+    /**
+     * removing quotes if needed
+     *
+     * @param p_string input string
+     * @return unquoted string
+     */
+    protected static String removequotes( final String p_string )
+    {
+        return ( p_string.startsWith( "'" ) ) && ( p_string.endsWith( "'" ) )
+               ? p_string.substring( 1, p_string.length() - 1 )
+               : p_string;
+    }
+
+    /**
+     * create a hash of a link
+     *
+     * @param p_value ID element
+     * @return hash
+     */
+    protected static String linkhash( final String p_value )
+    {
+        try
+        {
+            return new BigInteger( 1, MessageDigest.getInstance( "MD5" ).digest( p_value.getBytes( "UTF-8" ) ) ).toString( 16 );
+        }
+        catch ( final UnsupportedEncodingException | NoSuchAlgorithmException l_exception )
+        {
+            return "";
+        }
     }
 
     /**
