@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.text.MessageFormat;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -103,7 +104,7 @@ public final class CLaTeXSyntax extends IBaseTemplate
                                        StringUtils.join(
                                                i.getValue().entrySet().stream()
                                                 .sorted( ( n, m ) -> n.getKey().compareToIgnoreCase( m.getKey() ) )
-                                                .map( j -> j.getValue() )
+                                                .map( Map.Entry::getValue )
                                                 .collect( Collectors.toList() ),
                                                "\n"
                                        ).trim()
@@ -162,7 +163,7 @@ public final class CLaTeXSyntax extends IBaseTemplate
     @Override
     protected final String sequence( final IGrammarCollection p_element )
     {
-        final String l_child = StringUtils.join( p_element.get().stream().map( i -> this.map( i ) ).collect( Collectors.toList() ), " " ).trim();
+        final String l_child = StringUtils.join( p_element.get().stream().map( this::map ).collect( Collectors.toList() ), " " ).trim();
         return p_element.get().size() == 1 ? l_child : MessageFormat.format( "[ {0} ]", l_child );
     }
 
@@ -171,7 +172,7 @@ public final class CLaTeXSyntax extends IBaseTemplate
     {
         return StringUtils.join(
                 p_element.get().stream()
-                         .map( i -> this.map( i ) )
+                         .map( this::map )
                          .collect( Collectors.toList() ),
                 " \\\\alt "
         );

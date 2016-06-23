@@ -32,8 +32,7 @@ import de.flashpixx.rrd_antlr4.CCommon;
 public enum ETemplate
 {
     HTML,
-    LATEXSYNTAX,
-    LATEXDIAGRAM;
+    LATEXSYNTAX;
 
     /**
      * creates a new de.template

@@ -283,15 +283,15 @@ public final class CMain extends AbstractMojo
      * @param p_input grammar file or directory with grammar files
      * @param p_exclude file names which are ignored
      * @return stream of file objects
-     *
-     * @bug fix NPE with p_input
      */
     private static Stream<File> getFileList( final File p_input, final Set<String> p_exclude )
     {
-        return (
-                p_input.isFile()
-                ? Stream.of( p_input )
-                : Arrays.stream( p_input.listFiles( ( p_dir, p_name ) -> p_name.endsWith( GRAMMARFILEEXTENSION ) ) )
-        ).filter( i -> !p_exclude.contains( i.getName() ) );
+        return p_input == null
+            ? Stream.of()
+            : (
+                    p_input.isFile()
+                    ? Stream.of( p_input )
+                    : Arrays.stream( p_input.listFiles( ( p_dir, p_name ) -> p_name.endsWith( GRAMMARFILEEXTENSION ) ) )
+            ).filter( i -> !p_exclude.contains( i.getName() ) );
     }
 }

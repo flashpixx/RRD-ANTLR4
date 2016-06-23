@@ -46,6 +46,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -118,7 +119,7 @@ public final class CHTML extends IBaseTemplate
                                        i.getKey(),
                                        StringUtils.join(
                                                i.getValue().keySet().stream()
-                                                .sorted( ( n, m ) -> n.compareToIgnoreCase( m ) )
+                                                .sorted( String::compareToIgnoreCase )
                                                 .map( j -> MessageFormat.format( "<li><a href=\"#{0}\">{1}</a></li>\n", this.linkhash( j ),
                                                                                  j.toLowerCase()
                                                 ) )
@@ -143,7 +144,7 @@ public final class CHTML extends IBaseTemplate
                                        StringUtils.join(
                                                i.getValue().entrySet().stream()
                                                 .sorted( ( n, m ) -> n.getKey().compareToIgnoreCase( m.getKey() ) )
-                                                .map( j -> j.getValue() )
+                                                .map( Map.Entry::getValue )
                                                 .collect( Collectors.toList() ),
                                                "\n"
                                        ).trim()
@@ -221,7 +222,7 @@ public final class CHTML extends IBaseTemplate
     {
         final String l_child = StringUtils.join(
                 p_element.get().stream()
-                         .map( i -> this.map( i ) )
+                         .map( this::map )
                          .filter( i -> i != null )
                          .collect( Collectors.toList() ),
                 ", "

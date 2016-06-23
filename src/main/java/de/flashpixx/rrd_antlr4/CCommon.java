@@ -92,7 +92,7 @@ public final class CCommon
      *
      * @return bundle
      */
-    public static ResourceBundle languagebundle()
+    static ResourceBundle languagebundle()
     {
         return s_language;
     }
@@ -102,7 +102,7 @@ public final class CCommon
      *
      * @return property object
      */
-    public static ResourceBundle configuration()
+    static ResourceBundle configuration()
     {
         return PROPERTIES;
     }
@@ -117,7 +117,7 @@ public final class CCommon
      * @throws URISyntaxException thrown on syntax error
      * @throws MalformedURLException thrown on malformat
      */
-    public static URL concaturl( final URL p_base, final String p_string ) throws MalformedURLException, URISyntaxException
+    static URL concaturl( final URL p_base, final String p_string ) throws MalformedURLException, URISyntaxException
     {
         return new URL( p_base.toString() + p_string ).toURI().normalize().toURL();
     }
@@ -127,7 +127,7 @@ public final class CCommon
      *
      * @return URL of file or null
      */
-    public static URL resourceurl()
+    static URL resourceurl()
     {
         return CCommon.class.getClassLoader().getResource( "" );
     }
@@ -209,7 +209,7 @@ public final class CCommon
      * @param p_label label name of the object
      * @return label name
      */
-    public static String getLanguageLabel( final Class<?> p_class, final String p_label )
+    private static String getLanguageLabel( final Class<?> p_class, final String p_label )
     {
         return ( p_class.getCanonicalName().toLowerCase() + "." + p_label.toLowerCase() ).replaceAll( "[^a-zA-Z0-9_\\.]+", "" ).replace(
                 PACKAGEROOT + ".", "" );
