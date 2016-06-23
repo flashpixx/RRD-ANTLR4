@@ -96,10 +96,10 @@ public final class CLaTeXSyntax extends IBaseTemplate
                 "-rules-", StringUtils.join(
                         m_rules.rowMap().entrySet().stream().sorted( ( n, m ) -> n.getKey().compareToIgnoreCase( m.getKey() ) )
                                .map( i -> MessageFormat.format(
-                                       "\\\\subsection*'{'{0}'}'\n"
-                                       + "\\\\begin'{'grammar'}'"
+                                       "\\subsection*'{'{0}'}'\n"
+                                       + "\\begin'{'grammar'}'"
                                        + "\n{1}\n"
-                                       + "\\\\end'{'grammar'}'",
+                                       + "\\end'{'grammar'}'",
                                        CCommon.languagestring( this, "subsectiongrammar", i.getKey() ),
                                        StringUtils.join(
                                                i.getValue().entrySet().stream()
@@ -174,7 +174,7 @@ public final class CLaTeXSyntax extends IBaseTemplate
                 p_element.get().stream()
                          .map( this::map )
                          .collect( Collectors.toList() ),
-                " \\\\alt "
+                " \\alt "
         );
     }
 
@@ -187,13 +187,13 @@ public final class CLaTeXSyntax extends IBaseTemplate
     @Override
     protected final String terminalvalue( final IGrammarSimpleElement<?> p_element )
     {
-        return MessageFormat.format( "''{0}''", this.escapelatex( p_element.get().toString() ) );
+        return MessageFormat.format( "''{0}''", CLaTeXSyntax.escapelatex( p_element.get() ) );
     }
 
     @Override
     protected final String nonterminal( final IGrammarIdentifier p_element )
     {
-        return MessageFormat.format( "<{0}>", p_element.get().toString() );
+        return MessageFormat.format( "<{0}>", CLaTeXSyntax.removequotes( p_element.get() ) );
     }
 
     @Override
@@ -205,37 +205,39 @@ public final class CLaTeXSyntax extends IBaseTemplate
     /**
      * escape string with correct LaTeX definition
      *
+     * @note replace uses character sequences / replaceAll string sequences, so use the correct escaping sequence
      * @param p_string input string
      * @return escaped string
      */
-    private String escapelatex( final String p_string )
+    private static String escapelatex( final String p_string )
     {
-        return StringEscapeUtils.escapeJava(
-                (
-                        p_string.startsWith( "'" ) && p_string.endsWith( "'" )
-                        ? p_string.substring( 1, p_string.length() - 1 )
-                        : p_string
-                )
-                        .replace( "\\", "\\textbackslash " )
+        System.out.println( "--> " + CLaTeXSyntax.removequotes( p_string ) );
+        final String l_value = StringEscapeUtils.escapeJava(
+                CLaTeXSyntax.removequotes( p_string )
+                    .replaceAll( "\"", "\texttt{\''{}}" )
 
-                        .replace( "&", "\\&" )
+                    .replaceAll( "\\\\", "\\textbackslash " )
 
-                        .replace( "$", "\\$" )
+                    .replaceAll( "&", "\\&" )
 
-                        .replace( "<", "\\textless " )
-                        .replace( ">", "\\textgreater " )
+                    .replaceAll( "$", "\\$" )
 
-                        .replace( "{", "\\{" )
-                        .replace( "}", "\\}" )
+                    .replaceAll( "<", "\\textless " )
+                    .replaceAll( ">", "\\textgreater " )
 
-                        .replace( "#", "\\#" )
+                    //.replaceAll( "\{", "\\{" )
+                    //.replaceAll( "\}", "\\}" )
 
-                        .replace( "~", "\\textasciitilde" )
+                    .replaceAll( "#", "\\#" )
 
-                        .replace( "^", "\\^{}" )
+                    .replaceAll( "~", "\textasciitilde" )
 
-                        .replace( "\"", "\\\"{}" )
+                    .replaceAll( "^", "\\^{}" )
+
+
         );
+        System.out.println( l_value );
+        return l_value;
     }
 
 }
