@@ -39,12 +39,18 @@ test:
         - mkdir -p $CIRCLE_TEST_REPORTS/junit/
         - find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
 
-        # Documentation Build with Update to GH-Pages Branch
+        # move build components
         - git checkout master
         - mv target/site /tmp
+        - mv target/RRD-ANTLR4-0.1.jar /tmp
+        #- mv target/RRD-ANTLR4-0.1.exe /tmp
+        #- mv target/RRD-ANTLR4-0.1.dmg /tmp
+
+
+        # Documentation Build with Update to GH-Pages Branch
         - git checkout gh-pages
-        - mv circle.yml /tmp
-        - mv .gitignore /tmp
+        - mv -f circle.yml /tmp
+        - mv -f .gitignore /tmp
         - git checkout master
         - git push origin :gh-pages
         - git branch -D gh-pages
@@ -56,3 +62,24 @@ test:
         - git add --all .
         - git commit -m "current documentation"
         - git push origin gh-pages
+
+        # Executable Build with Update Binary Branch
+        - git checkout binary-master
+        - mv -f circle.yml /tmp
+        - mv -f .gitignore /tmp
+        - git checkout master
+        - git push origin :binary-master
+        - git branch -D binary-master
+        - git checkout --orphan binary-master
+        - rm -Rf *
+        - mv /tmp/.gitignore .
+        - mv /tmp/circle.yml .
+        - mv /tmp/RRD-ANTLR4-0.1.jar .
+        #- mv /tmp/RRD-ANTLR4-0.1.exe .
+        #- mv /tmp/RRD-ANTLR4-0.1.dmg .
+        - git add --all .
+        - git commit -m "binaries master branch"
+        - git push origin binary-master
+
+
+
