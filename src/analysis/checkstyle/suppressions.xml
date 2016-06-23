@@ -6,4 +6,7 @@
 
     <!-- used from the AntLR grammar definition -->
     <suppress files="IAntLRv4LexerAdaptor\.java" checks=".*"/>
+
+    <!-- ignore main-class because of mixing Maven plugin structure -->
+    <suppress files="CMain\.java" checks=".*"/>
 </suppressions>

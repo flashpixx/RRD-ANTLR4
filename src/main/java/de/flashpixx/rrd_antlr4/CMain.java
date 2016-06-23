@@ -255,23 +255,23 @@ public final class CMain extends AbstractMojo
 
         return getFileList( p_grammar, p_exclude )
                 .flatMap( i ->
-                          {
-                              try
-                              {
-                                  return ENGINE.generate(
-                                          p_outputdirectory,
-                                          i, p_docuclean,
-                                          l_imports,
-                                          Arrays.stream( p_template )
-                                                .map( j -> ETemplate.valueOf( j.trim().toUpperCase() ).generate() )
-                                                .collect( Collectors.toSet() )
-                                  ).stream();
-                              }
-                              catch ( final IOException l_exception )
-                              {
-                                  return Stream.of( l_exception.getMessage() );
-                              }
-                          } )
+                {
+                    try
+                    {
+                        return ENGINE.generate(
+                            p_outputdirectory,
+                            i, p_docuclean,
+                            l_imports,
+                            Arrays.stream( p_template )
+                                .map( j -> ETemplate.valueOf( j.trim().toUpperCase() ).generate() )
+                                .collect( Collectors.toSet() )
+                        ).stream();
+                    }
+                    catch ( final IOException l_exception )
+                    {
+                        return Stream.of( l_exception.getMessage() );
+                    }
+                } )
                 .filter( i -> i != null )
                 .collect( Collectors.toList() );
 
