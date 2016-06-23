@@ -29,7 +29,7 @@ import java.text.MessageFormat;
 /**
  * grammar information
  */
-public final class CGrammar implements IGrammarComplexElement
+final class CGrammar implements IGrammarComplexElement
 {
     /**
      * grammar name
@@ -46,7 +46,7 @@ public final class CGrammar implements IGrammarComplexElement
      * @param p_id grammar name
      * @param p_documentation documentation
      */
-    public CGrammar( final String p_id, final String p_documentation )
+    CGrammar( final String p_id, final String p_documentation )
     {
         m_id = p_id;
         m_documentation = p_documentation == null ? "" : p_documentation;
@@ -73,7 +73,7 @@ public final class CGrammar implements IGrammarComplexElement
     @Override
     public final boolean equals( final Object p_object )
     {
-        return this.hashCode() == p_object.hashCode();
+        return ( p_object == null ) && ( p_object instanceof IGrammarComplexElement ) && ( this.hashCode() == p_object.hashCode() );
     }
 
     @Override

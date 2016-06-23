@@ -130,7 +130,7 @@ public final class CCommon
                     new PCREParser(
                             new CommonTokenStream(
                                     new PCRELexer(
-                                            new ANTLRInputStream( new ByteArrayInputStream( Pattern.compile( p_value ).pattern().getBytes() ) )
+                                            new ANTLRInputStream( new ByteArrayInputStream( Pattern.compile( p_value ).pattern().getBytes( "UTF-8" ) ) )
                                     )
                             )
                     ).parse()
@@ -158,7 +158,7 @@ public final class CCommon
 
         // remove CR, LF and tab
         final CStringReplace l_documentation = new CStringReplace( p_comment ).replaceAll( "(\\t|\\n)+", " " ).replace( "\r", "" );
-        p_docuclean.stream().forEach( i -> l_documentation.replaceAll( i, "" ) );
+        p_docuclean.forEach( i -> l_documentation.replaceAll( i, "" ) );
 
         return l_documentation.replaceAll( "\\*", "" ).replaceAll( "\\/", "" ).get().trim();
     }

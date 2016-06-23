@@ -38,6 +38,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
@@ -288,9 +289,9 @@ public final class CHTML extends IBaseTemplate
     {
         try
         {
-            return new BigInteger( 1, MessageDigest.getInstance( "MD5" ).digest( p_value.getBytes() ) ).toString( 16 );
+            return new BigInteger( 1, MessageDigest.getInstance( "MD5" ).digest( p_value.getBytes( "UTF-8" ) ) ).toString( 16 );
         }
-        catch ( final NoSuchAlgorithmException l_exception )
+        catch ( final UnsupportedEncodingException | NoSuchAlgorithmException l_exception )
         {
             return "";
         }

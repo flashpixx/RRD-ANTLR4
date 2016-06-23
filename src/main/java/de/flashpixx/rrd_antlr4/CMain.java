@@ -38,7 +38,6 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
@@ -208,7 +207,7 @@ public final class CMain extends AbstractMojo
 
         if ( !l_errors.isEmpty() )
         {
-            l_errors.stream().forEach( System.err::println );
+            l_errors.forEach( System.err::println );
             System.exit( -1 );
         }
     }
@@ -268,9 +267,9 @@ public final class CMain extends AbstractMojo
                                                 .collect( Collectors.toSet() )
                                   ).stream();
                               }
-                              catch ( final IOException p_exception )
+                              catch ( final IOException l_exception )
                               {
-                                  return Stream.of( p_exception.getMessage() );
+                                  return Stream.of( l_exception.getMessage() );
                               }
                           } )
                 .filter( i -> i != null )
@@ -292,14 +291,7 @@ public final class CMain extends AbstractMojo
         return (
                 p_input.isFile()
                 ? Stream.of( p_input )
-                : Arrays.stream( p_input.listFiles( new FilenameFilter()
-                {
-                    @Override
-                    public final boolean accept( final File p_dir, final String p_name )
-                    {
-                        return p_name.endsWith( GRAMMARFILEEXTENSION );
-                    }
-                } ) )
+                : Arrays.stream( p_input.listFiles( ( p_dir, p_name ) -> p_name.endsWith( GRAMMARFILEEXTENSION ) ) )
         ).filter( i -> !p_exclude.contains( i.getName() ) );
     }
 }

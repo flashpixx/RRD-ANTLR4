@@ -30,12 +30,12 @@ import java.util.List;
 /**
  * empty grammar collection
  */
-public final class CGrammarEmptyCollection implements IGrammarCollection
+final class CGrammarEmptyCollection implements IGrammarCollection
 {
     /**
      * singletone instance
      */
-    public static final CGrammarEmptyCollection INSTANCE = new CGrammarEmptyCollection();
+    private static final CGrammarEmptyCollection INSTANCE = new CGrammarEmptyCollection();
 
 
     /**
@@ -72,7 +72,7 @@ public final class CGrammarEmptyCollection implements IGrammarCollection
     @Override
     public final boolean equals( final Object p_object )
     {
-        return this.hashCode() == p_object.hashCode();
+        return ( p_object != null ) && ( p_object instanceof IGrammarCollection ) && ( this.hashCode() == p_object.hashCode() );
     }
 
     @Override

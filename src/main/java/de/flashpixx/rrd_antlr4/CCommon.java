@@ -92,7 +92,7 @@ public final class CCommon
      *
      * @return bundle
      */
-    public static ResourceBundle getLanguageBundle()
+    public static ResourceBundle languagebundle()
     {
         return s_language;
     }
@@ -102,7 +102,7 @@ public final class CCommon
      *
      * @return property object
      */
-    public static ResourceBundle getConfiguration()
+    public static ResourceBundle configuration()
     {
         return PROPERTIES;
     }
@@ -117,7 +117,7 @@ public final class CCommon
      * @throws URISyntaxException thrown on syntax error
      * @throws MalformedURLException thrown on malformat
      */
-    public static URL concatURL( final URL p_base, final String p_string ) throws MalformedURLException, URISyntaxException
+    public static URL concaturl( final URL p_base, final String p_string ) throws MalformedURLException, URISyntaxException
     {
         return new URL( p_base.toString() + p_string ).toURI().normalize().toURL();
     }
@@ -127,7 +127,7 @@ public final class CCommon
      *
      * @return URL of file or null
      */
-    public static URL getResourceURL()
+    public static URL resourceurl()
     {
         return CCommon.class.getClassLoader().getResource( "" );
     }
@@ -141,9 +141,9 @@ public final class CCommon
      * @throws URISyntaxException thrown on syntax error
      * @throws MalformedURLException thrown on malformat
      */
-    public static URL getResourceURL( final String p_file ) throws URISyntaxException, MalformedURLException
+    public static URL resourceurl( final String p_file ) throws URISyntaxException, MalformedURLException
     {
-        return getResourceURL( new File( p_file ) );
+        return resourceurl( new File( p_file ) );
     }
 
     /**
@@ -155,7 +155,7 @@ public final class CCommon
      * @throws URISyntaxException is thrown on URI errors
      * @throws MalformedURLException is thrown on malformat
      */
-    public static URL getResourceURL( final File p_file ) throws URISyntaxException, MalformedURLException
+    public static URL resourceurl( final File p_file ) throws URISyntaxException, MalformedURLException
     {
         if ( p_file.exists() )
             return p_file.toURI().normalize().toURL();

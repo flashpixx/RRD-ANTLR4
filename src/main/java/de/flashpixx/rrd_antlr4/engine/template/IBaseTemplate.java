@@ -89,7 +89,7 @@ public abstract class IBaseTemplate implements ITemplate
         final Path l_target = Paths.get( p_output.toString(), p_templatefile );
         Files.createDirectories( l_target.getParent() );
         Files.copy(
-                CCommon.getResourceURL( MessageFormat.format( "{0}{1}{2}{3}", "de/flashpixx/rrd_antlr4/template/", m_name, "/", p_templatefile ) ).openStream(),
+                CCommon.resourceurl( MessageFormat.format( "{0}{1}{2}{3}", "de/flashpixx/rrd_antlr4/template/", m_name, "/", p_templatefile ) ).openStream(),
                 l_target,
                 StandardCopyOption.REPLACE_EXISTING
         );

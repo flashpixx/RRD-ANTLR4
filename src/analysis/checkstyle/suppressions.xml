@@ -3,4 +3,7 @@
 
 <suppressions>
     <suppress files="[/\\]target[/\\]" checks=".*"/>
+
+    <!-- used from the AntLR grammar definition -->
+    <suppress files="IAntLRv4LexerAdaptor\.java" checks=".*"/>
 </suppressions>

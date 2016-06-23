@@ -68,7 +68,7 @@ public final class CStringReplace
      */
     public final CStringReplace replace( final CharSequence p_search, final CharSequence p_replace )
     {
-        m_data.replace( p_search, p_replace );
+        m_data = m_data.replace( p_search, p_replace );
         return this;
     }
 
@@ -91,7 +91,7 @@ public final class CStringReplace
     @Override
     public final boolean equals( final Object p_object )
     {
-        return m_data.hashCode() == p_object.hashCode();
+        return ( p_object != null ) && ( p_object instanceof CStringReplace ) && ( m_data.hashCode() == p_object.hashCode() );
     }
 
     @Override

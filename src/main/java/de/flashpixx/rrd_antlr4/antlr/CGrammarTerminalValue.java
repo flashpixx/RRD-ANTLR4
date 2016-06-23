@@ -84,7 +84,7 @@ public class CGrammarTerminalValue<T> implements IGrammarSimpleElement<T>
     @Override
     public final boolean equals( final Object p_object )
     {
-        return m_value.hashCode() == p_object.hashCode();
+        return ( p_object != null ) && ( p_object instanceof IGrammarSimpleElement<?> ) && ( m_value.hashCode() == p_object.hashCode() );
     }
 
     @Override
@@ -96,7 +96,7 @@ public class CGrammarTerminalValue<T> implements IGrammarSimpleElement<T>
     @Override
     public final boolean isValueAssignableTo( final Class<?>... p_class )
     {
-        return m_value == null ? true : Arrays.asList( p_class ).stream().map( i -> i.isAssignableFrom( m_value.getClass() ) ).anyMatch( i -> i );
+        return m_value == null || Arrays.stream( p_class ).map( i -> i.isAssignableFrom( m_value.getClass() ) ).anyMatch( i -> i );
     }
 
     @Override

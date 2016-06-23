@@ -357,7 +357,7 @@
         <module name = "PackageDeclaration" />
 
         <module name = "PackageName">
-            <property name = "format" value = "^[a-z]{3,}(\.[a-z]{2,}[a-z_0-9]*)*$" />
+            <property name = "format" value = "^[a-z]{2,}(\.[a-z]{2,}[a-z_0-9]*)*$" />
         </module>
 
         <module name = "ParameterAssignment" />
@@ -447,7 +447,7 @@
         <module name = "TypecastParenPad" />
 
         <module name = "UncommentedMain">
-            <property name = "excludedClasses" value = "Test.*$" />
+            <property name = "excludedClasses" value = "((Test.*)|(CMain))$" />
         </module>
 
         <module name = "UnnecessaryParentheses" />
