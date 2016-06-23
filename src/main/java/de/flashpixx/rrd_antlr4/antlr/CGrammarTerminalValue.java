@@ -65,7 +65,7 @@ public class CGrammarTerminalValue<T> implements IGrammarSimpleElement<T>
         m_cardinality = p_cardinality;
 
         if ( m_value == null )
-            throw new IllegalArgumentException( CCommon.getLanguageString( CGrammarTerminalValue.class, "empty" ) );
+            throw new IllegalArgumentException( CCommon.languagestring( CGrammarTerminalValue.class, "empty" ) );
     }
 
     @Override

@@ -60,7 +60,7 @@ public final class CGrammarRule implements IGrammarRule
         m_element = p_element;
 
         if ( m_element == null )
-            throw new IllegalArgumentException( CCommon.getLanguageString( this, "empty" ) );
+            throw new IllegalArgumentException( CCommon.languagestring( this, "empty" ) );
     }
 
 

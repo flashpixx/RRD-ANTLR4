@@ -55,7 +55,7 @@ public final class CGrammarGroup implements IGrammarGroup
         m_cardinality = ECardinality.NONE;
 
         if ( m_element == null )
-            throw new IllegalArgumentException( CCommon.getLanguageString( this, "empty" ) );
+            throw new IllegalArgumentException( CCommon.languagestring( this, "empty" ) );
     }
 
     /**
@@ -70,7 +70,7 @@ public final class CGrammarGroup implements IGrammarGroup
         m_cardinality = p_cardinality;
 
         if ( m_element == null )
-            throw new IllegalArgumentException( CCommon.getLanguageString( this, "empty" ) );
+            throw new IllegalArgumentException( CCommon.languagestring( this, "empty" ) );
     }
 
     @Override

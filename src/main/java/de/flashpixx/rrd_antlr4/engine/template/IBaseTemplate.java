@@ -104,7 +104,7 @@ public abstract class IBaseTemplate implements ITemplate
     protected final void replace( final File p_file, final String... p_replacepair ) throws IOException
     {
         if ( ( p_replacepair == null ) || ( p_replacepair.length % 2 != 0 ) )
-            throw new IllegalArgumentException( CCommon.getLanguageString( IBaseTemplate.class, "replaceerror", p_file ) );
+            throw new IllegalArgumentException( CCommon.languagestring( IBaseTemplate.class, "replaceerror", p_file ) );
 
         final CStringReplace l_content = new CStringReplace( FileUtils.readFileToString( p_file, Charset.forName( "UTF-8" ) ) );
         SequenceM.rangeLong( 0, p_replacepair.length )

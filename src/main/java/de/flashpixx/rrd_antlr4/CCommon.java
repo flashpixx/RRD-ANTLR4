@@ -162,7 +162,7 @@ public final class CCommon
 
         final URL l_url = CCommon.class.getClassLoader().getResource( p_file.toString().replace( File.separator, "/" ) );
         if ( l_url == null )
-            throw new IllegalArgumentException( CCommon.getLanguageString( CCommon.class, "filenotfound", p_file ) );
+            throw new IllegalArgumentException( CCommon.languagestring( CCommon.class, "filenotfound", p_file ) );
 
         return l_url.toURI().normalize().toURL();
     }
@@ -177,9 +177,9 @@ public final class CCommon
      *
      * @tparam T object type
      */
-    public static <T> String getLanguageString( final T p_source, final String p_label, final Object... p_parameter )
+    public static <T> String languagestring( final T p_source, final String p_label, final Object... p_parameter )
     {
-        return getLanguageString( p_source.getClass(), p_label, p_parameter );
+        return languagestring( p_source.getClass(), p_label, p_parameter );
     }
 
     /**
@@ -190,7 +190,7 @@ public final class CCommon
      * @param p_parameter object array with substitutions
      * @return resource string
      */
-    public static String getLanguageString( final Class<?> p_class, final String p_label, final Object... p_parameter )
+    public static String languagestring( final Class<?> p_class, final String p_label, final Object... p_parameter )
     {
         try
         {
@@ -198,9 +198,8 @@ public final class CCommon
         }
         catch ( final MissingResourceException l_exception )
         {
+            return "";
         }
-
-        return "";
     }
 
     /**
@@ -272,13 +271,12 @@ public final class CCommon
             }
             catch ( final Exception l_exception )
             {
+                return null;
             }
             finally
             {
                 l_stream.close();
             }
-
-            return null;
         }
     }
 

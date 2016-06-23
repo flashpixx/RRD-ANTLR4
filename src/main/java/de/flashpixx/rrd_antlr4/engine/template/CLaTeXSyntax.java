@@ -86,7 +86,7 @@ public final class CLaTeXSyntax extends IBaseTemplate
                 new File( p_output.toString(), "/index.tex" ),
 
                 // set title
-                "-grammartitle-", CCommon.getLanguageString( this, "section", m_grammar.id() ),
+                "-grammartitle-", CCommon.languagestring( this, "section", m_grammar.id() ),
 
                 // set grammar documentation
                 "-grammardocumentation-", m_grammar.documentation(),
@@ -99,7 +99,7 @@ public final class CLaTeXSyntax extends IBaseTemplate
                                        + "\\\\begin'{'grammar'}'"
                                        + "\n{1}\n"
                                        + "\\\\end'{'grammar'}'",
-                                       CCommon.getLanguageString( this, "subsectiongrammar", i.getKey() ),
+                                       CCommon.languagestring( this, "subsectiongrammar", i.getKey() ),
                                        StringUtils.join(
                                                i.getValue().entrySet().stream()
                                                 .sorted( ( n, m ) -> n.getKey().compareToIgnoreCase( m.getKey() ) )
@@ -198,7 +198,7 @@ public final class CLaTeXSyntax extends IBaseTemplate
     @Override
     protected final String negation( final IGrammarElement p_element )
     {
-        return MessageFormat.format( "({0} {1})", CCommon.getLanguageString( this, "latexnegation" ), this.map( p_element ) ).trim();
+        return MessageFormat.format( "({0} {1})", CCommon.languagestring( this, "latexnegation" ), this.map( p_element ) ).trim();
     }
 
     /**

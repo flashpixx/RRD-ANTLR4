@@ -125,14 +125,14 @@ public final class CMain extends AbstractMojo
     {
         // --- define CLI options --------------------------------------------------------------------------------------
         final Options l_clioptions = new Options();
-        l_clioptions.addOption( "help", false, CCommon.getLanguageString( CMain.class, "help" ) );
-        l_clioptions.addOption( "output", true, CCommon.getLanguageString( CMain.class, "output", DEFAULTOUTPUT ) );
-        l_clioptions.addOption( "imports", true, CCommon.getLanguageString( CMain.class, "import" ) );
-        l_clioptions.addOption( "excludes", true, CCommon.getLanguageString( CMain.class, "exclude" ) );
-        l_clioptions.addOption( "grammar", true, CCommon.getLanguageString( CMain.class, "grammar" ) );
-        l_clioptions.addOption( "language", true, CCommon.getLanguageString( CMain.class, "language" ) );
-        l_clioptions.addOption( "docclean", true, CCommon.getLanguageString( CMain.class, "documentationclean" ) );
-        l_clioptions.addOption( "templates", true, CCommon.getLanguageString( CMain.class, "template", Arrays.asList( ETemplate.values() ), DEFAULTTEMPLATE ) );
+        l_clioptions.addOption( "help", false, CCommon.languagestring( CMain.class, "help" ) );
+        l_clioptions.addOption( "output", true, CCommon.languagestring( CMain.class, "output", DEFAULTOUTPUT ) );
+        l_clioptions.addOption( "imports", true, CCommon.languagestring( CMain.class, "import" ) );
+        l_clioptions.addOption( "excludes", true, CCommon.languagestring( CMain.class, "exclude" ) );
+        l_clioptions.addOption( "grammar", true, CCommon.languagestring( CMain.class, "grammar" ) );
+        l_clioptions.addOption( "language", true, CCommon.languagestring( CMain.class, "language" ) );
+        l_clioptions.addOption( "docclean", true, CCommon.languagestring( CMain.class, "documentationclean" ) );
+        l_clioptions.addOption( "templates", true, CCommon.languagestring( CMain.class, "template", Arrays.asList( ETemplate.values() ), DEFAULTTEMPLATE ) );
 
 
         final CommandLine l_cli;
@@ -142,7 +142,7 @@ public final class CMain extends AbstractMojo
         }
         catch ( final Exception l_exception )
         {
-            System.err.println( CCommon.getLanguageString( CMain.class, "parseerror", l_exception.getLocalizedMessage() ) );
+            System.err.println( CCommon.languagestring( CMain.class, "parseerror", l_exception.getLocalizedMessage() ) );
             System.exit( -1 );
             return;
         }
@@ -159,7 +159,7 @@ public final class CMain extends AbstractMojo
 
         if ( !l_cli.hasOption( "grammar" ) )
         {
-            System.err.println( CCommon.getLanguageString( CMain.class, "grammarnotset" ) );
+            System.err.println( CCommon.languagestring( CMain.class, "grammarnotset" ) );
             System.exit( -1 );
         }
 

@@ -170,7 +170,7 @@ public final class CASTVisitorPCRE extends PCREBaseVisitor<Object>
     {
         return new CGrammarTerminalValue<>(
                 ".".equals( p_string )
-                ? de.flashpixx.rrd_antlr4.CCommon.getLanguageString( this, "anychar" )
+                ? de.flashpixx.rrd_antlr4.CCommon.languagestring( this, "anychar" )
                 : p_string
         );
     }

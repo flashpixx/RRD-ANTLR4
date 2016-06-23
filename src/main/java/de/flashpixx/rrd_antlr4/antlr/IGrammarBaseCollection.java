@@ -56,7 +56,7 @@ public abstract class IGrammarBaseCollection implements IGrammarCollection
     protected IGrammarBaseCollection( final ECardinality p_cardinality, final List<IGrammarElement> p_data )
     {
         if ( p_data == null )
-            throw new IllegalArgumentException( CCommon.getLanguageString( IGrammarBaseCollection.class, "empty" ) );
+            throw new IllegalArgumentException( CCommon.languagestring( IGrammarBaseCollection.class, "empty" ) );
 
         m_data = Collections.unmodifiableList( p_data.stream().filter( i -> i != null ).collect( Collectors.toList() ) );
         m_cardinality = p_cardinality;

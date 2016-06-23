@@ -51,7 +51,7 @@ public enum ETemplate
                 return new CLaTeXSyntax( LATEXSYNTAX.toString() );
 
             default:
-                throw new IllegalStateException( CCommon.getLanguageString( this, "unknowntype", this ) );
+                throw new IllegalStateException( CCommon.languagestring( this, "unknowntype", this ) );
         }
     }
 }
