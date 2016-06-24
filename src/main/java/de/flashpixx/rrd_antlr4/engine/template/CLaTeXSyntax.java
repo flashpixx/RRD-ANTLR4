@@ -217,13 +217,13 @@ final class CLaTeXSyntax extends IBaseTemplate
                 CLaTeXSyntax.removequotes( p_string )
                     .replaceAll( "\\\\",          "\\\\textbackslash " )
                     .replaceAll( "([\\$\\#&%_])", "\\\\$1" )
-                    .replaceAll( "\"",            "\\\\texttt{\''{}}" )
                     .replaceAll( "<",             "\\\\textless " )
                     .replaceAll( ">",             "\\\\textgreater " )
                     .replaceAll( "\\{",           "\\\\{" )
                     .replaceAll( "\\}",           "\\\\}" )
                     .replaceAll( "~",             "\\\\textasciitilde" )
                     .replaceAll( "\\^",           "\\\\^{}" )
+                    .replaceAll( "\"",            "\\\\texttt{\''{}}" )
         );
     }
 
