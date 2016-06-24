@@ -33,7 +33,6 @@ import de.flashpixx.rrd_antlr4.antlr.IGrammarElement;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarGroup;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarIdentifier;
 import de.flashpixx.rrd_antlr4.antlr.IGrammarSimpleElement;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
@@ -209,22 +208,20 @@ final class CLaTeXSyntax extends IBaseTemplate
      * @param p_string input string
      * @return escaped string
      * @warning replace uses character sequences / replaceAll regexp string sequences, so use the correct escaping sequence
-     * @see http://www.mail-archive.com/templates@template-toolkit.org/msg07971.html
+     * @see https://en.wikibooks.org/wiki/LaTeX/Special_Characters#Other_symbols
      */
     private static String escapelatex( final String p_string )
     {
-        return StringEscapeUtils.escapeJava(
-                CLaTeXSyntax.removequotes( p_string )
+        return CLaTeXSyntax.removequotes( p_string )
                     .replaceAll( "\\\\",          "\\\\textbackslash " )
                     .replaceAll( "([\\$\\#&%_])", "\\\\$1" )
                     .replaceAll( "<",             "\\\\textless " )
                     .replaceAll( ">",             "\\\\textgreater " )
                     .replaceAll( "\\{",           "\\\\{" )
                     .replaceAll( "\\}",           "\\\\}" )
-                    .replaceAll( "~",             "\\\\textasciitilde" )
-                    .replaceAll( "\\^",           "\\\\^{}" )
-                    .replaceAll( "\"",            "\\\\texttt{\''{}}" )
-        );
+                    .replaceAll( "~",             " \\$\\\\widetilde{}\\$ " )
+                    .replaceAll( "\\^",           " \\$\\\\widehat{}\\$ " )
+                    .replaceAll( "\"",            "\\\\texttt{\''{}}" );
     }
 
 }
