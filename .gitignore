@@ -20,7 +20,6 @@
 !src/site/*.htm*
 !src/site/*.css
 !src/site/*.xml
-!src/site/*.graffle
 
 !src/analysis/**/*.xml
 !src/analysis/**/*.txt
@@ -29,4 +28,4 @@
 target/**
 rrd-output/**
 dependency-reduced-pom.xml
-src/main/java/de/flashpixx/rrd_antlr4/template/html/lib/**
+src/main/resources/de/flashpixx/rrd_antlr4/template/html/lib/**
