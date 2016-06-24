@@ -187,7 +187,7 @@ final class CLaTeXSyntax extends IBaseTemplate
     @Override
     protected final String terminalvalue( final IGrammarSimpleElement<?> p_element )
     {
-        return MessageFormat.format( "''{0}''", CLaTeXSyntax.escapelatex( p_element.get() ) );
+        return MessageFormat.format( "`{0}''", CLaTeXSyntax.escapelatex( p_element.get() ) );
     }
 
     @Override
@@ -212,16 +212,14 @@ final class CLaTeXSyntax extends IBaseTemplate
      */
     private static String escapelatex( final String p_string )
     {
+        // ", ~ and ^ are replaced by the syntax package itself
         return CLaTeXSyntax.removequotes( p_string )
                     .replaceAll( "\\\\",          "\\\\textbackslash " )
                     .replaceAll( "([\\$\\#&%_])", "\\\\$1" )
                     .replaceAll( "<",             "\\\\textless " )
                     .replaceAll( ">",             "\\\\textgreater " )
                     .replaceAll( "\\{",           "\\\\{" )
-                    .replaceAll( "\\}",           "\\\\}" )
-                    .replaceAll( "~",             " \\$\\\\widetilde{}\\$ " )
-                    .replaceAll( "\\^",           " \\$\\\\widehat{}\\$ " )
-                    .replaceAll( "\"",            "\\\\texttt{\''{}}" );
+                    .replaceAll( "\\}",           "\\\\}" );
     }
 
 }
