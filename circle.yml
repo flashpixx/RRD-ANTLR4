@@ -43,8 +43,8 @@ test:
         - git checkout master
         - mv target/site /tmp
         - mv target/RRD-ANTLR4-0.1.jar /tmp
-        #- mv target/RRD-ANTLR4-0.1.exe /tmp
-        #- mv target/RRD-ANTLR4-0.1.dmg /tmp
+        #- mv target/rrd-antlr4-0.1.exe /tmp
+        #- mv target/rrd-antlr4-0.1.dmg /tmp
 
 
         # Documentation Build with Update to GH-Pages Branch
@@ -74,9 +74,9 @@ test:
         - rm -Rf *
         - mv /tmp/.gitignore .
         - mv /tmp/circle.yml .
-        - mv /tmp/RRD-ANTLR4-0.1.jar .
-        #- mv /tmp/RRD-ANTLR4-0.1.exe .
-        #- mv /tmp/RRD-ANTLR4-0.1.dmg .
+        - mv /tmp/rrd-antlr4-0.1.jar .
+        #- mv /tmp/rrd-antlr4-0.1.exe .
+        #- mv /tmp/rrd-antlr4-0.1.dmg .
         - git add --all .
         - git commit -m "binaries master branch"
         - git push origin binary-master
