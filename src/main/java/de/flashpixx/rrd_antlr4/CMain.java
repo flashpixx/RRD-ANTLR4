@@ -80,7 +80,7 @@ public final class CMain extends AbstractMojo
     /**
      * Maven plugin parameter for output
      */
-    @Parameter( defaultValue = "target/" + DEFAULTOUTPUT )
+    @Parameter( defaultValue = "target/site/" + DEFAULTOUTPUT )
     private String output;
     /**
      * Maven plugin parameter for language

@@ -199,7 +199,7 @@ final class CLaTeXSyntax extends IBaseTemplate
     @Override
     protected final String negation( final IGrammarElement p_element )
     {
-        return MessageFormat.format( "({0} {1})", CCommon.languagestring( this, "latexnegation" ), this.map( p_element ) ).trim();
+        return MessageFormat.format( "(\\textit'{'{0}'}' {1})", CCommon.languagestring( this, "latexnegation" ), this.map( p_element ) ).trim();
     }
 
     /**

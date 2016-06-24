@@ -3,8 +3,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.flashpixx</groupId>
-    <artifactId>RRD-ANTLR4</artifactId>
-    <version>0.1</version>
+    <artifactId>rrd-antlr4</artifactId>
+    <version>0.1.0</version>
 
     <!-- project meta information -->
     <name>RRD-ANTLR4</name>
@@ -194,7 +194,7 @@
     <!-- main build -->
     <build>
         <!-- default goal is set to package and checking dependency updates -->
-        <defaultGoal>package versions:display-dependency-updates versions:display-plugin-updates</defaultGoal>
+        <defaultGoal>versions:display-dependency-updates versions:display-plugin-updates</defaultGoal>
 
         <!-- include resource directory with replacing configuration variables -->
         <resources>
@@ -376,7 +376,9 @@
                                     </manifestEntries>
                                 </transformer>
 
-                                <transformer implementation = "org.apache.maven.plugins.shade.resource.PluginXmlResourceTransformer" />
+                                <transformer implementation = "org.apache.maven.plugins.shade.resource.PluginXmlResourceTransformer">
+
+                                </transformer>
 
                             </transformers>
                         </configuration>
