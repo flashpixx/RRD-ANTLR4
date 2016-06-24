@@ -50,7 +50,7 @@ import java.util.stream.IntStream;
 /**
  * template for HTML export
  */
-public final class CHTML extends IBaseTemplate
+final class CHTML extends IBaseTemplate
 {
     /**
      * main grammar
@@ -66,7 +66,7 @@ public final class CHTML extends IBaseTemplate
      *
      * @param p_name template name
      */
-    public CHTML( final String p_name )
+    CHTML( final String p_name )
     {
         super( p_name );
     }

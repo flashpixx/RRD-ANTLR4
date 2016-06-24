@@ -45,10 +45,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 
+
 /**
  * template for LaTeX text export
  */
-public final class CLaTeXSyntax extends IBaseTemplate
+final class CLaTeXSyntax extends IBaseTemplate
 {
     /**
      * main grammar
@@ -64,7 +65,7 @@ public final class CLaTeXSyntax extends IBaseTemplate
      *
      * @param p_name template name
      */
-    public CLaTeXSyntax( final String p_name )
+    CLaTeXSyntax( final String p_name )
     {
         super( p_name );
     }
@@ -205,39 +206,25 @@ public final class CLaTeXSyntax extends IBaseTemplate
     /**
      * escape string with correct LaTeX definition
      *
-     * @note replace uses character sequences / replaceAll string sequences, so use the correct escaping sequence
      * @param p_string input string
      * @return escaped string
+     * @warning replace uses character sequences / replaceAll regexp string sequences, so use the correct escaping sequence
+     * @see http://www.mail-archive.com/templates@template-toolkit.org/msg07971.html
      */
     private static String escapelatex( final String p_string )
     {
-        System.out.println( "--> " + CLaTeXSyntax.removequotes( p_string ) );
-        final String l_value = StringEscapeUtils.escapeJava(
+        return StringEscapeUtils.escapeJava(
                 CLaTeXSyntax.removequotes( p_string )
-                    .replaceAll( "\"", "\texttt{\''{}}" )
-
-                    .replaceAll( "\\\\", "\\textbackslash " )
-
-                    .replaceAll( "&", "\\&" )
-
-                    .replaceAll( "$", "\\$" )
-
-                    .replaceAll( "<", "\\textless " )
-                    .replaceAll( ">", "\\textgreater " )
-
-                    //.replaceAll( "\{", "\\{" )
-                    //.replaceAll( "\}", "\\}" )
-
-                    .replaceAll( "#", "\\#" )
-
-                    .replaceAll( "~", "\textasciitilde" )
-
-                    .replaceAll( "^", "\\^{}" )
-
-
+                    .replaceAll( "\\\\",          "\\\\textbackslash " )
+                    .replaceAll( "([\\$\\#&%_])", "\\\\$1" )
+                    .replaceAll( "\"",            "\\\\texttt{\''{}}" )
+                    .replaceAll( "<",             "\\\\textless " )
+                    .replaceAll( ">",             "\\\\textgreater " )
+                    .replaceAll( "\\{",           "\\\\{" )
+                    .replaceAll( "\\}",           "\\\\}" )
+                    .replaceAll( "~",             "\\\\textasciitilde" )
+                    .replaceAll( "\\^",           "\\\\^{}" )
         );
-        System.out.println( l_value );
-        return l_value;
     }
 
 }
