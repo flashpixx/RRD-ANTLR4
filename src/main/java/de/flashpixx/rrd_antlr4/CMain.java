@@ -163,7 +163,7 @@ public final class CMain extends AbstractMojo
             System.exit( -1 );
         }
 
-        CCommon.setLanguage(
+        CCommon.language(
                 l_cli.hasOption( "language" )
                 ? Locale.forLanguageTag( l_cli.getOptionValue( "language" ) )
                 : Locale.getDefault()

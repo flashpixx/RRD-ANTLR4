@@ -1,7 +1,8 @@
 \documentclass{article}
 \usepackage[utf8]{inputenc}
-\usepackage{syntax}
 
+% --- grammar definition -----------------------------
+\usepackage{syntax, xspace}
 
 \setlength{\grammarindent}{3em}
 \setlength{\grammarparsep}{0.35em}
@@ -11,10 +12,12 @@
 \renewcommand*{\syntleft}{$\langle$\sffamily}
 \renewcommand*{\syntright}{$\rangle$}
 
-\newcommand{\ulitleft}{\normalfont\stfamily}
-\newcommand{\ulitright}{}
-\newcommand{\litleft}{`\bgroup\ulitleft}
-\newcommand{\litright}{\ulitright\egroup'}
+\renewcommand{\ulitleft}{\sffamily}
+\renewcommand{\ulitright}{}
+
+\renewcommand{\litleft}{`\bgroup\ulitleft}
+\renewcommand{\litright}{\ulitright\egroup'}
+% ----------------------------------------------------
 
 
 \begin{document}

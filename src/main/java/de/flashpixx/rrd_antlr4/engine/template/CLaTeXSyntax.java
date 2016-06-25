@@ -219,7 +219,8 @@ final class CLaTeXSyntax extends IBaseTemplate
                     .replaceAll( "<",             "\\\\textless " )
                     .replaceAll( ">",             "\\\\textgreater " )
                     .replaceAll( "\\{",           "\\\\{" )
-                    .replaceAll( "\\}",           "\\\\}" );
+                    .replaceAll( "\\}",           "\\\\}" )
+                    .replaceAll( "\\|",           "\\\\vline\\\\xspace" );
     }
 
 }

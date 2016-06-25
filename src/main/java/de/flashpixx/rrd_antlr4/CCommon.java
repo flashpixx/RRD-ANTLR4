@@ -78,13 +78,17 @@ public final class CCommon
      * sets the language
      * @param p_language language
      */
-    public static void setLanguage( final Locale p_language )
+    public static void language( final Locale p_language )
     {
+        Locale.setDefault( p_language );
         s_language = ResourceBundle.getBundle(
                 MessageFormat.format( "{0}.{1}", PACKAGEROOT, "language" ),
                 p_language,
                 new CUTF8Control()
         );
+
+        System.out.println( p_language + " " + s_language.getLocale() );
+
     }
 
     /**
