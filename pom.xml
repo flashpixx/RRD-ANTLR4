@@ -376,9 +376,7 @@
                                     </manifestEntries>
                                 </transformer>
 
-                                <transformer implementation = "org.apache.maven.plugins.shade.resource.PluginXmlResourceTransformer">
-
-                                </transformer>
+                                <transformer implementation = "org.apache.maven.plugins.shade.resource.PluginXmlResourceTransformer"/>
 
                             </transformers>
                         </configuration>

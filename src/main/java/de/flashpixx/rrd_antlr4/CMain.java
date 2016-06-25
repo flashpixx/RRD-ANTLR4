@@ -35,6 +35,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.File;
@@ -56,6 +58,7 @@ import java.util.stream.Stream;
  * @see https://maven.apache.org/guides/plugin/guide-java-plugin-development.html
  * @see https://books.sonatype.com/mvnref-book/reference/writing-plugins-sect-custom-plugin.html
  */
+@Mojo( name="rrdantlr4", defaultPhase = LifecyclePhase.SITE )
 public final class CMain extends AbstractMojo
 {
     /**
