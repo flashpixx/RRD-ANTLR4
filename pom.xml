@@ -5,7 +5,7 @@
     <groupId>de.flashpixx</groupId>
     <artifactId>rrd-antlr4</artifactId>
     <version>0.1.0</version>
-    <!-- <packaging>maven-plugin</packaging> -->
+    <packaging>maven-plugin</packaging>
 
     <!-- project meta information -->
     <name>RRD-ANTLR4</name>
@@ -355,7 +355,7 @@
                 </executions>
             </plugin>
 
-            <!-- executable Jar -->
+            <!-- executable Jar
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -391,6 +391,7 @@
                     </execution>
                 </executions>
             </plugin>
+            -->
 
             <!-- Clean -->
             <plugin>
