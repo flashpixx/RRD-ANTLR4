@@ -58,7 +58,7 @@ import java.util.stream.Stream;
  * @see https://maven.apache.org/guides/plugin/guide-java-plugin-development.html
  * @see https://books.sonatype.com/mvnref-book/reference/writing-plugins-sect-custom-plugin.html
  */
-@Mojo( name="rrdantlr4", defaultPhase = LifecyclePhase.SITE )
+@Mojo( name = "rrd-antlr4", defaultPhase = LifecyclePhase.SITE )
 public final class CMain extends AbstractMojo
 {
     /**
@@ -167,9 +167,9 @@ public final class CMain extends AbstractMojo
         }
 
         CCommon.language(
-                l_cli.hasOption( "language" )
-                ? Locale.forLanguageTag( l_cli.getOptionValue( "language" ) )
-                : Locale.getDefault()
+            l_cli.hasOption( "language" )
+            ? Locale.forLanguageTag( l_cli.getOptionValue( "language" ) )
+            : Locale.getDefault()
         );
 
         final Set<String> l_doclean = !l_cli.hasOption( "docclean" )
@@ -204,7 +204,7 @@ public final class CMain extends AbstractMojo
         final Collection<String> l_errors = Arrays.stream( l_cli.getOptionValue( "grammar" ).split( "," ) )
                                                   .parallel()
                                                   .flatMap( i -> generate( l_outputdirectory, l_exclude, l_import, new File( i ), l_doclean, l_templates )
-                                                          .stream()
+                                                      .stream()
                                                   )
                                                   .collect( Collectors.toList() );
 
@@ -257,26 +257,26 @@ public final class CMain extends AbstractMojo
                                                     .collect( Collectors.toMap( i -> FilenameUtils.removeExtension( i.getName() ), j -> j ) );
 
         return getFileList( p_grammar, p_exclude )
-                .flatMap( i ->
-                {
-                    try
-                    {
-                        return ENGINE.generate(
-                            p_outputdirectory,
-                            i, p_docuclean,
-                            l_imports,
-                            Arrays.stream( p_template )
-                                .map( j -> ETemplate.valueOf( j.trim().toUpperCase() ).generate() )
-                                .collect( Collectors.toSet() )
-                        ).stream();
-                    }
-                    catch ( final IOException l_exception )
-                    {
-                        return Stream.of( l_exception.getMessage() );
-                    }
-                } )
-                .filter( i -> i != null )
-                .collect( Collectors.toList() );
+            .flatMap( i ->
+                      {
+                          try
+                          {
+                              return ENGINE.generate(
+                                  p_outputdirectory,
+                                  i, p_docuclean,
+                                  l_imports,
+                                  Arrays.stream( p_template )
+                                        .map( j -> ETemplate.valueOf( j.trim().toUpperCase() ).generate() )
+                                        .collect( Collectors.toSet() )
+                              ).stream();
+                          }
+                          catch ( final IOException l_exception )
+                          {
+                              return Stream.of( l_exception.getMessage() );
+                          }
+                      } )
+            .filter( i -> i != null )
+            .collect( Collectors.toList() );
 
     }
 
