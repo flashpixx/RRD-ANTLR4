@@ -86,9 +86,6 @@ public final class CCommon
                 p_language,
                 new CUTF8Control()
         );
-
-        System.out.println( p_language + " " + s_language.getLocale() );
-
     }
 
     /**
