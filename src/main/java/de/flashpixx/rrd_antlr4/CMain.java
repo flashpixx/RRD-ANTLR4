@@ -88,12 +88,12 @@ public final class CMain extends AbstractMavenReport
     /**
      * Maven plugin default directories of grammars
      */
-    @Parameter( defaultValue = "src/main/antlr4" )
+    @Parameter( defaultValue = "${project.basedir}/src/main/antlr4" )
     private String[] grammar;
     /**
      * Maven plugin default grammar import directories
      */
-    @Parameter( defaultValue = "src/main/antlr4/imports" )
+    @Parameter( defaultValue = "${project.basedir}/src/main/antlr4/imports" )
     private String[] imports;
     /**
      * Maven plugin exclude file list
@@ -215,7 +215,7 @@ public final class CMain extends AbstractMavenReport
     @Override
     public final String getOutputName()
     {
-        return output+"/"+"index.htm";
+        return output+"/"+"index";
     }
 
     @Override
@@ -325,7 +325,8 @@ public final class CMain extends AbstractMavenReport
             p_input.isFile()
             ? Stream.of( p_input )
             : Arrays.stream( p_input.listFiles( ( p_dir, p_name ) -> p_name.endsWith( GRAMMARFILEEXTENSION ) ) )
-        ).filter( i -> !p_exclude.contains( i.getName() ) );
+        )
+        .filter( i -> !p_exclude.contains( i.getName() ) );
     }
 
     // ---------------------------------------------------------------------------------------------------------------------------------------------------------
