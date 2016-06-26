@@ -215,7 +215,7 @@ public final class CMain extends AbstractMavenReport
     @Override
     public final String getOutputName()
     {
-        return output+"/"+"index";
+        return output + "/" + "report";
     }
 
     @Override
@@ -231,7 +231,7 @@ public final class CMain extends AbstractMavenReport
     }
 
     @Override
-    protected void executeReport( final Locale p_locale ) throws MavenReportException
+    protected final void executeReport( final Locale p_locale ) throws MavenReportException
     {
         if ( ( imports == null ) || ( imports.length == 0) )
             throw new MavenReportException( CCommon.languagestring( this, "importempty" ) );
