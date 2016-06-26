@@ -32,12 +32,10 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.reporting.AbstractMavenReport;
+import org.apache.maven.reporting.MavenReportException;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,13 +51,10 @@ import java.util.stream.Stream;
 
 
 /**
- * standalone program and Maven plugin
- *
- * @see https://maven.apache.org/guides/plugin/guide-java-plugin-development.html
- * @see https://books.sonatype.com/mvnref-book/reference/writing-plugins-sect-custom-plugin.html
+ * standalone program and Maven Report plugin
  */
-@Mojo( name = "rrd-antlr4", defaultPhase = LifecyclePhase.SITE )
-public final class CMain extends AbstractMojo
+@Mojo( name = "rrd-antlr4" )
+public final class CMain extends AbstractMavenReport
 {
     /**
      * engine instance
@@ -83,13 +78,8 @@ public final class CMain extends AbstractMojo
     /**
      * Maven plugin parameter for output
      */
-    @Parameter( defaultValue = "target/site/" + DEFAULTOUTPUT )
+    @Parameter( defaultValue = "${project.reporting.outputDirectory}/" + DEFAULTOUTPUT )
     private String output;
-    /**
-     * Maven plugin parameter for language
-     */
-    @Parameter( defaultValue = "en" )
-    private String language;
     /**
      * Maven plugin used templates option
      */
@@ -117,6 +107,7 @@ public final class CMain extends AbstractMojo
     private String[] docclean;
 
 
+    // --- standalone execution --------------------------------------------------------------------------------------------------------------------------------
 
     /**
      * main
@@ -215,15 +206,48 @@ public final class CMain extends AbstractMojo
         }
     }
 
+    // ---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+    // --- Maven Report Plugin execution -----------------------------------------------------------------------------------------------------------------------
+
     @Override
-    public final void execute() throws MojoExecutionException, MojoFailureException
+    public final String getOutputName()
     {
-        final Set<String> l_doclean = Arrays.stream( docclean ).map( String::trim ).collect( Collectors.toSet() );
-        final Set<String> l_exclude = Arrays.stream( excludes ).map( String::trim ).collect( Collectors.toSet() );
+        return output+"/"+"index.htm";
+    }
+
+    @Override
+    public final String getName( final Locale p_locale )
+    {
+        return "RRD-AntLR4";
+    }
+
+    @Override
+    public final String getDescription( final Locale p_locale )
+    {
+        return "Railroad-Diagramm for AntLR4";
+    }
+
+    @Override
+    protected void executeReport( final Locale p_locale ) throws MavenReportException
+    {
+        if ( ( imports == null ) || ( imports.length == 0) )
+            throw new MavenReportException( CCommon.languagestring( this, "importempty" ) );
+
+        final Set<String> l_doclean = ( docclean == null ) || ( docclean.length == 0 )
+                                      ? Collections.<String>emptySet()
+                                      : Arrays.stream( docclean ).map( String::trim ).collect( Collectors.toSet() );
+
+        final Set<String> l_exclude = ( excludes == null ) || (excludes.length == 0 )
+                                      ? Collections.<String>emptySet()
+                                      : Arrays.stream( excludes ).map( String::trim ).collect( Collectors.toSet() );
+
         final Set<String> l_import = Arrays.stream( imports ).map( String::trim ).collect( Collectors.toSet() );
 
         // language definition set on runtime
-        Locale.setDefault( Locale.forLanguageTag( language ) );
+        Locale.setDefault( p_locale );
 
         final Collection<String> l_errors = Arrays.stream( grammar ).parallel()
                                                   .flatMap( i -> generate( output, l_exclude, l_import,
@@ -232,9 +256,14 @@ public final class CMain extends AbstractMojo
                                                   .collect( Collectors.toList() );
 
         if ( !l_errors.isEmpty() )
-            throw new MojoFailureException( StringUtils.join( l_errors, "\n" ) );
+            throw new MavenReportException( StringUtils.join( l_errors, "\n" ) );
     }
 
+    // ---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+    // --- helper ----------------------------------------------------------------------------------------------------------------------------------------------
 
     /**
      * generating export (generate template instances and call engine)
@@ -298,4 +327,7 @@ public final class CMain extends AbstractMojo
             : Arrays.stream( p_input.listFiles( ( p_dir, p_name ) -> p_name.endsWith( GRAMMARFILEEXTENSION ) ) )
         ).filter( i -> !p_exclude.contains( i.getName() ) );
     }
+
+    // ---------------------------------------------------------------------------------------------------------------------------------------------------------
+
 }
