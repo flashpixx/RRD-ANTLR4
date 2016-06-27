@@ -40,6 +40,8 @@ import org.apache.maven.reporting.MavenReportException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -209,7 +211,6 @@ public final class CMain extends AbstractMavenReport
     // ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-
     // --- Maven Report Plugin execution -----------------------------------------------------------------------------------------------------------------------
 
     @Override
@@ -233,14 +234,14 @@ public final class CMain extends AbstractMavenReport
     @Override
     protected final void executeReport( final Locale p_locale ) throws MavenReportException
     {
-        if ( ( imports == null ) || ( imports.length == 0) )
+        if ( ( imports == null ) || ( imports.length == 0 ) )
             throw new MavenReportException( CCommon.languagestring( this, "importempty" ) );
 
         final Set<String> l_doclean = ( docclean == null ) || ( docclean.length == 0 )
                                       ? Collections.<String>emptySet()
                                       : Arrays.stream( docclean ).map( String::trim ).collect( Collectors.toSet() );
 
-        final Set<String> l_exclude = ( excludes == null ) || (excludes.length == 0 )
+        final Set<String> l_exclude = ( excludes == null ) || ( excludes.length == 0 )
                                       ? Collections.<String>emptySet()
                                       : Arrays.stream( excludes ).map( String::trim ).collect( Collectors.toSet() );
 
@@ -262,7 +263,6 @@ public final class CMain extends AbstractMavenReport
     // ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-
     // --- helper ----------------------------------------------------------------------------------------------------------------------------------------------
 
     /**
@@ -280,33 +280,49 @@ public final class CMain extends AbstractMavenReport
                                                 final Set<String> p_docuclean, final String... p_template
     )
     {
-        // build import map
-        final Map<String, File> l_imports = p_import.stream()
-                                                    .flatMap( i -> getFileList( new File( i ), p_exclude ) )
-                                                    .collect( Collectors.toMap( i -> FilenameUtils.removeExtension( i.getName() ), j -> j ) );
+        try
+        {
+            // build import map
+            final Map<String, File> l_imports = p_import.stream()
+                                                        .flatMap( i ->
+                                                        {
+                                                            try
+                                                            {
+                                                                return getFileList( new File( i ), p_exclude );
+                                                            }
+                                                            catch ( final IOException l_exception )
+                                                            {
+                                                                throw new RuntimeException( l_exception );
+                                                            }
+                                                        } )
+                                                        .collect( Collectors.toMap( i -> FilenameUtils.removeExtension( i.getName() ), j -> j ) );
 
-        return getFileList( p_grammar, p_exclude )
-            .flatMap( i ->
-                      {
-                          try
+            return getFileList( p_grammar, p_exclude )
+                .flatMap( i ->
                           {
-                              return ENGINE.generate(
-                                  p_outputdirectory,
-                                  i, p_docuclean,
-                                  l_imports,
-                                  Arrays.stream( p_template )
-                                        .map( j -> ETemplate.valueOf( j.trim().toUpperCase() ).generate() )
-                                        .collect( Collectors.toSet() )
-                              ).stream();
-                          }
-                          catch ( final IOException l_exception )
-                          {
-                              return Stream.of( l_exception.getMessage() );
-                          }
-                      } )
-            .filter( i -> i != null )
-            .collect( Collectors.toList() );
-
+                              try
+                              {
+                                  return ENGINE.generate(
+                                      p_outputdirectory,
+                                      i, p_docuclean,
+                                      l_imports,
+                                      Arrays.stream( p_template )
+                                            .map( j -> ETemplate.valueOf( j.trim().toUpperCase() ).generate() )
+                                            .collect( Collectors.toSet() )
+                                  ).stream();
+                              }
+                              catch ( final IOException l_exception )
+                              {
+                                  return Stream.of( l_exception.getMessage() );
+                              }
+                          } )
+                .filter( i -> i != null )
+                .collect( Collectors.toList() );
+        }
+        catch ( final IOException l_exception )
+        {
+            return Stream.of( l_exception.getMessage() ).collect( Collectors.toSet() );
+        }
     }
 
     /**
@@ -316,7 +332,7 @@ public final class CMain extends AbstractMavenReport
      * @param p_exclude file names which are ignored
      * @return stream of file objects
      */
-    private static Stream<File> getFileList( final File p_input, final Set<String> p_exclude )
+    private static Stream<File> getFileList( final File p_input, final Set<String> p_exclude ) throws IOException
     {
         if ( !p_input.exists() )
             throw new RuntimeException( CCommon.languagestring( CMain.class, "notexist", p_input ) );
@@ -324,8 +340,9 @@ public final class CMain extends AbstractMavenReport
         return (
             p_input.isFile()
             ? Stream.of( p_input )
-            : Arrays.stream( p_input.listFiles( ( p_dir, p_name ) -> p_name.endsWith( GRAMMARFILEEXTENSION ) ) )
+            : Files.find( p_input.toPath(), Integer.MAX_VALUE, (i,j) -> j.isRegularFile() ).map( Path::toFile )
         )
+        .filter( i -> i.getName().endsWith( GRAMMARFILEEXTENSION ) )
         .filter( i -> !p_exclude.contains( i.getName() ) );
     }
 
