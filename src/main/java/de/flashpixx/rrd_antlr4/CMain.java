@@ -216,7 +216,7 @@ public final class CMain extends AbstractMavenReport
     @Override
     public final String getOutputName()
     {
-        return output + "/" + "report";
+        return DEFAULTOUTPUT;
     }
 
     @Override
