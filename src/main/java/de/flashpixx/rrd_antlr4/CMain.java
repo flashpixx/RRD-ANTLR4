@@ -32,10 +32,14 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.reporting.AbstractMavenReport;
+import org.apache.maven.reporting.AbstractMavenReportRenderer;
+import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
+import org.apache.maven.reporting.MavenReportRenderer;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,6 +62,14 @@ import java.util.stream.Stream;
 @Mojo( name = "rrd-antlr4" )
 public final class CMain extends AbstractMavenReport
 {
+    /**
+     * name of the plugin
+     */
+    private static final String NAME = "RRD-AntLR4";
+    /**
+     * main description
+     */
+    private static final String DESCRIPTION = "Railroad-Diagramm for AntLR4";
     /**
      * engine instance
      */
@@ -222,13 +234,13 @@ public final class CMain extends AbstractMavenReport
     @Override
     public final String getName( final Locale p_locale )
     {
-        return "RRD-AntLR4";
+        return NAME;
     }
 
     @Override
     public final String getDescription( final Locale p_locale )
     {
-        return "Railroad-Diagramm for AntLR4";
+        return DESCRIPTION;
     }
 
     @Override
@@ -237,6 +249,8 @@ public final class CMain extends AbstractMavenReport
         if ( ( imports == null ) || ( imports.length == 0 ) )
             throw new MavenReportException( CCommon.languagestring( this, "importempty" ) );
 
+
+        // run generating algorithms
         final Set<String> l_doclean = ( docclean == null ) || ( docclean.length == 0 )
                                       ? Collections.<String>emptySet()
                                       : Arrays.stream( docclean ).map( String::trim ).collect( Collectors.toSet() );
@@ -258,6 +272,9 @@ public final class CMain extends AbstractMavenReport
 
         if ( !l_errors.isEmpty() )
             throw new MavenReportException( StringUtils.join( l_errors, "\n" ) );
+
+        // generate report
+        new CReportGenerator( this.getSink() ).render();
     }
 
     // ---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -354,10 +371,33 @@ public final class CMain extends AbstractMavenReport
 
     /**
      * report generator for encapsuling the Maven
+     *
+     * @see http://www.programcreek.com/java-api-examples/index.php?source_dir=l10n-maven-plugin-master/src/main/java/com/googlecode/l10nmavenplugin/ReportMojo.java
      */
-    private static class CReportGenerator
+    private class CReportGenerator extends AbstractMavenReportRenderer
     {
 
+        /**
+         * Default constructor.
+         *
+         * @param p_sink the sink to use.
+         */
+        CReportGenerator( final Sink p_sink )
+        {
+            super( p_sink );
+        }
+
+        @Override
+        public final String getTitle()
+        {
+            return NAME;
+        }
+
+        @Override
+        protected final void renderBody()
+        {
+            this.startSection( this.getTitle() );
+        }
     }
 
     // ---------------------------------------------------------------------------------------------------------------------------------------------------------
