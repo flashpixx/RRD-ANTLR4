@@ -37,6 +37,13 @@ public interface ITemplate
 {
 
     /**
+     * returns the index file
+     *
+     * @return index file name without path
+     */
+    String index();
+
+    /**
      * returns the name of the template
      *
      * @return template name

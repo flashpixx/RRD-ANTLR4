@@ -374,7 +374,7 @@ public final class CMain extends AbstractMavenReport
      *
      * @see http://www.programcreek.com/java-api-examples/index.php?source_dir=l10n-maven-plugin-master/src/main/java/com/googlecode/l10nmavenplugin/ReportMojo.java
      */
-    private class CReportGenerator extends AbstractMavenReportRenderer
+    private static final class CReportGenerator extends AbstractMavenReportRenderer
     {
 
         /**

@@ -68,7 +68,7 @@ final class CHTML extends IBaseTemplate
      */
     CHTML( final String p_name )
     {
-        super( p_name );
+        super( p_name, "index.htm" );
     }
 
     @Override

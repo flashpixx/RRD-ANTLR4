@@ -66,7 +66,7 @@ final class CLaTeXSyntax extends IBaseTemplate
      */
     CLaTeXSyntax( final String p_name )
     {
-        super( p_name );
+        super( p_name, "index.tex" );
     }
 
 
