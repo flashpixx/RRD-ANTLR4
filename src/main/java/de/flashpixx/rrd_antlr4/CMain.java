@@ -440,7 +440,13 @@ public final class CMain extends AbstractMavenReport
                 this.startTable();
                 this.tableHeader( ArrayUtils.add( m_templates, 0, "Grammar" ) );
 
-                m_files.forEach( i -> this.tableRow( new String[]{ new File( CMain.this.project.getBasedir(), ANTLRGRAMMERDIR ).toURI().relativize( i.toURI() ).toString(), ""} ) );
+                m_files.forEach( i -> this.tableRow(
+                                          new String[]{
+                                              new File( CMain.this.project.getBasedir(), ANTLRGRAMMERDIR ).toURI().relativize( i.toURI() ).toString(),
+                                              ""
+                                          }
+                                      )
+                );
 
                 this.endTable();
 
