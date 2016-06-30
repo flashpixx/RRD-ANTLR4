@@ -74,6 +74,15 @@ public final class CMain extends AbstractMavenReport
      */
     private static final String DESCRIPTION = "Railroad-Diagramm for AntLR4";
     /**
+     * directory for AntLR grammar files
+     */
+    private static final String ANTLRGRAMMERDIR = "src/main/antlr4";
+    /**
+     * directory for AntLR import directory
+     */
+    private static final String ANTLRIMPORTDIR = "src/main/antlr4/imports";
+
+    /**
      * engine instance
      */
     private static final CEngine ENGINE = new CEngine();
@@ -105,12 +114,12 @@ public final class CMain extends AbstractMavenReport
     /**
      * Maven plugin default directories of grammars
      */
-    @Parameter( defaultValue = "${project.basedir}/src/main/antlr4" )
+    @Parameter( defaultValue = "${project.basedir}/" + ANTLRGRAMMERDIR )
     private String[] grammar;
     /**
      * Maven plugin default grammar import directories
      */
-    @Parameter( defaultValue = "${project.basedir}/src/main/antlr4/imports" )
+    @Parameter( defaultValue = "${project.basedir}/" + ANTLRIMPORTDIR )
     private String[] imports;
     /**
      * Maven plugin exclude file list
@@ -327,7 +336,11 @@ public final class CMain extends AbstractMavenReport
         final Set<File> l_files;
         try
         {
-            l_files = Collections.unmodifiableSet( CMain.getFileList( p_grammar, p_exclude ).collect( Collectors.toSet() ) );
+            l_files = Collections.unmodifiableSet(
+                          CMain.getFileList( p_grammar, p_exclude )
+                              .filter( i -> !i.toString().contains( ANTLRIMPORTDIR ) )
+                              .collect( Collectors.toSet() )
+                       );
         }
         catch ( final IOException l_exception )
         {
@@ -375,7 +388,7 @@ public final class CMain extends AbstractMavenReport
             return (
                 p_input.isFile()
                 ? Stream.of( p_input )
-                : Files.find( p_input.toPath(), Integer.MAX_VALUE, ( i, j ) -> j.isRegularFile() ).map( Path::toFile )
+                : Files.find( p_input.toPath(), Integer.MAX_VALUE, ( i, j ) -> (j.isRegularFile()) && (!j.isSymbolicLink()) ).map( Path::toFile )
             )
                 .filter( i -> i.getName().endsWith( GRAMMARFILEEXTENSION ) )
                 .filter( i -> !p_exclude.contains( i.getName() ) );
@@ -427,7 +440,7 @@ public final class CMain extends AbstractMavenReport
                 this.startTable();
                 this.tableHeader( ArrayUtils.add( m_templates, 0, "Grammar" ) );
 
-                m_files.forEach( i -> this.tableRow( new String[]{ CMain.this.project.getBasedir().toURI().relativize( i.toURI() ).toString(), ""} ) );
+                m_files.forEach( i -> this.tableRow( new String[]{ new File( CMain.this.project.getBasedir(), ANTLRGRAMMERDIR ).toURI().relativize( i.toURI() ).toString(), ""} ) );
 
                 this.endTable();
 
