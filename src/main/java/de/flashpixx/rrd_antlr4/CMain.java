@@ -338,7 +338,7 @@ public final class CMain extends AbstractMavenReport
         {
             l_files = Collections.unmodifiableSet(
                           CMain.getFileList( p_grammar, p_exclude )
-                              .filter( i -> !i.toString().contains( ANTLRIMPORTDIR ) )
+                              .filter( i -> !i.toURI().toString().contains( ANTLRIMPORTDIR ) )
                               .collect( Collectors.toSet() )
                        );
         }
