@@ -31,24 +31,27 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
-import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
-import org.apache.maven.reporting.MavenReportRenderer;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -208,8 +211,11 @@ public final class CMain extends AbstractMavenReport
         // --- run generating ------------------------------------------------------------------------------------------
         final Collection<String> l_errors = Arrays.stream( l_cli.getOptionValue( "grammar" ).split( "," ) )
                                                   .parallel()
-                                                  .flatMap( i -> generate( l_outputdirectory, l_exclude, l_import, new File( i ), l_doclean, l_templates )
-                                                      .stream()
+                                                  .flatMap( i -> CMain.generate(
+                                                                    l_outputdirectory, l_exclude,
+                                                                    l_import, new File( i ),
+                                                                    l_doclean, l_templates
+                                                                  ).getRight().stream()
                                                   )
                                                   .collect( Collectors.toList() );
 
@@ -264,17 +270,22 @@ public final class CMain extends AbstractMavenReport
         // language definition set on runtime
         Locale.setDefault( p_locale );
 
-        final Collection<String> l_errors = Arrays.stream( grammar ).parallel()
-                                                  .flatMap( i -> generate( output, l_exclude, l_import,
-                                                                           new File( i ), l_doclean, templates
-                                                  ).stream() )
-                                                  .collect( Collectors.toList() );
+        final Set<Pair<Collection<File>, Collection<String>>> l_result = Collections.unmodifiableSet(
+                                                                            Arrays.stream( grammar ).parallel()
+                                                                                .map( i -> CMain.generate( output, l_exclude, l_import, new File( i ), l_doclean, templates ) )
+                                                                                .collect( Collectors.toSet() )
+        );
 
+        final Set<String> l_errors = Collections.unmodifiableSet( l_result.parallelStream().flatMap( i -> i.getRight().stream() ).collect( Collectors.toSet() ) );
         if ( !l_errors.isEmpty() )
             throw new MavenReportException( StringUtils.join( l_errors, "\n" ) );
 
         // generate report
-        new CReportGenerator( this.getSink() ).render();
+        new CReportGenerator(
+            this.getSink(),
+            Collections.unmodifiableSet( l_result.parallelStream().flatMap( i -> i.getLeft().stream() ).collect( Collectors.toSet() ) ),
+            templates
+        ).render();
     }
 
     // ---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -291,116 +302,141 @@ public final class CMain extends AbstractMavenReport
      * @param p_grammar path to grammar file or grammar file directory
      * @param p_docuclean set with documentation clean regex
      * @param p_template string with export name
-     * @return returns a collection with error messages
+     * @return returns a pair of collection with error messages and collection with grammar files
      */
-    private static Collection<String> generate( final String p_outputdirectory, final Set<String> p_exclude, final Set<String> p_import, final File p_grammar,
-                                                final Set<String> p_docuclean, final String... p_template
+    private static Pair<Collection<File>, Collection<String>> generate( final String p_outputdirectory, final Set<String> p_exclude, final Set<String> p_import,
+                                                                        final File p_grammar,
+                                                                        final Set<String> p_docuclean, final String... p_template
     )
     {
+        // build import map
+        final Map<String, File> l_imports = p_import.stream()
+            .flatMap( i ->
+            {
+                try
+                {
+                    return CMain.getFileList( new File( i ), p_exclude );
+                }
+                catch ( final IOException l_exception )
+                {
+                    throw new RuntimeException( l_exception );
+                }
+            } )
+            .collect( Collectors.toMap( i -> FilenameUtils.removeExtension( i.getName() ), j -> j ) );
+
+        final Set<File> l_files;
         try
         {
-            // build import map
-            final Map<String, File> l_imports = p_import.stream()
-                                                        .flatMap( i ->
-                                                        {
-                                                            try
-                                                            {
-                                                                return getFileList( new File( i ), p_exclude );
-                                                            }
-                                                            catch ( final IOException l_exception )
-                                                            {
-                                                                throw new RuntimeException( l_exception );
-                                                            }
-                                                        } )
-                                                        .collect( Collectors.toMap( i -> FilenameUtils.removeExtension( i.getName() ), j -> j ) );
-
-            return getFileList( p_grammar, p_exclude )
-                .flatMap( i ->
-                          {
-                              try
-                              {
-                                  return ENGINE.generate(
-                                      p_outputdirectory,
-                                      i, p_docuclean,
-                                      l_imports,
-                                      Arrays.stream( p_template )
-                                            .map( j -> ETemplate.valueOf( j.trim().toUpperCase() ).generate() )
-                                            .collect( Collectors.toSet() )
-                                  ).stream();
-                              }
-                              catch ( final IOException l_exception )
-                              {
-                                  return Stream.of( l_exception.getMessage() );
-                              }
-                          } )
-                .filter( i -> i != null )
-                .collect( Collectors.toList() );
+            l_files = Collections.unmodifiableSet( CMain.getFileList( p_grammar, p_exclude ).collect( Collectors.toSet() ) );
         }
         catch ( final IOException l_exception )
         {
-            return Stream.of( l_exception.getMessage() ).collect( Collectors.toSet() );
+            return new ImmutablePair<>( Collections.emptySet(), Stream.of( l_exception.getMessage() ).collect( Collectors.toSet() ) );
         }
+
+        return new ImmutablePair<>(
+            l_files,
+            l_files.stream()
+                .flatMap( i ->
+                {
+                    try
+                    {
+                        return ENGINE.generate(
+                            p_outputdirectory,
+                            i, p_docuclean,
+                            l_imports,
+                            Arrays.stream( p_template )
+                                .map( j -> ETemplate.valueOf( j.trim().toUpperCase() ).generate() )
+                                .collect( Collectors.toSet() )
+                        ).stream();
+                    }
+                    catch ( final IOException l_exception )
+                    {
+                        return Stream.of( l_exception.getMessage() );
+                    }
+                } )
+                .filter( i -> ( i != null ) && ( !i.isEmpty() ) )
+                .collect( Collectors.toList() )
+        );
     }
-
-    /**
-     * returns a list of grammar files
-     *
-     * @param p_input grammar file or directory with grammar files
-     * @param p_exclude file names which are ignored
-     * @return stream of file objects
-     */
-    private static Stream<File> getFileList( final File p_input, final Set<String> p_exclude ) throws IOException
-    {
-        if ( !p_input.exists() )
-            throw new RuntimeException( CCommon.languagestring( CMain.class, "notexist", p_input ) );
-
-        return (
-            p_input.isFile()
-            ? Stream.of( p_input )
-            : Files.find( p_input.toPath(), Integer.MAX_VALUE, (i,j) -> j.isRegularFile() ).map( Path::toFile )
-        )
-        .filter( i -> i.getName().endsWith( GRAMMARFILEEXTENSION ) )
-        .filter( i -> !p_exclude.contains( i.getName() ) );
-    }
-
-    // ---------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
-    // --- report generator ------------------------------------------------------------------------------------------------------------------------------------
-
-    /**
-     * report generator for encapsuling the Maven
-     *
-     * @see http://www.programcreek.com/java-api-examples/index.php?source_dir=l10n-maven-plugin-master/src/main/java/com/googlecode/l10nmavenplugin/ReportMojo.java
-     */
-    private static final class CReportGenerator extends AbstractMavenReportRenderer
-    {
 
         /**
-         * Default constructor.
+         * returns a list of grammar files
          *
-         * @param p_sink the sink to use.
+         * @param p_input grammar file or directory with grammar files
+         * @param p_exclude file names which are ignored
+         * @return stream of file objects
          */
-        CReportGenerator( final Sink p_sink )
+        private static Stream<File> getFileList ( final File p_input, final Set<String> p_exclude ) throws IOException
         {
-            super( p_sink );
+            if ( !p_input.exists() )
+                throw new RuntimeException( CCommon.languagestring( CMain.class, "notexist", p_input ) );
+
+            return (
+                p_input.isFile()
+                ? Stream.of( p_input )
+                : Files.find( p_input.toPath(), Integer.MAX_VALUE, ( i, j ) -> j.isRegularFile() ).map( Path::toFile )
+            )
+                .filter( i -> i.getName().endsWith( GRAMMARFILEEXTENSION ) )
+                .filter( i -> !p_exclude.contains( i.getName() ) );
         }
 
-        @Override
-        public final String getTitle()
+        // ---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+        // --- report generator ------------------------------------------------------------------------------------------------------------------------------------
+
+        /**
+         * report generator for encapsuling the Maven
+         */
+        private final class CReportGenerator extends AbstractMavenReportRenderer
         {
-            return NAME;
+            /**
+             * used grammar files
+             **/
+            private final Set<File> m_files;
+            /**
+             * export templates
+             */
+            private final String[] m_templates;
+
+            /**
+             * Default constructor.
+             *
+             * @param p_sink the sink to use
+             * @param p_files set with grammar files
+             */
+            CReportGenerator( final Sink p_sink, final Set<File> p_files, final String[] p_templates )
+            {
+                super( p_sink );
+                m_files = p_files;
+                m_templates = p_templates;
+            }
+
+            @Override
+            public final String getTitle()
+            {
+                return NAME;
+            }
+
+            @Override
+            protected final void renderBody()
+            {
+                this.startSection( this.getTitle() );
+
+                this.startTable();
+                this.tableHeader( ArrayUtils.add( m_templates, 0, "Grammar" ) );
+
+                m_files.forEach( i -> this.tableRow( new String[]{ CMain.this.project.getBasedir().toURI().relativize( i.toURI() ).toString(), ""} ) );
+
+                this.endTable();
+
+
+                this.endSection();
+            }
         }
 
-        @Override
-        protected final void renderBody()
-        {
-            this.startSection( this.getTitle() );
-        }
+        // ---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
     }
-
-    // ---------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-}
