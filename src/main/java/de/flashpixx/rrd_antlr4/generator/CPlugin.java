@@ -27,11 +27,12 @@ import de.flashpixx.rrd_antlr4.engine.template.ITemplate;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
+import org.apache.maven.reporting.MavenReportRenderer;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 
 /**
@@ -50,7 +51,12 @@ public final class CPlugin extends IBaseGenerator
     /**
      * report
      */
-    private final AbstractMavenReportRenderer m_report;
+    private final MavenReportRenderer m_report;
+    /**
+     * set with all files
+     */
+    private final Set<File> m_files = new HashSet<>();
+
 
     /**
      * ctor
@@ -73,20 +79,27 @@ public final class CPlugin extends IBaseGenerator
     }
 
     @Override
-    protected File processoutputdirectory( final File p_grammar, final File p_outputdirectory )
+    protected final File processoutputdirectory( final File p_grammar, final File p_outputdirectory )
     {
         return null;
     }
 
     @Override
-    protected IGenerator processmessages( final File p_grammar, final Collection<String> p_messages )
+    protected final void processmessages( final File p_grammar, final Collection<String> p_messages )
     {
         m_error = !p_messages.isEmpty();
-        return null;
+        if ( !m_error )
+            m_files.add( p_grammar );
     }
 
+    @Override
+    protected final void processfinish()
+    {
+        if ( m_error )
+            return;
 
-
+        m_report.render();
+    }
 
     /**
      * report generator for encapsuling the Maven
@@ -126,7 +139,6 @@ public final class CPlugin extends IBaseGenerator
             );
 
             this.endTable();
-
 
             this.endSection();
         }

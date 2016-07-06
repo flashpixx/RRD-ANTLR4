@@ -56,11 +56,10 @@ public final class CStandalone extends IBaseGenerator
     }
 
     @Override
-    protected IGenerator processmessages( final File p_grammar, final Collection<String> p_messages )
+    protected void processmessages( final File p_grammar, final Collection<String> p_messages )
     {
         m_error = !p_messages.isEmpty();
         p_messages.forEach( System.err::println );
-        return this;
     }
 
 }
