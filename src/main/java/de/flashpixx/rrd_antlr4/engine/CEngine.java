@@ -38,6 +38,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -61,11 +62,11 @@ public final class CEngine
      * @return list with error messages
      * @throws IOException on IO error
      */
-    public Collection<String> generate( final String p_outputdirectory, final File p_grammar, final Set<String> p_docuclean,
+    public Collection<String> generate( final File p_outputdirectory, final File p_grammar, final Set<String> p_docuclean,
                                         final Map<String, File> p_imports, final Set<ITemplate> p_templates
     ) throws IOException
     {
-        return p_templates
+        return Collections.unmodifiableList( p_templates
                 .parallelStream()
 
                 // create output directory if not exists
@@ -73,7 +74,7 @@ public final class CEngine
                 {
                     try
                     {
-                        final Path l_directory = Files.createDirectories( Paths.get( p_outputdirectory, i.name(), p_grammar.getName().toLowerCase() ) );
+                        final Path l_directory = Files.createDirectories( Paths.get( p_outputdirectory.toString(), i.name(), p_grammar.getName().toLowerCase() ) );
 
                         // run exporting process
                         i.preprocess( l_directory );
@@ -91,7 +92,8 @@ public final class CEngine
                 } )
 
                 // collect error messages
-                .collect( Collectors.toList() );
+                .collect( Collectors.toList() )
+        );
     }
 
 

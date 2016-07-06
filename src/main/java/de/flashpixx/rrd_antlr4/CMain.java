@@ -25,6 +25,8 @@ package de.flashpixx.rrd_antlr4;
 
 import de.flashpixx.rrd_antlr4.engine.CEngine;
 import de.flashpixx.rrd_antlr4.engine.template.ETemplate;
+import de.flashpixx.rrd_antlr4.generator.CStandalone;
+import de.flashpixx.rrd_antlr4.generator.IGenerator;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -100,17 +102,16 @@ public final class CMain extends AbstractMavenReport
     private static final String GRAMMARFILEEXTENSION = ".g4";
 
 
-
-    /**
-     * Maven plugin parameter for output
-     */
-    @Parameter( defaultValue = "${project.reporting.outputDirectory}/" + DEFAULTOUTPUT )
-    private String output;
     /**
      * Maven plugin used templates option
      */
     @Parameter( defaultValue = DEFAULTTEMPLATE )
     private String[] templates;
+    /**
+     * Maven plugin basedir of the grammar files
+     */
+    @Parameter( defaultValue = "${project.basedir}/" + ANTLRGRAMMERDIR )
+    private String grammarbasedir;
     /**
      * Maven plugin default directories of grammars
      */
@@ -121,6 +122,11 @@ public final class CMain extends AbstractMavenReport
      */
     @Parameter( defaultValue = "${project.basedir}/" + ANTLRIMPORTDIR )
     private String[] imports;
+    /**
+     * Maven plugin parameter for output
+     */
+    @Parameter( defaultValue = "${project.reporting.outputDirectory}/" + DEFAULTOUTPUT )
+    private String output;
     /**
      * Maven plugin exclude file list
      */
@@ -133,6 +139,8 @@ public final class CMain extends AbstractMavenReport
     private String[] docclean;
 
 
+
+
     // --- standalone execution --------------------------------------------------------------------------------------------------------------------------------
 
     /**
@@ -143,7 +151,7 @@ public final class CMain extends AbstractMavenReport
      */
     public static void main( final String[] p_args ) throws IOException
     {
-        // --- define CLI options --------------------------------------------------------------------------------------
+        // --- define CLI options ---
         final Options l_clioptions = new Options();
         l_clioptions.addOption( "help", false, CCommon.languagestring( CMain.class, "help" ) );
         l_clioptions.addOption( "output", true, CCommon.languagestring( CMain.class, "output", DEFAULTOUTPUT ) );
@@ -168,7 +176,7 @@ public final class CMain extends AbstractMavenReport
         }
 
 
-        // --- process CLI arguments and push configuration ------------------------------------------------------------
+        // --- process CLI arguments and push configuration ---
         if ( l_cli.hasOption( "help" ) )
         {
             final HelpFormatter l_formatter = new HelpFormatter();
@@ -188,6 +196,19 @@ public final class CMain extends AbstractMavenReport
             ? Locale.forLanguageTag( l_cli.getOptionValue( "language" ) )
             : Locale.getDefault()
         );
+
+
+        final IGenerator l_generator = new CStandalone(  );
+
+
+        Arrays.stream( l_cli.getOptionValue( "grammar" ).split( "," ) ).flatMap( i ->  )
+
+
+
+
+
+
+
 
         final Set<String> l_doclean = !l_cli.hasOption( "docclean" )
                                       ? Collections.<String>emptySet()
@@ -212,12 +233,13 @@ public final class CMain extends AbstractMavenReport
                                      ? l_cli.getOptionValue( "templates" ).split( "," )
                                      : new String[]{DEFAULTTEMPLATE};
 
-        final String l_outputdirectory = l_cli.hasOption( "output" )
+        final File l_outputdirectory = new File( l_cli.hasOption( "output" )
                                          ? l_cli.getOptionValue( "output" )
-                                         : DEFAULTOUTPUT;
+                                         : DEFAULTOUTPUT
+        );
 
 
-        // --- run generating ------------------------------------------------------------------------------------------
+        // --- run generating and collect errors ---
         final Collection<String> l_errors = Arrays.stream( l_cli.getOptionValue( "grammar" ).split( "," ) )
                                                   .parallel()
                                                   .flatMap( i -> CMain.generate(
@@ -265,7 +287,7 @@ public final class CMain extends AbstractMavenReport
             throw new MavenReportException( CCommon.languagestring( this, "importempty" ) );
 
 
-        // run generating algorithms
+        // --- generating initialize data ---
         final Set<String> l_doclean = ( docclean == null ) || ( docclean.length == 0 )
                                       ? Collections.<String>emptySet()
                                       : Arrays.stream( docclean ).map( String::trim ).collect( Collectors.toSet() );
@@ -276,20 +298,22 @@ public final class CMain extends AbstractMavenReport
 
         final Set<String> l_import = Arrays.stream( imports ).map( String::trim ).collect( Collectors.toSet() );
 
-        // language definition set on runtime
+        // --- language definition set on runtime ---
         Locale.setDefault( p_locale );
 
+        // --- run export ---
         final Set<Pair<Collection<File>, Collection<String>>> l_result = Collections.unmodifiableSet(
                                                                             Arrays.stream( grammar ).parallel()
                                                                                 .map( i -> CMain.generate( output, l_exclude, l_import, new File( i ), l_doclean, templates ) )
                                                                                 .collect( Collectors.toSet() )
         );
 
+        // --- collect errors for each grammar file ---
         final Set<String> l_errors = Collections.unmodifiableSet( l_result.parallelStream().flatMap( i -> i.getRight().stream() ).collect( Collectors.toSet() ) );
         if ( !l_errors.isEmpty() )
             throw new MavenReportException( StringUtils.join( l_errors, "\n" ) );
 
-        // generate report
+        // --- generate report ---
         new CReportGenerator(
             this.getSink(),
             Collections.unmodifiableSet( l_result.parallelStream().flatMap( i -> i.getLeft().stream() ).collect( Collectors.toSet() ) ),
@@ -313,12 +337,12 @@ public final class CMain extends AbstractMavenReport
      * @param p_template string with export name
      * @return returns a pair of collection with error messages and collection with grammar files
      */
-    private static Pair<Collection<File>, Collection<String>> generate( final String p_outputdirectory, final Set<String> p_exclude, final Set<String> p_import,
+    private static Pair<Collection<File>, Collection<String>> generate( final File p_outputdirectory, final Set<String> p_exclude, final Set<String> p_import,
                                                                         final File p_grammar,
                                                                         final Set<String> p_docuclean, final String... p_template
     )
     {
-        // build import map
+        // --- build map with imported grammar files ---
         final Map<String, File> l_imports = p_import.stream()
             .flatMap( i ->
             {
@@ -333,12 +357,14 @@ public final class CMain extends AbstractMavenReport
             } )
             .collect( Collectors.toMap( i -> FilenameUtils.removeExtension( i.getName() ), j -> j ) );
 
+        // --- generate grammar file list, but all grammar files within the import directory are ignored ---
         final Set<File> l_files;
         try
         {
             l_files = Collections.unmodifiableSet(
                           CMain.getFileList( p_grammar, p_exclude )
                               .filter( i -> !i.toURI().toString().contains( ANTLRIMPORTDIR ) )
+                               // @todo relative to
                               .collect( Collectors.toSet() )
                        );
         }
@@ -347,6 +373,9 @@ public final class CMain extends AbstractMavenReport
             return new ImmutablePair<>( Collections.emptySet(), Stream.of( l_exception.getMessage() ).collect( Collectors.toSet() ) );
         }
 
+
+
+        // --- run export ---
         return new ImmutablePair<>(
             l_files,
             l_files.stream()
