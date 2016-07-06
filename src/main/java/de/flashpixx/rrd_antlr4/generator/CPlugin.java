@@ -24,43 +24,112 @@
 package de.flashpixx.rrd_antlr4.generator;
 
 import de.flashpixx.rrd_antlr4.engine.template.ITemplate;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.reporting.AbstractMavenReportRenderer;
 
 import java.io.File;
 import java.util.Collection;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 /**
- * generator of a standalone program
+ * maven plugin generator
  */
-public final class CStandalone extends IBaseGenerator
+public final class CPlugin extends IBaseGenerator
 {
+    /**
+     * base directory of grammar files
+     */
+    private final File m_basedirectory;
+    /**
+     * report title
+     */
+    private final String m_reporttitle;
+    /**
+     * report
+     */
+    private final AbstractMavenReportRenderer m_report;
 
     /**
      * ctor
      *
+     * @param p_sink report sink
+     * @param p_reporttitle report title
+     * @param p_basedirectory base directory
      * @param p_imports set with imported grammar files
      * @param p_docuclean set with documentation strings
      * @param p_templates array with exporting templates
      */
-    public CStandalone( final Set<File> p_imports, final Set<String> p_docuclean, final Set<ITemplate> p_templates
+    public CPlugin( final Sink p_sink, final String p_reporttitle, final File p_basedirectory,
+                    final Set<File> p_imports, final Set<String> p_docuclean, final Set<ITemplate> p_templates
     )
     {
         super( p_imports, p_docuclean, p_templates );
+        m_basedirectory = p_basedirectory;
+        m_reporttitle = p_reporttitle;
+        m_report = new CReportGenerator( p_sink );
     }
 
     @Override
     protected File processoutputdirectory( final File p_grammar, final File p_outputdirectory )
     {
-        return p_outputdirectory;
+        return null;
     }
 
     @Override
     protected IGenerator processmessages( final File p_grammar, final Collection<String> p_messages )
     {
         m_error = !p_messages.isEmpty();
-        p_messages.forEach( System.err::println );
-        return this;
+        return null;
+    }
+
+
+
+
+    /**
+     * report generator for encapsuling the Maven
+     */
+    private final class CReportGenerator extends AbstractMavenReportRenderer
+    {
+        /**
+         * ctor
+         *
+         * @param p_sink the sink to use
+         */
+        CReportGenerator( final Sink p_sink )
+        {
+            super( p_sink );
+        }
+
+        @Override
+        public final String getTitle()
+        {
+            return m_reporttitle;
+        }
+
+        @Override
+        protected final void renderBody()
+        {
+            this.startSection( this.getTitle() );
+
+            this.startTable();
+            this.tableHeader( ArrayUtils.add( m_templates.stream().map( ITemplate::name ).toArray( String[]::new ), 0, "Grammar" ) );
+
+            m_files.forEach( i -> this.tableRow(
+                new String[]{
+                    m_basedirectory.toURI().relativize( i.toURI() ).toString(),
+                    ""
+                }
+                             )
+            );
+
+            this.endTable();
+
+
+            this.endSection();
+        }
     }
 
 }

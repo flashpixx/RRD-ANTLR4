@@ -25,6 +25,7 @@ package de.flashpixx.rrd_antlr4;
 
 import de.flashpixx.rrd_antlr4.engine.CEngine;
 import de.flashpixx.rrd_antlr4.engine.template.ETemplate;
+import de.flashpixx.rrd_antlr4.engine.template.ITemplate;
 import de.flashpixx.rrd_antlr4.generator.CStandalone;
 import de.flashpixx.rrd_antlr4.generator.IGenerator;
 import org.apache.commons.cli.CommandLine;
@@ -197,64 +198,79 @@ public final class CMain extends AbstractMavenReport
             : Locale.getDefault()
         );
 
-
-        final IGenerator l_generator = new CStandalone(  );
-
-
-        Arrays.stream( l_cli.getOptionValue( "grammar" ).split( "," ) ).flatMap( i ->  )
-
-
-
-
-
-
-
-
         final Set<String> l_doclean = !l_cli.hasOption( "docclean" )
                                       ? Collections.<String>emptySet()
-                                      : FileUtils.readLines( new File( l_cli.getOptionValue( "docclean" ) ), Charset.defaultCharset() )
+                                      : Collections.unmodifiableSet(
+                                          FileUtils.readLines( new File( l_cli.getOptionValue( "docclean" ) ), Charset.defaultCharset() )
                                                  .stream()
                                                  .map( String::trim )
-                                                 .collect( Collectors.toSet() );
+                                                 .collect( Collectors.toSet() )
+                                      );
 
         final Set<String> l_exclude = !l_cli.hasOption( "excludes" )
                                       ? Collections.<String>emptySet()
-                                      : Arrays.stream( l_cli.getOptionValue( "excludes" ).split( "," ) )
+                                      : Collections.unmodifiableSet(
+                                          Arrays.stream( l_cli.getOptionValue( "excludes" ).split( "," ) )
                                               .map( String::trim )
-                                              .collect( Collectors.toSet() );
+                                              .collect( Collectors.toSet() )
+                                      );
 
-        final Set<String> l_import = !l_cli.hasOption( "imports" )
-                                     ? Collections.<String>emptySet()
-                                     : Arrays.stream( l_cli.getOptionValue( "imports" ).split( "," ) )
+        final Set<File> l_import = !l_cli.hasOption( "imports" )
+                                     ? Collections.<File>emptySet()
+                                     : Collections.unmodifiableSet(
+                                         Arrays.stream( l_cli.getOptionValue( "imports" ).split( "," ) )
                                              .map( String::trim )
-                                             .collect( Collectors.toSet() );
+                                             .map( File::new )
+                                             .collect( Collectors.toSet() )
+                                     );
 
-        final String[] l_templates = l_cli.hasOption( "templates" )
-                                     ? l_cli.getOptionValue( "templates" ).split( "," )
-                                     : new String[]{DEFAULTTEMPLATE};
+        final Set<ITemplate> l_templates = Collections.unmodifiableSet(
+                                                Arrays.stream( l_cli.hasOption( "templates" )
+                                                    ? l_cli.getOptionValue( "templates" ).split( "," )
+                                                    : new String[]{DEFAULTTEMPLATE}
+                                                )
+                                                .map( i -> ETemplate.valueOf( i.trim().toUpperCase() ).generate() )
+                                                .collect( Collectors.toSet() )
+                                           );
 
-        final File l_outputdirectory = new File( l_cli.hasOption( "output" )
-                                         ? l_cli.getOptionValue( "output" )
-                                         : DEFAULTOUTPUT
+        final File l_outputdirectory = new File (
+                                        l_cli.hasOption( "output" )
+                                        ? l_cli.getOptionValue( "output" )
+                                        : DEFAULTOUTPUT
         );
 
 
-        // --- run generating and collect errors ---
-        final Collection<String> l_errors = Arrays.stream( l_cli.getOptionValue( "grammar" ).split( "," ) )
-                                                  .parallel()
-                                                  .flatMap( i -> CMain.generate(
-                                                                    l_outputdirectory, l_exclude,
-                                                                    l_import, new File( i ),
-                                                                    l_doclean, l_templates
-                                                                  ).getRight().stream()
-                                                  )
-                                                  .collect( Collectors.toList() );
 
-        if ( !l_errors.isEmpty() )
-        {
-            l_errors.forEach( System.err::println );
-            System.exit( -1 );
-        }
+        // --- run generator ---
+        final IGenerator l_generator = new CStandalone( l_import, l_doclean, l_templates );
+
+
+        if ( Arrays.stream( l_cli.getOptionValue( "grammar" ).split( "," ) )
+              .flatMap( i ->
+                        {
+                            try
+                            {
+                                return CMain.getFileList(
+                                    new File( i ),
+                                    !l_cli.hasOption( "excludes" )
+                                    ? Collections.<String>emptySet()
+                                    : Arrays.stream( l_cli.getOptionValue( "excludes" ).split( "," ) )
+                                            .map( String::trim )
+                                            .collect( Collectors.toSet() )
+                                );
+                            }
+                            catch ( final IOException l_exception )
+                            {
+                                return null;
+                            }
+                        }
+              )
+              .filter( i -> i != null )
+              .map( i -> CMain.generate( l_generator, i, l_outputdirectory  ) )
+              .findFirst()
+              .isPresent()
+            )
+                System.exit( -1 );
     }
 
     // ---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -327,6 +343,19 @@ public final class CMain extends AbstractMavenReport
     // --- helper ----------------------------------------------------------------------------------------------------------------------------------------------
 
     /**
+     * generator call
+     *
+     * @param p_generator generator
+     * @param p_grammar grammar file
+     * @param p_outputdirectory output directory
+     * @return boolean flag of errors
+     */
+    private static boolean generate( final IGenerator p_generator, final File p_grammar, final File p_outputdirectory )
+    {
+        return p_generator.generate( p_grammar, p_outputdirectory ).hasError();
+    }
+
+    /**
      * generating export (generate template instances and call engine)
      *
      * @param p_outputdirectory output directory
@@ -336,7 +365,9 @@ public final class CMain extends AbstractMavenReport
      * @param p_docuclean set with documentation clean regex
      * @param p_template string with export name
      * @return returns a pair of collection with error messages and collection with grammar files
+     * @deprecated
      */
+    @Deprecated
     private static Pair<Collection<File>, Collection<String>> generate( final File p_outputdirectory, final Set<String> p_exclude, final Set<String> p_import,
                                                                         final File p_grammar,
                                                                         final Set<String> p_docuclean, final String... p_template
@@ -424,67 +455,5 @@ public final class CMain extends AbstractMavenReport
         }
 
         // ---------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-        // --- report generator ------------------------------------------------------------------------------------------------------------------------------------
-
-        /**
-         * report generator for encapsuling the Maven
-         */
-        private final class CReportGenerator extends AbstractMavenReportRenderer
-        {
-            /**
-             * used grammar files
-             **/
-            private final Set<File> m_files;
-            /**
-             * export templates
-             */
-            private final String[] m_templates;
-
-            /**
-             * Default constructor.
-             *
-             * @param p_sink the sink to use
-             * @param p_files set with grammar files
-             */
-            CReportGenerator( final Sink p_sink, final Set<File> p_files, final String[] p_templates )
-            {
-                super( p_sink );
-                m_files = p_files;
-                m_templates = p_templates;
-            }
-
-            @Override
-            public final String getTitle()
-            {
-                return NAME;
-            }
-
-            @Override
-            protected final void renderBody()
-            {
-                this.startSection( this.getTitle() );
-
-                this.startTable();
-                this.tableHeader( ArrayUtils.add( m_templates, 0, "Grammar" ) );
-
-                m_files.forEach( i -> this.tableRow(
-                                          new String[]{
-                                              new File( CMain.this.project.getBasedir(), ANTLRGRAMMERDIR ).toURI().relativize( i.toURI() ).toString(),
-                                              ""
-                                          }
-                                      )
-                );
-
-                this.endTable();
-
-
-                this.endSection();
-            }
-        }
-
-        // ---------------------------------------------------------------------------------------------------------------------------------------------------------
-
 
     }

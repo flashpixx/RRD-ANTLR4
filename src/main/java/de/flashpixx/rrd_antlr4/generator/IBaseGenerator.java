@@ -51,9 +51,13 @@ public abstract class IBaseGenerator implements IGenerator
      */
     private static final CEngine ENGINE = new CEngine();
     /**
+     * result generator error
+     */
+    protected boolean m_error;
+    /**
      * set of generator templates
      */
-    private final Set<ITemplate> m_templates;
+    protected final Set<ITemplate> m_templates;
     /**
      * map with imported grammar files
      */
@@ -62,10 +66,6 @@ public abstract class IBaseGenerator implements IGenerator
      * set with regex string for documentation cleaning
      */
     private final Set<String> m_docuclean;
-    /**
-     * result generator error
-     */
-    protected boolean m_error;
 
     /**
      * ctor
@@ -74,10 +74,10 @@ public abstract class IBaseGenerator implements IGenerator
      * @param p_imports set with imported grammar files
      * @param p_docuclean set with documentation strings
      */
-    protected IBaseGenerator( final Set<File> p_imports, final Set<String> p_docuclean, final ITemplate... p_templates )
+    protected IBaseGenerator( final Set<File> p_imports, final Set<String> p_docuclean, final Set<ITemplate> p_templates )
     {
         m_docuclean = p_docuclean;
-        m_templates = Collections.unmodifiableSet( Arrays.stream( p_templates ).collect( Collectors.toSet() ) );
+        m_templates = p_templates;
         m_imports = Collections.unmodifiableMap( p_imports.parallelStream().collect( Collectors.toMap( i -> FilenameUtils.removeExtension( i.getName() ), i -> i ) ) );
     }
 
@@ -102,6 +102,7 @@ public abstract class IBaseGenerator implements IGenerator
         {
             return this.processmessages( p_grammar, Collections.unmodifiableSet( Stream.of( l_exception.getMessage() ).collect( Collectors.toSet() ) ) );
         }
+
     }
 
     @Override
