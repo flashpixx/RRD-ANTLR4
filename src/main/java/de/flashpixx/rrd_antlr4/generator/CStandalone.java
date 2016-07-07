@@ -39,20 +39,21 @@ public final class CStandalone extends IBaseGenerator
     /**
      * ctor
      *
+     * @param p_baseoutputdirectory base output directory
      * @param p_imports set with imported grammar files
      * @param p_docuclean set with documentation strings
      * @param p_templates array with exporting templates
      */
-    public CStandalone( final Set<File> p_imports, final Set<String> p_docuclean, final Set<ITemplate> p_templates
+    public CStandalone( final File p_baseoutputdirectory, final Set<File> p_imports, final Set<String> p_docuclean, final Set<ITemplate> p_templates
     )
     {
-        super( p_imports, p_docuclean, p_templates );
+        super( p_baseoutputdirectory, p_imports, p_docuclean, p_templates );
     }
 
     @Override
-    protected File processoutputdirectory( final File p_grammar, final File p_outputdirectory )
+    protected File processoutputdirectory( final File p_grammar )
     {
-        return p_outputdirectory;
+        return new File( "" );
     }
 
     @Override

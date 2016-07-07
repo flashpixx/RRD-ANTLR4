@@ -54,7 +54,8 @@ public final class CEngine
     /**
      * generator call
      *
-     * @param p_outputdirectory output directory - the template name and grammar file name will be appended
+     * @param p_baseoutputdirectory base output directory
+     * @param p_outputdirectory output directory - relative to base output directory
      * @param p_grammar grammar input file
      * @param p_docuclean set with documentation clean regex
      * @param p_imports map with grammar imported grammar files
@@ -62,7 +63,7 @@ public final class CEngine
      * @return list with error messages
      * @throws IOException on IO error
      */
-    public Collection<String> generate( final File p_outputdirectory, final File p_grammar, final Set<String> p_docuclean,
+    public Collection<String> generate( final File p_baseoutputdirectory, final File p_outputdirectory, final File p_grammar, final Set<String> p_docuclean,
                                         final Map<String, File> p_imports, final Set<ITemplate> p_templates
     ) throws IOException
     {
@@ -74,7 +75,7 @@ public final class CEngine
                 {
                     try
                     {
-                        final Path l_directory = Files.createDirectories( Paths.get( p_outputdirectory.toString(), i.name(), p_grammar.getName().toLowerCase() ) );
+                        final Path l_directory = Files.createDirectories( Paths.get( p_baseoutputdirectory.toString(), i.name(), p_outputdirectory.toString() ) );
 
                         // run exporting process
                         i.preprocess( l_directory );

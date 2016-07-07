@@ -201,11 +201,11 @@ public final class CMain extends AbstractMavenReport
 
 
         // --- run generator ---
-        final IGenerator l_generator = new CStandalone( l_initdata.v3(), l_initdata.v5(), l_initdata.v2() );
+        final IGenerator l_generator = new CStandalone( l_initdata.v1(), l_initdata.v3(), l_initdata.v5(), l_initdata.v2() );
 
         if ( Arrays.stream( l_cli.getOptionValue( "grammar" ).split( "," ) )
                    .flatMap( i -> CMain.filelist( new File( i.trim() ), l_initdata.v3(), l_initdata.v4() ) )
-                   .map( i -> CMain.generate( l_generator, i, l_initdata.v1() ) )
+                   .map( i -> l_generator.generate( i ).hasError() )
                    .findFirst()
                    .isPresent()
             )
@@ -253,10 +253,10 @@ public final class CMain extends AbstractMavenReport
         );
 
         // --- run generator ---
-        final IGenerator l_generator = new CPlugin( this.getSink(), NAME, new File( grammarbasedir ), l_initdata.v3(), l_initdata.v5(), l_initdata.v2() );
+        final IGenerator l_generator = new CPlugin( this.getSink(), NAME, l_initdata.v1(), new File( grammarbasedir ), l_initdata.v3(), l_initdata.v5(), l_initdata.v2() );
         Arrays.stream( grammar )
               .flatMap( i -> CMain.filelist( new File( i.trim() ), l_initdata.v3(), l_initdata.v4() ) )
-              .forEach( i -> CMain.generate( l_generator, i, l_initdata.v1() ) );
+              .forEach( l_generator::generate );
 
         l_generator.finish();
 /*
@@ -342,20 +342,6 @@ public final class CMain extends AbstractMavenReport
                       .collect( Collectors.toSet() )
             )
         );
-    }
-
-
-    /**
-     * generator call
-     *
-     * @param p_generator generator
-     * @param p_grammar grammar file
-     * @param p_outputdirectory output directory
-     * @return boolean flag of errors
-     */
-    private static boolean generate( final IGenerator p_generator, final File p_grammar, final File p_outputdirectory )
-    {
-        return p_generator.generate( p_grammar, p_outputdirectory ).hasError();
     }
 
 

@@ -62,31 +62,38 @@ public abstract class IBaseGenerator implements IGenerator
      * set with regex string for documentation cleaning
      */
     private final Set<String> m_docuclean;
+    /**
+     * base output directory
+     */
+    private final File m_baseoutput;
 
     /**
      * ctor
      *
+     * @param p_baseoutputdirectory base output directory
      * @param p_templates array with exporting templates
      * @param p_imports set with imported grammar files
      * @param p_docuclean set with documentation strings
      */
-    protected IBaseGenerator( final Set<File> p_imports, final Set<String> p_docuclean, final Set<ITemplate> p_templates )
+    protected IBaseGenerator( final File p_baseoutputdirectory, final Set<File> p_imports, final Set<String> p_docuclean, final Set<ITemplate> p_templates )
     {
         m_docuclean = p_docuclean;
         m_templates = p_templates;
+        m_baseoutput = p_baseoutputdirectory;
         m_imports = Collections.unmodifiableMap( p_imports.parallelStream().collect( Collectors.toMap( i -> FilenameUtils.removeExtension( i.getName() ), i -> i ) ) );
     }
 
 
     @Override
-    public final IGenerator generate( final File p_grammar, final File p_outputdirectory )
+    public final IGenerator generate( final File p_grammar )
     {
         try
         {
             return this.processmessages(
                 p_grammar,
                 ENGINE.generate(
-                    this.processoutputdirectory( p_grammar, p_outputdirectory ),
+                    m_baseoutput,
+                    this.processoutputdirectory( p_grammar ),
                     p_grammar,
                     m_docuclean,
                     m_imports,
@@ -117,10 +124,9 @@ public abstract class IBaseGenerator implements IGenerator
      * processes the output directory
      *
      * @param p_grammar input grammar file
-     * @param p_outputdirectory output directory
      * @return new output directory
      */
-    protected abstract File processoutputdirectory( final File p_grammar, final File p_outputdirectory );
+    protected abstract File processoutputdirectory( final File p_grammar );
 
     /**
      * processes the error messages

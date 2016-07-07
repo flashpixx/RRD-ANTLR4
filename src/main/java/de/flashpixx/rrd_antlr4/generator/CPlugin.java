@@ -30,7 +30,6 @@ import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.apache.maven.reporting.MavenReportRenderer;
 
 import java.io.File;
-import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -64,16 +63,17 @@ public final class CPlugin extends IBaseGenerator
      *
      * @param p_sink report sink
      * @param p_reporttitle report title
+     * @param p_baseoutputdirectory base output directory
      * @param p_basedirectory base directory
      * @param p_imports set with imported grammar files
      * @param p_docuclean set with documentation strings
      * @param p_templates array with exporting templates
      */
-    public CPlugin( final Sink p_sink, final String p_reporttitle, final File p_basedirectory,
+    public CPlugin( final Sink p_sink, final String p_reporttitle, final File p_baseoutputdirectory, final File p_basedirectory,
                     final Set<File> p_imports, final Set<String> p_docuclean, final Set<ITemplate> p_templates
     )
     {
-        super( p_imports, p_docuclean, p_templates );
+        super( p_baseoutputdirectory, p_imports, p_docuclean, p_templates );
         m_basedirectory = p_basedirectory;
         m_reporttitle = p_reporttitle;
         m_report = new CReportGenerator( p_sink );
@@ -90,9 +90,9 @@ public final class CPlugin extends IBaseGenerator
     }
 
     @Override
-    protected final File processoutputdirectory( final File p_grammar, final File p_outputdirectory )
+    protected final File processoutputdirectory( final File p_grammar )
     {
-        return Paths.get( p_outputdirectory.toString(),  m_basedirectory.toURI().relativize( p_grammar.toURI() ).toString() ).toFile();
+        return new File( m_basedirectory.toURI().relativize( p_grammar.toURI() ).toString() );
     }
 
     @Override

@@ -35,10 +35,9 @@ public interface IGenerator
      * generates export for a grammar file
      *
      * @param p_grammar grammar file
-     * @param p_outputdirectory output directory
      * @return generator self reference
      */
-    IGenerator generate( final File p_grammar, final File p_outputdirectory );
+    IGenerator generate( final File p_grammar );
 
     /**
      * boolean error flag
