@@ -53,7 +53,7 @@ public final class CStandalone extends IBaseGenerator
     @Override
     protected File processoutputdirectory( final File p_grammar )
     {
-        return new File( "" );
+        return new File( p_grammar.getName() );
     }
 
     @Override
