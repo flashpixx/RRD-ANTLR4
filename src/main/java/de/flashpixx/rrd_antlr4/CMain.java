@@ -204,7 +204,7 @@ public final class CMain extends AbstractMavenReport
         final IGenerator l_generator = new CStandalone( l_initdata.v3(), l_initdata.v5(), l_initdata.v2() );
 
         if ( Arrays.stream( l_cli.getOptionValue( "grammar" ).split( "," ) )
-                   .flatMap( i -> CMain.filelist( new File( i.trim() ), l_initdata.v4() ) )
+                   .flatMap( i -> CMain.filelist( new File( i.trim() ), l_initdata.v3(), l_initdata.v4() ) )
                    .map( i -> CMain.generate( l_generator, i, l_initdata.v1() ) )
                    .findFirst()
                    .isPresent()
@@ -255,7 +255,7 @@ public final class CMain extends AbstractMavenReport
         // --- run generator ---
         final IGenerator l_generator = new CPlugin( this.getSink(), NAME, new File( grammarbasedir ), l_initdata.v3(), l_initdata.v5(), l_initdata.v2() );
         Arrays.stream( grammar )
-              .flatMap( i -> CMain.filelist( new File( i.trim() ), l_initdata.v4() ) )
+              .flatMap( i -> CMain.filelist( new File( i.trim() ), l_initdata.v3(), l_initdata.v4() ) )
               .forEach( i -> CMain.generate( l_generator, i, l_initdata.v1() ) );
 
         l_generator.finish();
@@ -310,7 +310,7 @@ public final class CMain extends AbstractMavenReport
                 Arrays.stream( p_imports )
                       .map( String::trim )
                       .map( File::new )
-                      .flatMap( i -> CMain.filelist( i, Collections.<String>emptySet() ) )
+                      .flatMap( i -> CMain.filelist( i, Collections.<File>emptySet(), Collections.<String>emptySet() ) )
                       .collect( Collectors.toSet() )
             ),
 
@@ -363,10 +363,11 @@ public final class CMain extends AbstractMavenReport
      * returns a list of grammar files
      *
      * @param p_input grammar file or directory with grammar files
+     * @param p_import imported files
      * @param p_exclude file names which are ignored
      * @return stream of file objects
      */
-    private static Stream<File> filelist( final File p_input, final Set<String> p_exclude )
+    private static Stream<File> filelist( final File p_input, final Set<File> p_import, final Set<String> p_exclude )
     {
         if ( !p_input.exists() )
             throw new RuntimeException( CCommon.languagestring( CMain.class, "notexist", p_input ) );
@@ -379,6 +380,7 @@ public final class CMain extends AbstractMavenReport
                 : Files.find( p_input.toPath(), Integer.MAX_VALUE, ( i, j ) -> ( j.isRegularFile() ) && ( !j.isSymbolicLink() ) ).map( Path::toFile )
             )
                 .filter( i -> i.getName().endsWith( GRAMMARFILEEXTENSION ) )
+                .filter( i -> !p_import.contains( i ) )
                 .filter( i -> !p_exclude.contains( i.getName() ) );
         }
         catch ( final IOException l_exception )
