@@ -34,16 +34,9 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.reporting.AbstractMavenReport;
-import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.apache.maven.reporting.MavenReportException;
 
 import java.io.File;
@@ -51,13 +44,9 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -141,8 +130,6 @@ public final class CMain extends AbstractMavenReport
     private String[] docclean;
 
 
-
-
     // --- standalone execution --------------------------------------------------------------------------------------------------------------------------------
 
     /**
@@ -204,55 +191,54 @@ public final class CMain extends AbstractMavenReport
                                       ? Collections.<String>emptySet()
                                       : Collections.unmodifiableSet(
                                           FileUtils.readLines( new File( l_cli.getOptionValue( "docclean" ) ), Charset.defaultCharset() )
-                                                 .stream()
-                                                 .map( String::trim )
-                                                 .collect( Collectors.toSet() )
+                                                   .stream()
+                                                   .map( String::trim )
+                                                   .collect( Collectors.toSet() )
                                       );
 
         final Set<String> l_exclude = !l_cli.hasOption( "excludes" )
                                       ? Collections.<String>emptySet()
                                       : Collections.unmodifiableSet(
                                           Arrays.stream( l_cli.getOptionValue( "excludes" ).split( "," ) )
-                                              .map( String::trim )
-                                              .collect( Collectors.toSet() )
+                                                .map( String::trim )
+                                                .collect( Collectors.toSet() )
                                       );
 
         final Set<File> l_import = !l_cli.hasOption( "imports" )
-                                     ? Collections.<File>emptySet()
-                                     : Collections.unmodifiableSet(
-                                         Arrays.stream( l_cli.getOptionValue( "imports" ).split( "," ) )
+                                   ? Collections.<File>emptySet()
+                                   : Collections.unmodifiableSet(
+                                       Arrays.stream( l_cli.getOptionValue( "imports" ).split( "," ) )
                                              .map( String::trim )
                                              .map( File::new )
                                              .collect( Collectors.toSet() )
-                                     );
+                                   );
 
         final Set<ITemplate> l_templates = Collections.unmodifiableSet(
-                                                Arrays.stream( l_cli.hasOption( "templates" )
-                                                    ? l_cli.getOptionValue( "templates" ).split( "," )
-                                                    : new String[]{DEFAULTTEMPLATE}
-                                                )
-                                                .map( i -> ETemplate.valueOf( i.trim().toUpperCase() ).generate() )
-                                                .collect( Collectors.toSet() )
-                                           );
-
-        final File l_outputdirectory = new File (
-                                        l_cli.hasOption( "output" )
-                                        ? l_cli.getOptionValue( "output" )
-                                        : DEFAULTOUTPUT
+            Arrays.stream( l_cli.hasOption( "templates" )
+                           ? l_cli.getOptionValue( "templates" ).split( "," )
+                           : new String[]{DEFAULTTEMPLATE}
+            )
+                  .map( i -> ETemplate.valueOf( i.trim().toUpperCase() ).generate() )
+                  .collect( Collectors.toSet() )
         );
 
+        final File l_outputdirectory = new File(
+            l_cli.hasOption( "output" )
+            ? l_cli.getOptionValue( "output" )
+            : DEFAULTOUTPUT
+        );
 
 
         // --- run generator ---
         final IGenerator l_generator = new CStandalone( l_import, l_doclean, l_templates );
 
         if ( Arrays.stream( l_cli.getOptionValue( "grammar" ).split( "," ) )
-              .flatMap( i -> CMain.grammarfiles( new File( i.trim() ), l_exclude ) )
-              .map( i -> CMain.generate( l_generator, i, l_outputdirectory  ) )
-              .findFirst()
-              .isPresent()
+                   .flatMap( i -> CMain.grammarfiles( new File( i.trim() ), l_exclude ) )
+                   .map( i -> CMain.generate( l_generator, i, l_outputdirectory ) )
+                   .findFirst()
+                   .isPresent()
             )
-                System.exit( -1 );
+            System.exit( -1 );
 
         l_generator.finish();
     }
@@ -293,24 +279,24 @@ public final class CMain extends AbstractMavenReport
         final Set<String> l_doclean = ( docclean == null ) || ( docclean.length == 0 )
                                       ? Collections.<String>emptySet()
                                       : Collections.unmodifiableSet(
-                                            Arrays.stream( docclean )
-                                                  .map( String::trim )
-                                                  .collect( Collectors.toSet() )
+                                          Arrays.stream( docclean )
+                                                .map( String::trim )
+                                                .collect( Collectors.toSet() )
                                       );
 
         final Set<String> l_exclude = ( excludes == null ) || ( excludes.length == 0 )
                                       ? Collections.<String>emptySet()
                                       : Collections.unmodifiableSet(
-                                            Arrays.stream( excludes )
-                                                  .map( String::trim )
-                                                  .collect( Collectors.toSet() )
+                                          Arrays.stream( excludes )
+                                                .map( String::trim )
+                                                .collect( Collectors.toSet() )
                                       );
 
         final Set<File> l_import = Collections.unmodifiableSet(
-                                        Arrays.stream( imports )
-                                              .map( String::trim )
-                                              .map( File::new )
-                                              .collect( Collectors.toSet() )
+            Arrays.stream( imports )
+                  .map( String::trim )
+                  .map( File::new )
+                  .collect( Collectors.toSet() )
         );
 
         final Set<ITemplate> l_templates = Collections.unmodifiableSet(
@@ -323,11 +309,11 @@ public final class CMain extends AbstractMavenReport
 
 
         // --- run generator ---
-        final IGenerator l_generator = new CPlugin( this.getSink(), NAME, new File( "" ), l_import, l_doclean, l_templates );
+        final IGenerator l_generator = new CPlugin( this.getSink(), NAME, new File( grammarbasedir ), l_import, l_doclean, l_templates );
 
         Arrays.stream( grammar )
               .flatMap( i -> CMain.grammarfiles( new File( i.trim() ), l_exclude ) )
-              .map( i -> CMain.generate( l_generator, i, l_outputdirectory  ) );
+              .map( i -> CMain.generate( l_generator, i, l_outputdirectory ) );
 
         l_generator.finish();
 /*
@@ -356,7 +342,7 @@ public final class CMain extends AbstractMavenReport
         }
         catch ( final IOException l_exception )
         {
-            return Stream.of(  );
+            return Stream.of();
         }
     }
 
@@ -373,105 +359,28 @@ public final class CMain extends AbstractMavenReport
         return p_generator.generate( p_grammar, p_outputdirectory ).hasError();
     }
 
+
     /**
-     * generating export (generate template instances and call engine)
+     * returns a list of grammar files
      *
-     * @param p_outputdirectory output directory
+     * @param p_input grammar file or directory with grammar files
      * @param p_exclude file names which are ignored
-     * @param p_import import files & directories
-     * @param p_grammar path to grammar file or grammar file directory
-     * @param p_docuclean set with documentation clean regex
-     * @param p_template string with export name
-     * @return returns a pair of collection with error messages and collection with grammar files
-     * @deprecated
+     * @return stream of file objects
      */
-    @Deprecated
-    private static Pair<Collection<File>, Collection<String>> generate( final File p_outputdirectory, final Set<String> p_exclude, final Set<String> p_import,
-                                                                        final File p_grammar,
-                                                                        final Set<String> p_docuclean, final String... p_template
-    )
+    private static Stream<File> getFileList( final File p_input, final Set<String> p_exclude ) throws IOException
     {
-        // --- build map with imported grammar files ---
-        final Map<String, File> l_imports = p_import.stream()
-            .flatMap( i ->
-            {
-                try
-                {
-                    return CMain.getFileList( new File( i ), p_exclude );
-                }
-                catch ( final IOException l_exception )
-                {
-                    throw new RuntimeException( l_exception );
-                }
-            } )
-            .collect( Collectors.toMap( i -> FilenameUtils.removeExtension( i.getName() ), j -> j ) );
+        if ( !p_input.exists() )
+            throw new RuntimeException( CCommon.languagestring( CMain.class, "notexist", p_input ) );
 
-        // --- generate grammar file list, but all grammar files within the import directory are ignored ---
-        final Set<File> l_files;
-        try
-        {
-            l_files = Collections.unmodifiableSet(
-                          CMain.getFileList( p_grammar, p_exclude )
-                              .filter( i -> !i.toURI().toString().contains( ANTLRIMPORTDIR ) )
-                               // @todo relative to
-                              .collect( Collectors.toSet() )
-                       );
-        }
-        catch ( final IOException l_exception )
-        {
-            return new ImmutablePair<>( Collections.emptySet(), Stream.of( l_exception.getMessage() ).collect( Collectors.toSet() ) );
-        }
-
-
-
-        // --- run export ---
-        return new ImmutablePair<>(
-            l_files,
-            l_files.stream()
-                .flatMap( i ->
-                {
-                    try
-                    {
-                        return ENGINE.generate(
-                            p_outputdirectory,
-                            i, p_docuclean,
-                            l_imports,
-                            Arrays.stream( p_template )
-                                .map( j -> ETemplate.valueOf( j.trim().toUpperCase() ).generate() )
-                                .collect( Collectors.toSet() )
-                        ).stream();
-                    }
-                    catch ( final IOException l_exception )
-                    {
-                        return Stream.of( l_exception.getMessage() );
-                    }
-                } )
-                .filter( i -> ( i != null ) && ( !i.isEmpty() ) )
-                .collect( Collectors.toList() )
-        );
+        return (
+            p_input.isFile()
+            ? Stream.of( p_input )
+            : Files.find( p_input.toPath(), Integer.MAX_VALUE, ( i, j ) -> ( j.isRegularFile() ) && ( !j.isSymbolicLink() ) ).map( Path::toFile )
+        )
+            .filter( i -> i.getName().endsWith( GRAMMARFILEEXTENSION ) )
+            .filter( i -> !p_exclude.contains( i.getName() ) );
     }
 
-        /**
-         * returns a list of grammar files
-         *
-         * @param p_input grammar file or directory with grammar files
-         * @param p_exclude file names which are ignored
-         * @return stream of file objects
-         */
-        private static Stream<File> getFileList ( final File p_input, final Set<String> p_exclude ) throws IOException
-        {
-            if ( !p_input.exists() )
-                throw new RuntimeException( CCommon.languagestring( CMain.class, "notexist", p_input ) );
+    // ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
-            return (
-                p_input.isFile()
-                ? Stream.of( p_input )
-                : Files.find( p_input.toPath(), Integer.MAX_VALUE, ( i, j ) -> (j.isRegularFile()) && (!j.isSymbolicLink()) ).map( Path::toFile )
-            )
-                .filter( i -> i.getName().endsWith( GRAMMARFILEEXTENSION ) )
-                .filter( i -> !p_exclude.contains( i.getName() ) );
-        }
-
-        // ---------------------------------------------------------------------------------------------------------------------------------------------------------
-
-    }
+}
