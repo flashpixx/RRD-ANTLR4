@@ -38,6 +38,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
+import org.jooq.lambda.tuple.Tuple5;
 
 import java.io.File;
 import java.io.IOException;
@@ -173,68 +174,38 @@ public final class CMain extends AbstractMavenReport
             System.exit( 0 );
         }
 
-
         if ( !l_cli.hasOption( "grammar" ) )
         {
             System.err.println( CCommon.languagestring( CMain.class, "grammarnotset" ) );
             System.exit( -1 );
         }
 
-        // --- language definition set on runtime ---
-        CCommon.language(
-            l_cli.hasOption( "language" )
-            ? Locale.forLanguageTag( l_cli.getOptionValue( "language" ) )
-            : Locale.getDefault()
-        );
 
-        final Set<String> l_doclean = !l_cli.hasOption( "docclean" )
-                                      ? Collections.<String>emptySet()
-                                      : Collections.unmodifiableSet(
-                                          FileUtils.readLines( new File( l_cli.getOptionValue( "docclean" ) ), Charset.defaultCharset() )
-                                                   .stream()
-                                                   .map( String::trim )
-                                                   .collect( Collectors.toSet() )
-                                      );
+        final Tuple5<File, Set<ITemplate>, Set<File>, Set<String>, Set<String>> l_initdata = CMain.initialize(
+            l_cli.getOptionValue( "language" ),
 
-        final Set<String> l_exclude = !l_cli.hasOption( "excludes" )
-                                      ? Collections.<String>emptySet()
-                                      : Collections.unmodifiableSet(
-                                          Arrays.stream( l_cli.getOptionValue( "excludes" ).split( "," ) )
-                                                .map( String::trim )
-                                                .collect( Collectors.toSet() )
-                                      );
-
-        final Set<File> l_import = !l_cli.hasOption( "imports" )
-                                   ? Collections.<File>emptySet()
-                                   : Collections.unmodifiableSet(
-                                       Arrays.stream( l_cli.getOptionValue( "imports" ).split( "," ) )
-                                             .map( String::trim )
-                                             .map( File::new )
-                                             .collect( Collectors.toSet() )
-                                   );
-
-        final Set<ITemplate> l_templates = Collections.unmodifiableSet(
-            Arrays.stream( l_cli.hasOption( "templates" )
-                           ? l_cli.getOptionValue( "templates" ).split( "," )
-                           : new String[]{DEFAULTTEMPLATE}
-            )
-                  .map( i -> ETemplate.valueOf( i.trim().toUpperCase() ).generate() )
-                  .collect( Collectors.toSet() )
-        );
-
-        final File l_outputdirectory = new File(
             l_cli.hasOption( "output" )
             ? l_cli.getOptionValue( "output" )
-            : DEFAULTOUTPUT
+            : DEFAULTOUTPUT,
+
+            l_cli.hasOption( "templates" )
+            ? l_cli.getOptionValue( "templates" ).split( "," )
+            : new String[]{DEFAULTTEMPLATE},
+
+            l_cli.getOptionValue( "imports" ).split( "," ),
+
+            l_cli.getOptionValue( "excludes" ).split( "," ),
+
+            l_cli.getOptionValue( "docclean" ).split( "," )
         );
 
 
         // --- run generator ---
-        final IGenerator l_generator = new CStandalone( l_import, l_doclean, l_templates );
+        final IGenerator l_generator = new CStandalone( l_initdata.v3(), l_initdata.v5(), l_initdata.v2() );
 
         if ( Arrays.stream( l_cli.getOptionValue( "grammar" ).split( "," ) )
-                   .flatMap( i -> CMain.grammarfiles( new File( i.trim() ), l_exclude ) )
-                   .map( i -> CMain.generate( l_generator, i, l_outputdirectory ) )
+                   .flatMap( i -> CMain.filelist( new File( i.trim() ), l_initdata.v4() ) )
+                   .map( i -> CMain.generate( l_generator, i, l_initdata.v1() ) )
                    .findFirst()
                    .isPresent()
             )
@@ -272,48 +243,20 @@ public final class CMain extends AbstractMavenReport
         if ( ( imports == null ) || ( imports.length == 0 ) )
             throw new MavenReportException( CCommon.languagestring( this, "importempty" ) );
 
-        // --- language definition set on runtime ---
-        Locale.setDefault( p_locale );
-
-        // --- generating initialize data ---
-        final Set<String> l_doclean = ( docclean == null ) || ( docclean.length == 0 )
-                                      ? Collections.<String>emptySet()
-                                      : Collections.unmodifiableSet(
-                                          Arrays.stream( docclean )
-                                                .map( String::trim )
-                                                .collect( Collectors.toSet() )
-                                      );
-
-        final Set<String> l_exclude = ( excludes == null ) || ( excludes.length == 0 )
-                                      ? Collections.<String>emptySet()
-                                      : Collections.unmodifiableSet(
-                                          Arrays.stream( excludes )
-                                                .map( String::trim )
-                                                .collect( Collectors.toSet() )
-                                      );
-
-        final Set<File> l_import = Collections.unmodifiableSet(
-            Arrays.stream( imports )
-                  .map( String::trim )
-                  .map( File::new )
-                  .collect( Collectors.toSet() )
+        final Tuple5<File, Set<ITemplate>, Set<File>, Set<String>, Set<String>> l_initdata = CMain.initialize(
+            p_locale.toLanguageTag(),
+            output,
+            templates,
+            imports,
+            excludes,
+            docclean
         );
-
-        final Set<ITemplate> l_templates = Collections.unmodifiableSet(
-            Arrays.stream( templates )
-                  .map( i -> ETemplate.valueOf( i.trim().toUpperCase() ).generate() )
-                  .collect( Collectors.toSet() )
-        );
-
-        final File l_outputdirectory = new File( DEFAULTOUTPUT );
-
 
         // --- run generator ---
-        final IGenerator l_generator = new CPlugin( this.getSink(), NAME, new File( grammarbasedir ), l_import, l_doclean, l_templates );
-
+        final IGenerator l_generator = new CPlugin( this.getSink(), NAME, new File( grammarbasedir ), l_initdata.v3(), l_initdata.v5(), l_initdata.v2() );
         Arrays.stream( grammar )
-              .flatMap( i -> CMain.grammarfiles( new File( i.trim() ), l_exclude ) )
-              .map( i -> CMain.generate( l_generator, i, l_outputdirectory ) );
+              .flatMap( i -> CMain.filelist( new File( i.trim() ), l_initdata.v4() ) )
+              .forEach( i -> CMain.generate( l_generator, i, l_initdata.v1() ) );
 
         l_generator.finish();
 /*
@@ -328,23 +271,79 @@ public final class CMain extends AbstractMavenReport
     // --- helper ----------------------------------------------------------------------------------------------------------------------------------------------
 
     /**
-     * returns a file stream of grammar files
+     * initialize all data
      *
-     * @param p_grammar grammar or directory
-     * @param p_excludes exclude filenames
-     * @return file stream
+     * @param p_locale locale
+     * @param p_outputdirectory output directory string
+     * @param p_templates template string array
+     * @param p_imports import string array
+     * @param p_excludes exclude string array
+     * @param p_docclean documentation clean array
+     * @return 5-tuple with initialized and converted data
      */
-    private static Stream<File> grammarfiles( final File p_grammar, final Set<String> p_excludes )
+    private static Tuple5<File, Set<ITemplate>, Set<File>, Set<String>, Set<String>> initialize(
+        final String p_locale, final String p_outputdirectory, final String[] p_templates,
+        final String[] p_imports, final String[] p_excludes, final String[] p_docclean
+    )
     {
-        try
-        {
-            return CMain.getFileList( p_grammar, p_excludes );
-        }
-        catch ( final IOException l_exception )
-        {
-            return Stream.of();
-        }
+        CCommon.language(
+            ( p_locale == null ) || ( p_locale.isEmpty() )
+            ? Locale.getDefault()
+            : Locale.forLanguageTag( p_locale )
+        );
+
+        return new Tuple5<>(
+            new File( p_outputdirectory ),
+
+            ( p_templates == null ) || ( p_templates.length == 0 )
+            ? Collections.<ITemplate>emptySet()
+            :
+            Collections.unmodifiableSet(
+                Arrays.stream( p_templates )
+                      .map( i -> ETemplate.valueOf( i.trim().toUpperCase() ).generate() )
+                      .collect( Collectors.toSet() )
+            ),
+
+            ( p_imports == null ) || ( p_imports.length == 0 )
+            ? Collections.<File>emptySet()
+            : Collections.unmodifiableSet(
+                Arrays.stream( p_imports )
+                      .map( String::trim )
+                      .map( File::new )
+                      .flatMap( i -> CMain.filelist( i, Collections.<String>emptySet() ) )
+                      .collect( Collectors.toSet() )
+            ),
+
+            ( p_excludes == null ) || ( p_excludes.length == 0 )
+            ? Collections.<String>emptySet()
+            : Collections.unmodifiableSet(
+                Arrays.stream( p_excludes )
+                      .map( String::trim )
+                      .collect( Collectors.toSet() )
+            ),
+
+            ( p_docclean == null ) || ( p_docclean.length == 0 )
+            ? Collections.<String>emptySet()
+            : Collections.unmodifiableSet(
+                Arrays.stream( p_docclean )
+                      .flatMap( i ->
+                                {
+                                    try
+                                    {
+                                        return FileUtils.readLines( new File( i ), Charset.defaultCharset() ).stream();
+                                    }
+                                    catch ( final IOException l_exception )
+                                    {
+                                        return Stream.of( "" );
+                                    }
+                                } )
+                      .map( String::trim )
+                      .filter( i -> !i.isEmpty() )
+                      .collect( Collectors.toSet() )
+            )
+        );
     }
+
 
     /**
      * generator call
@@ -367,18 +366,25 @@ public final class CMain extends AbstractMavenReport
      * @param p_exclude file names which are ignored
      * @return stream of file objects
      */
-    private static Stream<File> getFileList( final File p_input, final Set<String> p_exclude ) throws IOException
+    private static Stream<File> filelist( final File p_input, final Set<String> p_exclude )
     {
         if ( !p_input.exists() )
             throw new RuntimeException( CCommon.languagestring( CMain.class, "notexist", p_input ) );
 
-        return (
-            p_input.isFile()
-            ? Stream.of( p_input )
-            : Files.find( p_input.toPath(), Integer.MAX_VALUE, ( i, j ) -> ( j.isRegularFile() ) && ( !j.isSymbolicLink() ) ).map( Path::toFile )
-        )
-            .filter( i -> i.getName().endsWith( GRAMMARFILEEXTENSION ) )
-            .filter( i -> !p_exclude.contains( i.getName() ) );
+        try
+        {
+            return (
+                p_input.isFile()
+                ? Stream.of( p_input )
+                : Files.find( p_input.toPath(), Integer.MAX_VALUE, ( i, j ) -> ( j.isRegularFile() ) && ( !j.isSymbolicLink() ) ).map( Path::toFile )
+            )
+                .filter( i -> i.getName().endsWith( GRAMMARFILEEXTENSION ) )
+                .filter( i -> !p_exclude.contains( i.getName() ) );
+        }
+        catch ( final IOException l_exception )
+        {
+            throw new RuntimeException( l_exception );
+        }
     }
 
     // ---------------------------------------------------------------------------------------------------------------------------------------------------------

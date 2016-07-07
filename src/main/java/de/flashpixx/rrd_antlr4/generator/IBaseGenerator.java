@@ -23,18 +23,14 @@
 
 package de.flashpixx.rrd_antlr4.generator;
 
-import com.sun.xml.internal.ws.api.pipe.Engine;
 import de.flashpixx.rrd_antlr4.engine.CEngine;
-import de.flashpixx.rrd_antlr4.engine.template.ETemplate;
 import de.flashpixx.rrd_antlr4.engine.template.ITemplate;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;

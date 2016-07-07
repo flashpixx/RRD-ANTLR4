@@ -30,6 +30,7 @@ import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.apache.maven.reporting.MavenReportRenderer;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -78,6 +79,8 @@ public final class CPlugin extends IBaseGenerator
         m_report = new CReportGenerator( p_sink );
     }
 
+
+
     @Override
     public final IGenerator finish()
     {
@@ -89,7 +92,7 @@ public final class CPlugin extends IBaseGenerator
     @Override
     protected final File processoutputdirectory( final File p_grammar, final File p_outputdirectory )
     {
-        return p_outputdirectory + m_basedirectory.toURI().relativize( p_grammar.toURI() );
+        return Paths.get( p_outputdirectory.toString(),  m_basedirectory.toURI().relativize( p_grammar.toURI() ).toString() ).toFile();
     }
 
     @Override
