@@ -259,10 +259,6 @@ public final class CMain extends AbstractMavenReport
               .forEach( l_generator::generate );
 
         l_generator.finish();
-/*
-        if ( !l_errors.isEmpty() )
-            throw new MavenReportException( StringUtils.join( l_errors, "\n" ) );
-            */
     }
 
     // ---------------------------------------------------------------------------------------------------------------------------------------------------------
