@@ -89,7 +89,7 @@ public final class CPlugin extends IBaseGenerator
     @Override
     protected final File processoutputdirectory( final File p_grammar, final File p_outputdirectory )
     {
-        return m_basedirectory.toURI().relativize( p_grammar.toURI() );
+        return p_outputdirectory + m_basedirectory.toURI().relativize( p_grammar.toURI() );
     }
 
     @Override
