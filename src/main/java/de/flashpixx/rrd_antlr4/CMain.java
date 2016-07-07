@@ -192,11 +192,11 @@ public final class CMain extends AbstractMavenReport
             ? l_cli.getOptionValue( "templates" ).split( "," )
             : new String[]{DEFAULTTEMPLATE},
 
-            l_cli.getOptionValue( "imports" ).split( "," ),
+            l_cli.getOptionValue( "imports", "" ).split( "," ),
 
-            l_cli.getOptionValue( "excludes" ).split( "," ),
+            l_cli.getOptionValue( "excludes", "" ).split( "," ),
 
-            l_cli.getOptionValue( "docclean" ).split( "," )
+            l_cli.getOptionValue( "docclean", "" ).split( "," )
         );
 
 
@@ -309,6 +309,7 @@ public final class CMain extends AbstractMavenReport
             : Collections.unmodifiableSet(
                 Arrays.stream( p_imports )
                       .map( String::trim )
+                      .filter( i -> !i.isEmpty() )
                       .map( File::new )
                       .flatMap( i -> CMain.filelist( i, Collections.<File>emptySet(), Collections.<String>emptySet() ) )
                       .collect( Collectors.toSet() )
@@ -319,6 +320,7 @@ public final class CMain extends AbstractMavenReport
             : Collections.unmodifiableSet(
                 Arrays.stream( p_excludes )
                       .map( String::trim )
+                      .filter( i -> !i.isEmpty() )
                       .collect( Collectors.toSet() )
             ),
 
