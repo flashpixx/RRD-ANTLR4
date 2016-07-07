@@ -26,6 +26,7 @@ package de.flashpixx.rrd_antlr4;
 import de.flashpixx.rrd_antlr4.engine.CEngine;
 import de.flashpixx.rrd_antlr4.engine.template.ETemplate;
 import de.flashpixx.rrd_antlr4.engine.template.ITemplate;
+import de.flashpixx.rrd_antlr4.generator.CPlugin;
 import de.flashpixx.rrd_antlr4.generator.CStandalone;
 import de.flashpixx.rrd_antlr4.generator.IGenerator;
 import org.apache.commons.cli.CommandLine;
@@ -192,6 +193,7 @@ public final class CMain extends AbstractMavenReport
             System.exit( -1 );
         }
 
+        // --- language definition set on runtime ---
         CCommon.language(
             l_cli.hasOption( "language" )
             ? Locale.forLanguageTag( l_cli.getOptionValue( "language" ) )
@@ -244,33 +246,15 @@ public final class CMain extends AbstractMavenReport
         // --- run generator ---
         final IGenerator l_generator = new CStandalone( l_import, l_doclean, l_templates );
 
-
         if ( Arrays.stream( l_cli.getOptionValue( "grammar" ).split( "," ) )
-              .flatMap( i ->
-                        {
-                            try
-                            {
-                                return CMain.getFileList(
-                                    new File( i ),
-                                    !l_cli.hasOption( "excludes" )
-                                    ? Collections.<String>emptySet()
-                                    : Arrays.stream( l_cli.getOptionValue( "excludes" ).split( "," ) )
-                                            .map( String::trim )
-                                            .collect( Collectors.toSet() )
-                                );
-                            }
-                            catch ( final IOException l_exception )
-                            {
-                                return null;
-                            }
-                        }
-              )
-              .filter( i -> i != null )
+              .flatMap( i -> CMain.grammarfiles( new File( i ), l_exclude ) )
               .map( i -> CMain.generate( l_generator, i, l_outputdirectory  ) )
               .findFirst()
               .isPresent()
             )
                 System.exit( -1 );
+
+        l_generator.finish();
     }
 
     // ---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -302,20 +286,45 @@ public final class CMain extends AbstractMavenReport
         if ( ( imports == null ) || ( imports.length == 0 ) )
             throw new MavenReportException( CCommon.languagestring( this, "importempty" ) );
 
+        // --- language definition set on runtime ---
+        Locale.setDefault( p_locale );
 
         // --- generating initialize data ---
         final Set<String> l_doclean = ( docclean == null ) || ( docclean.length == 0 )
                                       ? Collections.<String>emptySet()
-                                      : Arrays.stream( docclean ).map( String::trim ).collect( Collectors.toSet() );
+                                      : Collections.unmodifiableSet(
+                                            Arrays.stream( docclean )
+                                                  .map( String::trim )
+                                                  .collect( Collectors.toSet() )
+                                      );
 
         final Set<String> l_exclude = ( excludes == null ) || ( excludes.length == 0 )
                                       ? Collections.<String>emptySet()
-                                      : Arrays.stream( excludes ).map( String::trim ).collect( Collectors.toSet() );
+                                      : Collections.unmodifiableSet(
+                                            Arrays.stream( excludes )
+                                                  .map( String::trim )
+                                                  .collect( Collectors.toSet() )
+                                      );
 
-        final Set<String> l_import = Arrays.stream( imports ).map( String::trim ).collect( Collectors.toSet() );
+        final Set<File> l_import = Collections.unmodifiableSet(
+                                        Arrays.stream( imports )
+                                              .map( String::trim )
+                                              .map( File::new )
+                                              .collect( Collectors.toSet() )
+        );
 
-        // --- language definition set on runtime ---
-        Locale.setDefault( p_locale );
+        final Set<ITemplate> l_templates = Collections.unmodifiableSet(
+            Arrays.stream( templates )
+                  .map( i -> ETemplate.valueOf( i.trim().toUpperCase() ).generate() )
+                  .collect( Collectors.toSet() )
+        );
+
+
+        // --- run generator ---
+        final IGenerator l_generator = new CPlugin( this.getSink(), NAME, new File( "" ), l_import, l_doclean, l_templates );
+
+        l_generator.
+
 
         // --- run export ---
         final Set<Pair<Collection<File>, Collection<String>>> l_result = Collections.unmodifiableSet(
@@ -341,6 +350,18 @@ public final class CMain extends AbstractMavenReport
 
 
     // --- helper ----------------------------------------------------------------------------------------------------------------------------------------------
+
+    private static Stream<File> grammarfiles( final File p_grammar, final Set<String> p_excludes )
+    {
+        try
+        {
+            return CMain.getFileList( p_grammar, p_excludes );
+        }
+        catch ( final IOException l_exception )
+        {
+            return Stream.of(  );
+        }
+    }
 
     /**
      * generator call

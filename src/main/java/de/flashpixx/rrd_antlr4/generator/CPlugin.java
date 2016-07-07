@@ -79,26 +79,26 @@ public final class CPlugin extends IBaseGenerator
     }
 
     @Override
+    public final IGenerator finish()
+    {
+        if ( !m_error )
+            m_report.render();
+        return this;
+    }
+
+    @Override
     protected final File processoutputdirectory( final File p_grammar, final File p_outputdirectory )
     {
         return null;
     }
 
     @Override
-    protected final void processmessages( final File p_grammar, final Collection<String> p_messages )
+    protected final IGenerator processmessages( final File p_grammar, final Collection<String> p_messages )
     {
         m_error = !p_messages.isEmpty();
         if ( !m_error )
             m_files.add( p_grammar );
-    }
-
-    @Override
-    protected final void processfinish()
-    {
-        if ( m_error )
-            return;
-
-        m_report.render();
+        return this;
     }
 
     /**

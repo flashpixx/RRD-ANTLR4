@@ -87,7 +87,7 @@ public abstract class IBaseGenerator implements IGenerator
     {
         try
         {
-            this.processmessages(
+            return this.processmessages(
                 p_grammar,
                 ENGINE.generate(
                     this.processoutputdirectory( p_grammar, p_outputdirectory ),
@@ -100,17 +100,21 @@ public abstract class IBaseGenerator implements IGenerator
         }
         catch ( final IOException l_exception )
         {
-            this.processmessages( p_grammar, Collections.unmodifiableSet( Stream.of( l_exception.getMessage() ).collect( Collectors.toSet() ) ) );
+            return this.processmessages( p_grammar, Collections.unmodifiableSet( Stream.of( l_exception.getMessage() ).collect( Collectors.toSet() ) ) );
         }
 
-        this.processfinish();
-        return this;
     }
 
     @Override
     public final boolean hasError()
     {
         return m_error;
+    }
+
+    @Override
+    public IGenerator finish()
+    {
+        return this;
     }
 
     /**
@@ -129,14 +133,6 @@ public abstract class IBaseGenerator implements IGenerator
      * @param p_messages error messages
      * @return generator self reference
      */
-    protected abstract void processmessages( final File p_grammar, final Collection<String> p_messages );
-
-    /**
-     * process for finishing
-     */
-    protected void processfinish()
-    {
-
-    }
+    protected abstract IGenerator processmessages( final File p_grammar, final Collection<String> p_messages );
 
 }
