@@ -247,7 +247,7 @@ public final class CMain extends AbstractMavenReport
         final IGenerator l_generator = new CStandalone( l_import, l_doclean, l_templates );
 
         if ( Arrays.stream( l_cli.getOptionValue( "grammar" ).split( "," ) )
-              .flatMap( i -> CMain.grammarfiles( new File( i ), l_exclude ) )
+              .flatMap( i -> CMain.grammarfiles( new File( i.trim() ), l_exclude ) )
               .map( i -> CMain.generate( l_generator, i, l_outputdirectory  ) )
               .findFirst()
               .isPresent()
@@ -319,31 +319,21 @@ public final class CMain extends AbstractMavenReport
                   .collect( Collectors.toSet() )
         );
 
+        final File l_outputdirectory = new File( DEFAULTOUTPUT );
+
 
         // --- run generator ---
         final IGenerator l_generator = new CPlugin( this.getSink(), NAME, new File( "" ), l_import, l_doclean, l_templates );
 
-        l_generator.
+        Arrays.stream( grammar )
+              .flatMap( i -> CMain.grammarfiles( new File( i.trim() ), l_exclude ) )
+              .map( i -> CMain.generate( l_generator, i, l_outputdirectory  ) );
 
-
-        // --- run export ---
-        final Set<Pair<Collection<File>, Collection<String>>> l_result = Collections.unmodifiableSet(
-                                                                            Arrays.stream( grammar ).parallel()
-                                                                                .map( i -> CMain.generate( output, l_exclude, l_import, new File( i ), l_doclean, templates ) )
-                                                                                .collect( Collectors.toSet() )
-        );
-
-        // --- collect errors for each grammar file ---
-        final Set<String> l_errors = Collections.unmodifiableSet( l_result.parallelStream().flatMap( i -> i.getRight().stream() ).collect( Collectors.toSet() ) );
+        l_generator.finish();
+/*
         if ( !l_errors.isEmpty() )
             throw new MavenReportException( StringUtils.join( l_errors, "\n" ) );
-
-        // --- generate report ---
-        new CReportGenerator(
-            this.getSink(),
-            Collections.unmodifiableSet( l_result.parallelStream().flatMap( i -> i.getLeft().stream() ).collect( Collectors.toSet() ) ),
-            templates
-        ).render();
+            */
     }
 
     // ---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -351,6 +341,13 @@ public final class CMain extends AbstractMavenReport
 
     // --- helper ----------------------------------------------------------------------------------------------------------------------------------------------
 
+    /**
+     * returns a file stream of grammar files
+     *
+     * @param p_grammar grammar or directory
+     * @param p_excludes exclude filenames
+     * @return file stream
+     */
     private static Stream<File> grammarfiles( final File p_grammar, final Set<String> p_excludes )
     {
         try
