@@ -253,7 +253,7 @@ public final class CMain extends AbstractMavenReport
         );
 
         // --- run generator ---
-        final IGenerator l_generator = new CPlugin( this.getSink(), NAME, l_initdata.v1(), new File( grammarbasedir ), l_initdata.v3(), l_initdata.v5(), l_initdata.v2() );
+        final IGenerator l_generator = new CPlugin( this, NAME, l_initdata.v1(), new File( grammarbasedir ), l_initdata.v3(), l_initdata.v5(), l_initdata.v2() );
         Arrays.stream( grammar )
               .flatMap( i -> CMain.filelist( new File( i.trim() ), l_initdata.v3(), l_initdata.v4() ) )
               .forEach( l_generator::generate );

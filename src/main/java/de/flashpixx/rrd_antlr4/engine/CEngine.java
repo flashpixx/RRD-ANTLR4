@@ -23,6 +23,7 @@
 
 package de.flashpixx.rrd_antlr4.engine;
 
+import de.flashpixx.rrd_antlr4.CCommon;
 import de.flashpixx.rrd_antlr4.antlr.ANTLRv4Lexer;
 import de.flashpixx.rrd_antlr4.antlr.ANTLRv4Parser;
 import de.flashpixx.rrd_antlr4.antlr.CASTVisitorAntLR;
@@ -36,7 +37,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -75,7 +75,7 @@ public final class CEngine
                 {
                     try
                     {
-                        final Path l_directory = Files.createDirectories( Paths.get( p_baseoutputdirectory.toString(), i.name(), p_outputdirectory.toString() ) );
+                        final Path l_directory = Files.createDirectories( CCommon.outputdirectory( p_baseoutputdirectory, i, p_outputdirectory ) );
 
                         // run exporting process
                         i.preprocess( l_directory );

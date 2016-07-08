@@ -23,15 +23,20 @@
 
 package de.flashpixx.rrd_antlr4.generator;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import de.flashpixx.rrd_antlr4.CCommon;
 import de.flashpixx.rrd_antlr4.engine.template.ITemplate;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.apache.maven.reporting.MavenReportRenderer;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 
 
@@ -41,9 +46,13 @@ import java.util.Set;
 public final class CPlugin extends IBaseGenerator
 {
     /**
+     * report directory
+     */
+    private final File m_reportdirectory;
+    /**
      * base directory of grammar files
      */
-    private final File m_basedirectory;
+    private final File m_grammarbase;
     /**
      * report title
      */
@@ -53,30 +62,31 @@ public final class CPlugin extends IBaseGenerator
      */
     private final MavenReportRenderer m_report;
     /**
-     * set with all files
+     * map with grammar files, pair of template name and link
      */
-    private final Set<File> m_files = new HashSet<>();
+    private final Multimap<File, Pair<String, String>> m_files = HashMultimap.create();
 
 
     /**
      * ctor
      *
-     * @param p_sink report sink
+     * @param p_report maven project reference
      * @param p_reporttitle report title
      * @param p_baseoutputdirectory base output directory
-     * @param p_basedirectory base directory
+     * @param p_grammarbase base directory of grammar files
      * @param p_imports set with imported grammar files
      * @param p_docuclean set with documentation strings
      * @param p_templates array with exporting templates
      */
-    public CPlugin( final Sink p_sink, final String p_reporttitle, final File p_baseoutputdirectory, final File p_basedirectory,
+    public CPlugin( final AbstractMavenReport p_report, final String p_reporttitle, final File p_baseoutputdirectory, final File p_grammarbase,
                     final Set<File> p_imports, final Set<String> p_docuclean, final Set<ITemplate> p_templates
     )
     {
         super( p_baseoutputdirectory, p_imports, p_docuclean, p_templates );
-        m_basedirectory = p_basedirectory;
+        m_grammarbase = p_grammarbase;
         m_reporttitle = p_reporttitle;
-        m_report = new CReportGenerator( p_sink );
+        m_report = new CReportGenerator( p_report.getSink() );
+        m_reportdirectory = p_report.getReportOutputDirectory();
     }
 
 
@@ -92,15 +102,26 @@ public final class CPlugin extends IBaseGenerator
     @Override
     protected final File processoutputdirectory( final File p_grammar )
     {
-        return new File( m_basedirectory.toURI().relativize( p_grammar.toURI() ).toString() );
+        return new File( m_grammarbase.toURI().relativize( p_grammar.toURI() ).toString() );
     }
 
     @Override
-    protected final IGenerator processmessages( final File p_grammar, final Collection<String> p_messages )
+    protected final IGenerator processmessages( final File p_grammar, final File p_outputdirectory, final Collection<String> p_messages )
     {
         m_error = !p_messages.isEmpty();
         if ( !m_error )
-            m_files.add( p_grammar );
+            m_templates
+                .forEach( i -> m_files.put(
+                                   p_grammar,
+                                   new ImmutablePair<>(
+                                       i.name(),
+                                       m_reportdirectory.toURI().relativize(
+                                           CCommon.outputdirectory( m_baseoutput, i, p_outputdirectory, i.index() ).toUri()
+                                       ).toString()
+                                   )
+                          )
+                );
+
         return this;
     }
 
@@ -131,16 +152,26 @@ public final class CPlugin extends IBaseGenerator
             this.startSection( this.getTitle() );
 
             this.startTable();
-            this.tableHeader( ArrayUtils.add( m_templates.stream().map( ITemplate::name ).toArray( String[]::new ), 0, "Grammar" ) );
+            this.tableHeader( ArrayUtils.add( m_templates.stream().map( i -> "" ).toArray( String[]::new ), 0, "Grammar" ) );
 
-            m_files.forEach( i -> this.tableRow(
-                new String[]{
-                    m_basedirectory.toURI().relativize( i.toURI() ).toString(),
-                    ""
-                }
-                             )
-            );
+            m_files.asMap().entrySet().forEach( i -> {
 
+                sink.tableRow();
+
+                sink.tableCell();
+                sink.text( m_grammarbase.toURI().relativize( i.getKey().toURI() ).toString() );
+                sink.tableCell_();
+
+                i.getValue()
+                    .forEach( j -> {
+                        sink.tableCell();
+                        sink.link( j.getRight() );
+                        sink.text( j.getLeft() );
+                        sink.tableCell_();
+                    } );
+
+                sink.tableRow_();
+            } );
             this.endTable();
 
             this.endSection();

@@ -55,6 +55,10 @@ public abstract class IBaseGenerator implements IGenerator
      */
     protected final Set<ITemplate> m_templates;
     /**
+     * base output directory
+     */
+    protected final File m_baseoutput;
+    /**
      * map with imported grammar files
      */
     private final Map<String, File> m_imports;
@@ -62,10 +66,7 @@ public abstract class IBaseGenerator implements IGenerator
      * set with regex string for documentation cleaning
      */
     private final Set<String> m_docuclean;
-    /**
-     * base output directory
-     */
-    private final File m_baseoutput;
+
 
     /**
      * ctor
@@ -87,13 +88,14 @@ public abstract class IBaseGenerator implements IGenerator
     @Override
     public final IGenerator generate( final File p_grammar )
     {
+        final File l_outputdirectory = this.processoutputdirectory( p_grammar );
         try
         {
             return this.processmessages(
-                p_grammar,
+                p_grammar, l_outputdirectory,
                 ENGINE.generate(
                     m_baseoutput,
-                    this.processoutputdirectory( p_grammar ),
+                    l_outputdirectory,
                     p_grammar,
                     m_docuclean,
                     m_imports,
@@ -103,7 +105,7 @@ public abstract class IBaseGenerator implements IGenerator
         }
         catch ( final IOException l_exception )
         {
-            return this.processmessages( p_grammar, Collections.unmodifiableSet( Stream.of( l_exception.getMessage() ).collect( Collectors.toSet() ) ) );
+            return this.processmessages( p_grammar, l_outputdirectory, Collections.unmodifiableSet( Stream.of( l_exception.getMessage() ).collect( Collectors.toSet() ) ) );
         }
 
     }
@@ -132,9 +134,10 @@ public abstract class IBaseGenerator implements IGenerator
      * processes the error messages
      *
      * @param p_grammar input grammar file
+     * @param p_outputdirectory output directory
      * @param p_messages error messages
      * @return generator self reference
      */
-    protected abstract IGenerator processmessages( final File p_grammar, final Collection<String> p_messages );
+    protected abstract IGenerator processmessages( final File p_grammar, final File p_outputdirectory, final Collection<String> p_messages );
 
 }
