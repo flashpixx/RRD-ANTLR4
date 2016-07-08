@@ -26,7 +26,7 @@ package de.flashpixx.rrd_antlr4.generator;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import de.flashpixx.rrd_antlr4.CCommon;
-import de.flashpixx.rrd_antlr4.engine.template.ITemplate;
+import de.flashpixx.rrd_antlr4.engine.template.ETemplate;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -79,7 +79,7 @@ public final class CPlugin extends IBaseGenerator
      * @param p_templates array with exporting templates
      */
     public CPlugin( final AbstractMavenReport p_report, final String p_reporttitle, final File p_baseoutputdirectory, final File p_grammarbase,
-                    final Set<File> p_imports, final Set<String> p_docuclean, final Set<ITemplate> p_templates
+                    final Set<File> p_imports, final Set<String> p_docuclean, final Set<ETemplate> p_templates
     )
     {
         super( p_baseoutputdirectory, p_imports, p_docuclean, p_templates );
@@ -111,6 +111,8 @@ public final class CPlugin extends IBaseGenerator
         m_error = !p_messages.isEmpty();
         if ( !m_error )
             m_templates
+                .stream()
+                .map( ETemplate::generate )
                 .forEach( i -> m_files.put(
                                    p_grammar,
                                    new ImmutablePair<>(

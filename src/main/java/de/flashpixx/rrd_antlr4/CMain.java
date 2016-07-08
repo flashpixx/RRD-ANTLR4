@@ -181,7 +181,7 @@ public final class CMain extends AbstractMavenReport
         }
 
 
-        final Tuple5<File, Set<ITemplate>, Set<File>, Set<String>, Set<String>> l_initdata = CMain.initialize(
+        final Tuple5<File, Set<ETemplate>, Set<File>, Set<String>, Set<String>> l_initdata = CMain.initialize(
             l_cli.getOptionValue( "language" ),
 
             l_cli.hasOption( "output" )
@@ -243,7 +243,7 @@ public final class CMain extends AbstractMavenReport
         if ( ( imports == null ) || ( imports.length == 0 ) )
             throw new MavenReportException( CCommon.languagestring( this, "importempty" ) );
 
-        final Tuple5<File, Set<ITemplate>, Set<File>, Set<String>, Set<String>> l_initdata = CMain.initialize(
+        final Tuple5<File, Set<ETemplate>, Set<File>, Set<String>, Set<String>> l_initdata = CMain.initialize(
             p_locale.toLanguageTag(),
             output,
             templates,
@@ -277,7 +277,7 @@ public final class CMain extends AbstractMavenReport
      * @param p_docclean documentation clean array
      * @return 5-tuple with initialized and converted data
      */
-    private static Tuple5<File, Set<ITemplate>, Set<File>, Set<String>, Set<String>> initialize(
+    private static Tuple5<File, Set<ETemplate>, Set<File>, Set<String>, Set<String>> initialize(
         final String p_locale, final String p_outputdirectory, final String[] p_templates,
         final String[] p_imports, final String[] p_excludes, final String[] p_docclean
     )
@@ -292,11 +292,10 @@ public final class CMain extends AbstractMavenReport
             new File( p_outputdirectory ),
 
             ( p_templates == null ) || ( p_templates.length == 0 )
-            ? Collections.<ITemplate>emptySet()
-            :
-            Collections.unmodifiableSet(
+            ? Collections.<ETemplate>emptySet()
+            : Collections.unmodifiableSet(
                 Arrays.stream( p_templates )
-                      .map( i -> ETemplate.valueOf( i.trim().toUpperCase() ).generate() )
+                      .map( i -> ETemplate.valueOf( i.trim().toUpperCase() ) )
                       .collect( Collectors.toSet() )
             ),
 

@@ -24,7 +24,7 @@
 package de.flashpixx.rrd_antlr4.generator;
 
 import de.flashpixx.rrd_antlr4.engine.CEngine;
-import de.flashpixx.rrd_antlr4.engine.template.ITemplate;
+import de.flashpixx.rrd_antlr4.engine.template.ETemplate;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
@@ -53,7 +53,7 @@ public abstract class IBaseGenerator implements IGenerator
     /**
      * set of generator templates
      */
-    protected final Set<ITemplate> m_templates;
+    protected final Set<ETemplate> m_templates;
     /**
      * base output directory
      */
@@ -76,7 +76,7 @@ public abstract class IBaseGenerator implements IGenerator
      * @param p_imports set with imported grammar files
      * @param p_docuclean set with documentation strings
      */
-    protected IBaseGenerator( final File p_baseoutputdirectory, final Set<File> p_imports, final Set<String> p_docuclean, final Set<ITemplate> p_templates )
+    protected IBaseGenerator( final File p_baseoutputdirectory, final Set<File> p_imports, final Set<String> p_docuclean, final Set<ETemplate> p_templates )
     {
         m_docuclean = p_docuclean;
         m_templates = p_templates;

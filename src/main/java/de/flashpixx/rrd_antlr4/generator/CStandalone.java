@@ -23,7 +23,7 @@
 
 package de.flashpixx.rrd_antlr4.generator;
 
-import de.flashpixx.rrd_antlr4.engine.template.ITemplate;
+import de.flashpixx.rrd_antlr4.engine.template.ETemplate;
 
 import java.io.File;
 import java.util.Collection;
@@ -44,7 +44,7 @@ public final class CStandalone extends IBaseGenerator
      * @param p_docuclean set with documentation strings
      * @param p_templates array with exporting templates
      */
-    public CStandalone( final File p_baseoutputdirectory, final Set<File> p_imports, final Set<String> p_docuclean, final Set<ITemplate> p_templates
+    public CStandalone( final File p_baseoutputdirectory, final Set<File> p_imports, final Set<String> p_docuclean, final Set<ETemplate> p_templates
     )
     {
         super( p_baseoutputdirectory, p_imports, p_docuclean, p_templates );

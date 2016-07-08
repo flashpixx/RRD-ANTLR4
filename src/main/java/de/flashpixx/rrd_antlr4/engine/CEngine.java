@@ -27,6 +27,7 @@ import de.flashpixx.rrd_antlr4.CCommon;
 import de.flashpixx.rrd_antlr4.antlr.ANTLRv4Lexer;
 import de.flashpixx.rrd_antlr4.antlr.ANTLRv4Parser;
 import de.flashpixx.rrd_antlr4.antlr.CASTVisitorAntLR;
+import de.flashpixx.rrd_antlr4.engine.template.ETemplate;
 import de.flashpixx.rrd_antlr4.engine.template.ITemplate;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -38,7 +39,6 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -64,11 +64,14 @@ public final class CEngine
      * @throws IOException on IO error
      */
     public Collection<String> generate( final File p_baseoutputdirectory, final File p_outputdirectory, final File p_grammar, final Set<String> p_docuclean,
-                                        final Map<String, File> p_imports, final Set<ITemplate> p_templates
+                                        final Map<String, File> p_imports, final Set<ETemplate> p_templates
     ) throws IOException
     {
-        return Collections.unmodifiableList( p_templates
+        return p_templates
                 .parallelStream()
+
+                // create template
+                .map( i -> i.generate() )
 
                 // create output directory if not exists
                 .flatMap( i ->
@@ -93,8 +96,7 @@ public final class CEngine
                 } )
 
                 // collect error messages
-                .collect( Collectors.toList() )
-        );
+                .collect( Collectors.toList() );
     }
 
 
