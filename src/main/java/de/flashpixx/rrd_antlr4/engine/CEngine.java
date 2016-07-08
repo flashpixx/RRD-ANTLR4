@@ -71,7 +71,7 @@ public final class CEngine
                 .parallelStream()
 
                 // create template
-                .map( i -> i.generate() )
+                .map( ETemplate::generate )
 
                 // create output directory if not exists
                 .flatMap( i ->

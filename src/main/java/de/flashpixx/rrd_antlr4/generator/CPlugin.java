@@ -112,7 +112,9 @@ public final class CPlugin extends IBaseGenerator
         if ( !m_error )
             m_templates
                 .stream()
+                // generate template to get template data
                 .map( ETemplate::generate )
+                // create grammar file and pair with string name and output directory
                 .forEach( i -> m_files.put(
                                    p_grammar,
                                    new ImmutablePair<>(
