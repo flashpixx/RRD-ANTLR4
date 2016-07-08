@@ -23,9 +23,11 @@
 
 package de.flashpixx.rrd_antlr4.engine;
 
+import de.flashpixx.rrd_antlr4.CCommon;
 import de.flashpixx.rrd_antlr4.antlr.ANTLRv4Lexer;
 import de.flashpixx.rrd_antlr4.antlr.ANTLRv4Parser;
 import de.flashpixx.rrd_antlr4.antlr.CASTVisitorAntLR;
+import de.flashpixx.rrd_antlr4.engine.template.ETemplate;
 import de.flashpixx.rrd_antlr4.engine.template.ITemplate;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -36,7 +38,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -53,7 +54,8 @@ public final class CEngine
     /**
      * generator call
      *
-     * @param p_outputdirectory output directory - the template name and grammar file name will be appended
+     * @param p_baseoutputdirectory base output directory
+     * @param p_outputdirectory output directory - relative to base output directory
      * @param p_grammar grammar input file
      * @param p_docuclean set with documentation clean regex
      * @param p_imports map with grammar imported grammar files
@@ -61,19 +63,22 @@ public final class CEngine
      * @return list with error messages
      * @throws IOException on IO error
      */
-    public Collection<String> generate( final String p_outputdirectory, final File p_grammar, final Set<String> p_docuclean,
-                                        final Map<String, File> p_imports, final Set<ITemplate> p_templates
+    public Collection<String> generate( final File p_baseoutputdirectory, final File p_outputdirectory, final File p_grammar, final Set<String> p_docuclean,
+                                        final Map<String, File> p_imports, final Set<ETemplate> p_templates
     ) throws IOException
     {
         return p_templates
                 .parallelStream()
+
+                // create template
+                .map( ETemplate::generate )
 
                 // create output directory if not exists
                 .flatMap( i ->
                 {
                     try
                     {
-                        final Path l_directory = Files.createDirectories( Paths.get( p_outputdirectory, i.name(), p_grammar.getName().toLowerCase() ) );
+                        final Path l_directory = Files.createDirectories( CCommon.outputdirectory( p_baseoutputdirectory, i, p_outputdirectory ) );
 
                         // run exporting process
                         i.preprocess( l_directory );

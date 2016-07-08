@@ -24,21 +24,25 @@
 
 package de.flashpixx.rrd_antlr4;
 
+import de.flashpixx.rrd_antlr4.engine.template.ITemplate;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.MessageFormat;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
+import java.util.stream.Stream;
 
 
 /**
@@ -216,22 +220,31 @@ public final class CCommon
                 PACKAGEROOT + ".", "" );
     }
 
-
     /**
-     * converts any collection type into a typed array
+     * generates the full output directory
      *
-     * @param p_class class array
-     * @param p_collection collection
-     * @return typed array
-     *
-     * @tparam T collection / array type
+     * @param p_baseoutputdirectory base output directory
+     * @param p_template exporting template
+     * @param p_outputdirectory relative output directory
+     * @param p_extension optional path extension
+     * @return full path
      */
-    public static <T> T[] convertCollectionToArray( final Class<T[]> p_class, final Collection<T> p_collection )
+    public static Path outputdirectory( final File p_baseoutputdirectory, final ITemplate p_template, final File p_outputdirectory, final String... p_extension )
     {
-        final T[] l_return = p_class.cast( Array.newInstance( p_class.getComponentType(), p_collection.size() ) );
-        p_collection.toArray( l_return );
-        return l_return;
+        return Paths.get( p_baseoutputdirectory.toString(),
+                          Stream.concat(
+                              Stream.of(
+                                p_template.name(),
+                                p_outputdirectory.toString()
+                              ),
+
+                              ( p_extension == null ) || ( p_extension.length == 0 )
+                              ? Stream.of()
+                              : Arrays.stream( p_extension )
+                          ).toArray( String[]::new )
+        );
     }
+
 
     /**
      * class to read UTF-8 encoded property file

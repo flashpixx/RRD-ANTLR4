@@ -25,42 +25,57 @@ package de.flashpixx.rrd_antlr4;
 
 import de.flashpixx.rrd_antlr4.engine.CEngine;
 import de.flashpixx.rrd_antlr4.engine.template.ETemplate;
+import de.flashpixx.rrd_antlr4.engine.template.ITemplate;
+import de.flashpixx.rrd_antlr4.generator.CPlugin;
+import de.flashpixx.rrd_antlr4.generator.CStandalone;
+import de.flashpixx.rrd_antlr4.generator.IGenerator;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.reporting.AbstractMavenReport;
+import org.apache.maven.reporting.MavenReportException;
+import org.jooq.lambda.tuple.Tuple5;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
 /**
- * standalone program and Maven plugin
- *
- * @see https://maven.apache.org/guides/plugin/guide-java-plugin-development.html
- * @see https://books.sonatype.com/mvnref-book/reference/writing-plugins-sect-custom-plugin.html
+ * standalone program and Maven Report plugin
  */
-@Mojo( name="rrdantlr4", defaultPhase = LifecyclePhase.SITE )
-public final class CMain extends AbstractMojo
+@Mojo( name = "rrd-antlr4" )
+public final class CMain extends AbstractMavenReport
 {
+    /**
+     * name of the plugin
+     */
+    private static final String NAME = "RRD-AntLR4";
+    /**
+     * main description
+     */
+    private static final String DESCRIPTION = "Railroad-Diagramm for AntLR4";
+    /**
+     * directory for AntLR grammar files
+     */
+    private static final String ANTLRGRAMMERDIR = "src/main/antlr4";
+    /**
+     * directory for AntLR import directory
+     */
+    private static final String ANTLRIMPORTDIR = "src/main/antlr4/imports";
+
     /**
      * engine instance
      */
@@ -79,32 +94,31 @@ public final class CMain extends AbstractMojo
     private static final String GRAMMARFILEEXTENSION = ".g4";
 
 
-
-    /**
-     * Maven plugin parameter for output
-     */
-    @Parameter( defaultValue = "target/site/" + DEFAULTOUTPUT )
-    private String output;
-    /**
-     * Maven plugin parameter for language
-     */
-    @Parameter( defaultValue = "en" )
-    private String language;
     /**
      * Maven plugin used templates option
      */
     @Parameter( defaultValue = DEFAULTTEMPLATE )
     private String[] templates;
     /**
+     * Maven plugin basedir of the grammar files
+     */
+    @Parameter( defaultValue = "${project.basedir}/" + ANTLRGRAMMERDIR )
+    private String grammarbasedir;
+    /**
      * Maven plugin default directories of grammars
      */
-    @Parameter( defaultValue = "src/main/antlr4" )
+    @Parameter( defaultValue = "${project.basedir}/" + ANTLRGRAMMERDIR )
     private String[] grammar;
     /**
      * Maven plugin default grammar import directories
      */
-    @Parameter( defaultValue = "src/main/antlr4/imports" )
+    @Parameter( defaultValue = "${project.basedir}/" + ANTLRIMPORTDIR )
     private String[] imports;
+    /**
+     * Maven plugin parameter for output
+     */
+    @Parameter( defaultValue = "${project.reporting.outputDirectory}/" + DEFAULTOUTPUT )
+    private String output;
     /**
      * Maven plugin exclude file list
      */
@@ -117,6 +131,7 @@ public final class CMain extends AbstractMojo
     private String[] docclean;
 
 
+    // --- standalone execution --------------------------------------------------------------------------------------------------------------------------------
 
     /**
      * main
@@ -126,7 +141,7 @@ public final class CMain extends AbstractMojo
      */
     public static void main( final String[] p_args ) throws IOException
     {
-        // --- define CLI options --------------------------------------------------------------------------------------
+        // --- define CLI options ---
         final Options l_clioptions = new Options();
         l_clioptions.addOption( "help", false, CCommon.languagestring( CMain.class, "help" ) );
         l_clioptions.addOption( "output", true, CCommon.languagestring( CMain.class, "output", DEFAULTOUTPUT ) );
@@ -151,7 +166,7 @@ public final class CMain extends AbstractMojo
         }
 
 
-        // --- process CLI arguments and push configuration ------------------------------------------------------------
+        // --- process CLI arguments and push configuration ---
         if ( l_cli.hasOption( "help" ) )
         {
             final HelpFormatter l_formatter = new HelpFormatter();
@@ -159,143 +174,204 @@ public final class CMain extends AbstractMojo
             System.exit( 0 );
         }
 
-
         if ( !l_cli.hasOption( "grammar" ) )
         {
             System.err.println( CCommon.languagestring( CMain.class, "grammarnotset" ) );
             System.exit( -1 );
         }
 
-        CCommon.language(
-                l_cli.hasOption( "language" )
-                ? Locale.forLanguageTag( l_cli.getOptionValue( "language" ) )
-                : Locale.getDefault()
+
+        final Tuple5<File, Set<ETemplate>, Set<File>, Set<String>, Set<String>> l_initdata = CMain.initialize(
+            l_cli.getOptionValue( "language" ),
+
+            l_cli.hasOption( "output" )
+            ? l_cli.getOptionValue( "output" )
+            : DEFAULTOUTPUT,
+
+            l_cli.hasOption( "templates" )
+            ? l_cli.getOptionValue( "templates" ).split( "," )
+            : new String[]{DEFAULTTEMPLATE},
+
+            l_cli.getOptionValue( "imports", "" ).split( "," ),
+
+            l_cli.getOptionValue( "excludes", "" ).split( "," ),
+
+            l_cli.getOptionValue( "docclean", "" ).split( "," )
         );
 
-        final Set<String> l_doclean = !l_cli.hasOption( "docclean" )
-                                      ? Collections.<String>emptySet()
-                                      : FileUtils.readLines( new File( l_cli.getOptionValue( "docclean" ) ), Charset.defaultCharset() )
-                                                 .stream()
-                                                 .map( String::trim )
-                                                 .collect( Collectors.toSet() );
 
-        final Set<String> l_exclude = !l_cli.hasOption( "excludes" )
-                                      ? Collections.<String>emptySet()
-                                      : Arrays.stream( l_cli.getOptionValue( "excludes" ).split( "," ) )
-                                              .map( String::trim )
-                                              .collect( Collectors.toSet() );
+        // --- run generator ---
+        final IGenerator l_generator = new CStandalone( l_initdata.v1(), l_initdata.v3(), l_initdata.v5(), l_initdata.v2() );
 
-        final Set<String> l_import = !l_cli.hasOption( "imports" )
-                                     ? Collections.<String>emptySet()
-                                     : Arrays.stream( l_cli.getOptionValue( "imports" ).split( "," ) )
-                                             .map( String::trim )
-                                             .collect( Collectors.toSet() );
-
-        final String[] l_templates = l_cli.hasOption( "templates" )
-                                     ? l_cli.getOptionValue( "templates" ).split( "," )
-                                     : new String[]{DEFAULTTEMPLATE};
-
-        final String l_outputdirectory = l_cli.hasOption( "output" )
-                                         ? l_cli.getOptionValue( "output" )
-                                         : DEFAULTOUTPUT;
-
-
-        // --- run generating ------------------------------------------------------------------------------------------
-        final Collection<String> l_errors = Arrays.stream( l_cli.getOptionValue( "grammar" ).split( "," ) )
-                                                  .parallel()
-                                                  .flatMap( i -> generate( l_outputdirectory, l_exclude, l_import, new File( i ), l_doclean, l_templates )
-                                                          .stream()
-                                                  )
-                                                  .collect( Collectors.toList() );
-
-        if ( !l_errors.isEmpty() )
-        {
-            l_errors.forEach( System.err::println );
+        if ( Arrays.stream( l_cli.getOptionValue( "grammar" ).split( "," ) )
+                   .flatMap( i -> CMain.filelist( new File( i.trim() ), l_initdata.v3(), l_initdata.v4() ) )
+                   .map( i -> l_generator.generate( i ).hasError() )
+                   .findFirst()
+                   .isPresent()
+            )
             System.exit( -1 );
-        }
+
+        l_generator.finish();
+    }
+
+    // ---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+    // --- Maven Report Plugin execution -----------------------------------------------------------------------------------------------------------------------
+
+    @Override
+    public final String getOutputName()
+    {
+        return DEFAULTOUTPUT;
     }
 
     @Override
-    public final void execute() throws MojoExecutionException, MojoFailureException
+    public final String getName( final Locale p_locale )
     {
-        final Set<String> l_doclean = Arrays.stream( docclean ).map( String::trim ).collect( Collectors.toSet() );
-        final Set<String> l_exclude = Arrays.stream( excludes ).map( String::trim ).collect( Collectors.toSet() );
-        final Set<String> l_import = Arrays.stream( imports ).map( String::trim ).collect( Collectors.toSet() );
-
-        // language definition set on runtime
-        Locale.setDefault( Locale.forLanguageTag( language ) );
-
-        final Collection<String> l_errors = Arrays.stream( grammar ).parallel()
-                                                  .flatMap( i -> generate( output, l_exclude, l_import,
-                                                                           new File( i ), l_doclean, templates
-                                                  ).stream() )
-                                                  .collect( Collectors.toList() );
-
-        if ( !l_errors.isEmpty() )
-            throw new MojoFailureException( StringUtils.join( l_errors, "\n" ) );
+        return NAME;
     }
 
+    @Override
+    public final String getDescription( final Locale p_locale )
+    {
+        return DESCRIPTION;
+    }
+
+    @Override
+    protected final void executeReport( final Locale p_locale ) throws MavenReportException
+    {
+        if ( ( imports == null ) || ( imports.length == 0 ) )
+            throw new MavenReportException( CCommon.languagestring( this, "importempty" ) );
+
+        final Tuple5<File, Set<ETemplate>, Set<File>, Set<String>, Set<String>> l_initdata = CMain.initialize(
+            p_locale.toLanguageTag(),
+            output,
+            templates,
+            imports,
+            excludes,
+            docclean
+        );
+
+        // --- run generator ---
+        final IGenerator l_generator = new CPlugin( this, NAME, l_initdata.v1(), new File( grammarbasedir ), l_initdata.v3(), l_initdata.v5(), l_initdata.v2() );
+        Arrays.stream( grammar )
+              .flatMap( i -> CMain.filelist( new File( i.trim() ), l_initdata.v3(), l_initdata.v4() ) )
+              .forEach( l_generator::generate );
+
+        l_generator.finish();
+    }
+
+    // ---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+    // --- helper ----------------------------------------------------------------------------------------------------------------------------------------------
 
     /**
-     * generating export (generate template instances and call engine)
+     * initialize all data
      *
-     * @param p_outputdirectory output directory
-     * @param p_exclude file names which are ignored
-     * @param p_import import files & directories
-     * @param p_grammar path to grammar file or grammar file directory
-     * @param p_docuclean set with documentation clean regex
-     * @param p_template string with export name
-     * @return returns a collection with error messages
+     * @param p_locale locale
+     * @param p_outputdirectory output directory string
+     * @param p_templates template string array
+     * @param p_imports import string array
+     * @param p_excludes exclude string array
+     * @param p_docclean documentation clean array
+     * @return 5-tuple with initialized and converted data
      */
-    private static Collection<String> generate( final String p_outputdirectory, final Set<String> p_exclude, final Set<String> p_import, final File p_grammar,
-                                                final Set<String> p_docuclean, final String... p_template
+    private static Tuple5<File, Set<ETemplate>, Set<File>, Set<String>, Set<String>> initialize(
+        final String p_locale, final String p_outputdirectory, final String[] p_templates,
+        final String[] p_imports, final String[] p_excludes, final String[] p_docclean
     )
     {
-        // build import map
-        final Map<String, File> l_imports = p_import.stream()
-                                                    .flatMap( i -> getFileList( new File( i ), p_exclude ) )
-                                                    .collect( Collectors.toMap( i -> FilenameUtils.removeExtension( i.getName() ), j -> j ) );
+        CCommon.language(
+            ( p_locale == null ) || ( p_locale.isEmpty() )
+            ? Locale.getDefault()
+            : Locale.forLanguageTag( p_locale )
+        );
 
-        return getFileList( p_grammar, p_exclude )
-                .flatMap( i ->
-                {
-                    try
-                    {
-                        return ENGINE.generate(
-                            p_outputdirectory,
-                            i, p_docuclean,
-                            l_imports,
-                            Arrays.stream( p_template )
-                                .map( j -> ETemplate.valueOf( j.trim().toUpperCase() ).generate() )
-                                .collect( Collectors.toSet() )
-                        ).stream();
-                    }
-                    catch ( final IOException l_exception )
-                    {
-                        return Stream.of( l_exception.getMessage() );
-                    }
-                } )
-                .filter( i -> i != null )
-                .collect( Collectors.toList() );
+        return new Tuple5<>(
+            new File( p_outputdirectory ),
 
+            ( p_templates == null ) || ( p_templates.length == 0 )
+            ? Collections.<ETemplate>emptySet()
+            : Collections.unmodifiableSet(
+                Arrays.stream( p_templates )
+                      .map( i -> ETemplate.valueOf( i.trim().toUpperCase() ) )
+                      .collect( Collectors.toSet() )
+            ),
+
+            ( p_imports == null ) || ( p_imports.length == 0 )
+            ? Collections.<File>emptySet()
+            : Collections.unmodifiableSet(
+                Arrays.stream( p_imports )
+                      .map( String::trim )
+                      .filter( i -> !i.isEmpty() )
+                      .map( File::new )
+                      .flatMap( i -> CMain.filelist( i, Collections.<File>emptySet(), Collections.<String>emptySet() ) )
+                      .collect( Collectors.toSet() )
+            ),
+
+            ( p_excludes == null ) || ( p_excludes.length == 0 )
+            ? Collections.<String>emptySet()
+            : Collections.unmodifiableSet(
+                Arrays.stream( p_excludes )
+                      .map( String::trim )
+                      .filter( i -> !i.isEmpty() )
+                      .collect( Collectors.toSet() )
+            ),
+
+            ( p_docclean == null ) || ( p_docclean.length == 0 )
+            ? Collections.<String>emptySet()
+            : Collections.unmodifiableSet(
+                Arrays.stream( p_docclean )
+                      .flatMap( i ->
+                                {
+                                    try
+                                    {
+                                        return FileUtils.readLines( new File( i ), Charset.defaultCharset() ).stream();
+                                    }
+                                    catch ( final IOException l_exception )
+                                    {
+                                        return Stream.of( "" );
+                                    }
+                                } )
+                      .map( String::trim )
+                      .filter( i -> !i.isEmpty() )
+                      .collect( Collectors.toSet() )
+            )
+        );
     }
+
 
     /**
      * returns a list of grammar files
      *
      * @param p_input grammar file or directory with grammar files
+     * @param p_import imported files
      * @param p_exclude file names which are ignored
      * @return stream of file objects
      */
-    private static Stream<File> getFileList( final File p_input, final Set<String> p_exclude )
+    private static Stream<File> filelist( final File p_input, final Set<File> p_import, final Set<String> p_exclude )
     {
         if ( !p_input.exists() )
             throw new RuntimeException( CCommon.languagestring( CMain.class, "notexist", p_input ) );
 
-        return (
-            p_input.isFile()
-            ? Stream.of( p_input )
-            : Arrays.stream( p_input.listFiles( ( p_dir, p_name ) -> p_name.endsWith( GRAMMARFILEEXTENSION ) ) )
-        ).filter( i -> !p_exclude.contains( i.getName() ) );
+        try
+        {
+            return (
+                p_input.isFile()
+                ? Stream.of( p_input )
+                : Files.find( p_input.toPath(), Integer.MAX_VALUE, ( i, j ) -> ( j.isRegularFile() ) && ( !j.isSymbolicLink() ) ).map( Path::toFile )
+            )
+                .filter( i -> i.getName().endsWith( GRAMMARFILEEXTENSION ) )
+                .filter( i -> !p_import.contains( i ) )
+                .filter( i -> !p_exclude.contains( i.getName() ) );
+        }
+        catch ( final IOException l_exception )
+        {
+            throw new RuntimeException( l_exception );
+        }
     }
+
+    // ---------------------------------------------------------------------------------------------------------------------------------------------------------
+
 }

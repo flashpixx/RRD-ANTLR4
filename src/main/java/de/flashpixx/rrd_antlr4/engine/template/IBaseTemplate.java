@@ -63,15 +63,27 @@ public abstract class IBaseTemplate implements ITemplate
      * template name
      */
     private final String m_name;
+    /**
+     * index file name
+     */
+    private final String m_index;
 
     /**
      * ctor
      *
      * @param p_name template name
+     * @param p_index index file
      */
-    public IBaseTemplate( final String p_name )
+    public IBaseTemplate( final String p_name, final String p_index )
     {
         m_name = p_name.trim().toLowerCase();
+        m_index = p_index;
+    }
+
+    @Override
+    public final String index()
+    {
+        return m_index;
     }
 
     @Override

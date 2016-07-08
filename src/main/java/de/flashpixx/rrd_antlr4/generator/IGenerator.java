@@ -21,70 +21,36 @@
  * @endcond
  */
 
-package de.flashpixx.rrd_antlr4.engine.template;
+package de.flashpixx.rrd_antlr4.generator;
 
-import de.flashpixx.rrd_antlr4.antlr.IGrammarComplexElement;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Path;
+import java.io.File;
 
 
 /**
- * interface of a template
+ * interface to generate data
  */
-public interface ITemplate
+public interface IGenerator
 {
+    /**
+     * generates export for a grammar file
+     *
+     * @param p_grammar grammar file
+     * @return generator self reference
+     */
+    IGenerator generate( final File p_grammar );
 
     /**
-     * returns the index file
+     * boolean error flag
      *
-     * @return index file name without path
+     * @return flag of errors
      */
-    String index();
+    boolean hasError();
 
     /**
-     * returns the name of the template
+     * finishing after all grammar files are proceed
      *
-     * @return template name
+     * @return generator self reference
      */
-    String name();
-
-    /**
-     * preprocessing (before AST visiting)
-     *
-     * @param p_output output directory
-     *
-     * @throws IOException on io errors
-     * @throws URISyntaxException on uri syntax
-     */
-    void preprocess( final Path p_output ) throws IOException, URISyntaxException;
-
-    /**
-     * postprocessing (after AST visiting)
-     *
-     * @param p_output working directory
-     *
-     * @throws IOException on io errors
-     * @throws URISyntaxException on uri syntax
-     */
-    void postprocess( final Path p_output ) throws IOException, URISyntaxException;
-
-    /**
-     * is called on the grammar definition
-     *
-     * @param p_grammar grammar
-     * @return grammar object reference
-     */
-    IGrammarComplexElement grammar( final IGrammarComplexElement p_grammar );
-
-    /**
-     * is called if any grammar element is completed
-     *
-     * @param p_grammar grammar
-     * @param p_element element
-     * @return grammar object reference
-     */
-    IGrammarComplexElement element( final IGrammarComplexElement p_grammar, final IGrammarComplexElement p_element );
+    IGenerator finish();
 
 }

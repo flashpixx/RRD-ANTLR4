@@ -21,70 +21,47 @@
  * @endcond
  */
 
-package de.flashpixx.rrd_antlr4.engine.template;
+package de.flashpixx.rrd_antlr4.generator;
 
-import de.flashpixx.rrd_antlr4.antlr.IGrammarComplexElement;
+import de.flashpixx.rrd_antlr4.engine.template.ETemplate;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Path;
+import java.io.File;
+import java.util.Collection;
+import java.util.Set;
 
 
 /**
- * interface of a template
+ * generator of a standalone program
  */
-public interface ITemplate
+public final class CStandalone extends IBaseGenerator
 {
 
     /**
-     * returns the index file
+     * ctor
      *
-     * @return index file name without path
+     * @param p_baseoutputdirectory base output directory
+     * @param p_imports set with imported grammar files
+     * @param p_docuclean set with documentation strings
+     * @param p_templates array with exporting templates
      */
-    String index();
+    public CStandalone( final File p_baseoutputdirectory, final Set<File> p_imports, final Set<String> p_docuclean, final Set<ETemplate> p_templates
+    )
+    {
+        super( p_baseoutputdirectory, p_imports, p_docuclean, p_templates );
+    }
 
-    /**
-     * returns the name of the template
-     *
-     * @return template name
-     */
-    String name();
+    @Override
+    protected File processoutputdirectory( final File p_grammar )
+    {
+        return new File( p_grammar.getName() );
+    }
 
-    /**
-     * preprocessing (before AST visiting)
-     *
-     * @param p_output output directory
-     *
-     * @throws IOException on io errors
-     * @throws URISyntaxException on uri syntax
-     */
-    void preprocess( final Path p_output ) throws IOException, URISyntaxException;
-
-    /**
-     * postprocessing (after AST visiting)
-     *
-     * @param p_output working directory
-     *
-     * @throws IOException on io errors
-     * @throws URISyntaxException on uri syntax
-     */
-    void postprocess( final Path p_output ) throws IOException, URISyntaxException;
-
-    /**
-     * is called on the grammar definition
-     *
-     * @param p_grammar grammar
-     * @return grammar object reference
-     */
-    IGrammarComplexElement grammar( final IGrammarComplexElement p_grammar );
-
-    /**
-     * is called if any grammar element is completed
-     *
-     * @param p_grammar grammar
-     * @param p_element element
-     * @return grammar object reference
-     */
-    IGrammarComplexElement element( final IGrammarComplexElement p_grammar, final IGrammarComplexElement p_element );
+    @Override
+    protected IGenerator processmessages( final File p_grammar, final File p_outputdirectory,  final Collection<String> p_messages )
+    {
+        m_error = !p_messages.isEmpty();
+        p_messages.forEach( System.err::println );
+        return this;
+    }
 
 }
