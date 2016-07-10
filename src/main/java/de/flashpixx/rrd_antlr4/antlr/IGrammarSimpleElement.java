@@ -33,6 +33,7 @@ public interface IGrammarSimpleElement<T> extends IGrammarElement
      * return native value
      *
      * @return value
+     * @tparam N any casting type
      */
     <N> N get();
 
