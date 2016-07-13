@@ -408,8 +408,6 @@
                                 <include>src/main/resources/de/flashpixx/rrd_antlr4/template/html/lib/**</include>
                                 <include>rrd-output/**</include>
                                 <include>dependency-reduced-pom.xml</include>
-                                <include>maven-central-deploy.log</include>
-                                <include>pom.xml.releaseBackup</include>
                             </includes>
                         </fileset>
                     </filesets>
