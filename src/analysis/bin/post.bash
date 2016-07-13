@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 
 # get build filename
-BIN=$(mvn help:evaluate -Dexpression=project.build.finalName | grep -vi info)
+FINALNAME=$(cat target/classes/de/flashpixx/rrd_antlr4/configuration.properties | grep -i finalname)
+IFS='='
+read -ra PARTS <<< "$FINALNAME"
+BIN=$(echo ${PARTS[1]}".jar")
+
+
 
 # moving data
 git checkout master
@@ -18,6 +23,7 @@ git push origin :binary-master
 git branch -D binary-master
 git checkout --orphan binary-master
 rm -Rf *
+rm -f .bowerrc
 mv -f /tmp/.gitignore .
 mv -f /tmp/circle.yml .
 mv /tmp/$BIN .
@@ -35,10 +41,10 @@ git push origin :gh-pages
 git branch -D gh-pages
 git checkout --orphan gh-pages
 rm -Rf *
+rm -f .bowerrc
 mv -f /tmp/.gitignore .
 mv -f /tmp/circle.yml .
 mv /tmp/site/* .
 git add --all .
 git commit -m "current documentation"
 git push origin gh-pages
-
