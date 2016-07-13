@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/DECORATION/1.6.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/DECORATION/1.6.0 http://maven.apache.org/xsd/decoration-1.6.0.xsd">
     <body>
         <links>
-            <item name="Repository" href="https://github.com/flashpixx/RRD-ANTLR4" />
+            <item name="Repository" href="http://github.com/flashpixx/RRD-ANTLR4" />
             <item name="Source Documentation" href="sources/index.html"/>
         </links>
         <menu ref="modules" />
