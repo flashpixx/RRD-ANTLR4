@@ -30,6 +30,17 @@
         <developerConnection>scm:git:git@github.com:flashpixx/RRD-ANTLR4.git</developerConnection>
     </scm>
 
+    <distributionManagement>
+        <snapshotRepository>
+            <id>sonatype-nexus-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>sonatype-nexus-staging</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
     <developers>
         <developer>
             <id>pkr</id>
@@ -397,6 +408,8 @@
                                 <include>src/main/resources/de/flashpixx/rrd_antlr4/template/html/lib/**</include>
                                 <include>rrd-output/**</include>
                                 <include>dependency-reduced-pom.xml</include>
+                                <include>maven-central-deploy.log</include>
+                                <include>pom.xml.releaseBackup</include>
                             </includes>
                         </fileset>
                     </filesets>
