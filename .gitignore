@@ -15,6 +15,7 @@
 !*.htm
 !*.js
 !*.txt
+!*.bash
 
 !src/site/*.doxyfile
 !src/site/*.htm*
