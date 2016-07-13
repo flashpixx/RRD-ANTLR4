@@ -11,9 +11,9 @@ Inspired by the project [rrd-antlr4](https://github.com/bkiers/rrd-antlr4) this 
 ## <a name="development">Development</a>
 
 * [JDK 1.8](http://www.oracle.com/technetwork/java/javase/downloads/)
+* [Bower](http://bower.io/)
 * [Maven 3 or higher](http://maven.apache.org/)
 * [Doxygen](http://www.doxygen.org/) with [GraphViz](http://www.graphviz.org/)
-* [Bower](http://bower.io/)
 * [Source code documentation](http://flashpixx.github.io/RRD-ANTLR4/)
 
 ## Binary Components
