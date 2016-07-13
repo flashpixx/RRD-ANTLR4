@@ -27,6 +27,7 @@ rm -f .bowerrc
 mv -f /tmp/.gitignore .
 mv -f /tmp/circle.yml .
 mv /tmp/$BIN .
+echo "# Railroad Diagram Generator for ANTLR 4 - Standalone Binary" > readme.md
 git add --all .
 git commit -m "binaries master branch"
 git push origin binary-master
@@ -45,6 +46,7 @@ rm -f .bowerrc
 mv -f /tmp/.gitignore .
 mv -f /tmp/circle.yml .
 mv /tmp/site/* .
+echo "# Railroad Diagram Generator for ANTLR 4 - Documentation" > readme.md
 git add --all .
 git commit -m "current documentation"
 git push origin gh-pages
