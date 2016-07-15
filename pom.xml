@@ -446,7 +446,7 @@
                 </configuration>
             </plugin>
 
-            <!-- checkstyle is perform at compile phase -->
+            <!-- Checkstyle -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
