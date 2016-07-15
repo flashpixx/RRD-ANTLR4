@@ -18,5 +18,20 @@ Inspired by the project [rrd-antlr4](https://github.com/bkiers/rrd-antlr4) this 
 
 ## Binary Components
 
-* [Standalone Jar](https://github.com/flashpixx/RRD-ANTLR4/tree/binary-master)
+Using as [Standalone Jar](https://github.com/flashpixx/RRD-ANTLR4/tree/binary-master)
+or Maven Site Plugin
+
+```xml
+<reporting>
+    <plugins>
+        <plugin>
+            <groupId>de.flashpixx</groupId>
+            <artifactId>rrd-antlr4</artifactId>
+            <version>0.0.1</version>
+        </plugin>
+    </plugins>
+</reporting>    
+```
+
+
 
