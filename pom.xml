@@ -11,6 +11,7 @@
     <!-- project meta information -->
     <name>RRD-ANTLR4</name>
     <url>https://github.com/flashpixx/RRD-ANTLR4</url>
+    <description>Railroad Diagram Generator for ANTLR 4</description>
 
     <licenses>
         <license>
