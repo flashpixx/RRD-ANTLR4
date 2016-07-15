@@ -70,7 +70,6 @@
         <!-- will be set outside (build parameter) -->
         <build.number></build.number>
         <build.commit></build.commit>
-        <build.skipgpg>false</build.skipgpg>
     </properties>
 
 
