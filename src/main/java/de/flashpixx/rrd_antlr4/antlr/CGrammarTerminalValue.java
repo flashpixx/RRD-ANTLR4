@@ -96,7 +96,7 @@ public class CGrammarTerminalValue<T> implements IGrammarSimpleElement<T>
     @Override
     public final boolean isValueAssignableTo( final Class<?>... p_class )
     {
-        return m_value == null || Arrays.stream( p_class ).map( i -> i.isAssignableFrom( m_value.getClass() ) ).anyMatch( i -> i );
+        return m_value == null || Arrays.stream( p_class ).anyMatch( i -> i.isAssignableFrom( m_value.getClass() ) );
     }
 
     @Override

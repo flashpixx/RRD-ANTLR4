@@ -3,7 +3,8 @@
   "private": true,
   "dependencies": {
     "railroad-diagrams" : "https://github.com/tabatkins/railroad-diagrams.git#gh-pages",
-    "jquery" : "~3.0.0",
-    "jquery-ui" : "~1.11.4"
+    "jquery" : "~3.1.1",
+    "tether" : "~1.4.0",
+    "bootstrap" : "~4.0.0-alpha.6"
   }
 }

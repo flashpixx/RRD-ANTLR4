@@ -43,6 +43,7 @@ import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -84,7 +85,9 @@ final class CHTML extends IBaseTemplate
         this.copy( "layout.css", p_output );
         this.copy( "action.js", p_output );
         this.copy( "lib/jquery/dist/jquery.min.js", p_output );
-        this.copy( "lib/jquery-ui/jquery-ui.min.js", p_output );
+        this.copy( "lib/tether/dist/js/tether.min.js", p_output );
+        this.copy( "lib/bootstrap/dist/js/bootstrap.min.js", p_output );
+        this.copy( "lib/bootstrap/dist/css/bootstrap.min.css", p_output );
         this.copy( "lib/railroad-diagrams/railroad-diagrams.css", p_output );
         this.copy( "lib/railroad-diagrams/railroad-diagrams.js", p_output );
 
@@ -205,7 +208,7 @@ final class CHTML extends IBaseTemplate
                         .range( 0, p_element.get().size() )
                         .boxed()
                         .map( i -> this.map( p_element.get().get( i ) ) )
-                        .filter( i -> i != null )
+                        .filter( Objects::nonNull )
                         .collect( Collectors.toList() ),
                 ", "
         );
@@ -219,7 +222,7 @@ final class CHTML extends IBaseTemplate
         final String l_child = StringUtils.join(
                 p_element.get().stream()
                          .map( this::map )
-                         .filter( i -> i != null )
+                         .filter( Objects::nonNull )
                          .collect( Collectors.toList() ),
                 ", "
         );

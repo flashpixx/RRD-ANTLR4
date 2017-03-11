@@ -25,7 +25,7 @@ package de.flashpixx.rrd_antlr4;
 
 
 import com.github.javaparser.JavaParser;
-import com.github.javaparser.ParseException;
+import com.github.javaparser.ParseProblemException;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
@@ -47,12 +47,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static org.junit.Assert.assertFalse;
@@ -82,29 +84,42 @@ public final class TestCLanguageLabels
         try
         {
             l_uri = CCommon.concaturl( CCommon.resourceurl(), "../../src/main/java/" ).toURI();
-
-            LANGUAGEPROPERY.put(
-                "en",
-                CCommon.concaturl(
-                    CCommon.resourceurl(),
-                    MessageFormat.format( "{0}/{1}/{2}", l_resource, CCommon.PACKAGEROOT.replace( CLASSSEPARATOR, "/" ),
-                                          "language.properties" )
-                ).toURI()
-            );
-
-            LANGUAGEPROPERY.put(
-                "de",
-                CCommon.concaturl(
-                    CCommon.resourceurl(),
-                    MessageFormat.format( "{0}/{1}/{2}", l_resource, CCommon.PACKAGEROOT.replace( CLASSSEPARATOR, "/" ),
-                                          "language_de.properties" )
-                ).toURI()
-            );
         }
         catch ( final Exception l_exception )
         {
             assumeTrue( MessageFormat.format( "source directory cannot be read: {0}", l_exception.getMessage() ), false );
         }
+
+        // read all possible languages and define the first as default
+        final String[] l_languages = CCommon.languages();
+        IntStream.range( 0, l_languages.length )
+                 .boxed()
+                 .forEach( i -> {
+                     try
+                     {
+                         LANGUAGEPROPERY.put(
+                             l_languages[i],
+                             CCommon.concaturl(
+                                 CCommon.resourceurl(),
+                                 MessageFormat.format(
+                                     "{0}/{1}/{2}",
+                                     l_resource,
+                                     CCommon.PACKAGEROOT.replace( CLASSSEPARATOR, "/" ),
+                                     MessageFormat.format(
+                                         "language{0}.properties",
+                                         i == 0
+                                         ? ""
+                                         : "_" + l_languages[i]
+                                     )
+                                 )
+                             ).toURI()
+                         );
+                     }
+                     catch ( final Exception l_exception )
+                     {
+                         assumeTrue( MessageFormat.format( "source directory cannot be read: {0}", l_exception.getMessage() ), false );
+                     }
+                 } );
 
         SEARCHPATH = l_uri;
     }
@@ -168,8 +183,7 @@ public final class TestCLanguageLabels
             Files.walk( Paths.get( SEARCHPATH ) )
                  .filter( Files::isRegularFile )
                  .filter( i -> i.toString().endsWith( ".java" ) )
-                 .flatMap( i ->
-                 {
+                 .flatMap( i -> {
                      try
                      {
                          final CJavaVistor l_parser = new CJavaVistor();
@@ -179,20 +193,20 @@ public final class TestCLanguageLabels
                      catch ( final IOException l_excpetion )
                      {
                          assertTrue( MessageFormat.format( "io error on file [{0}]: {1}", i, l_excpetion.getMessage() ), false );
-                         return Stream.<String>empty();
+                         return Stream.empty();
                      }
-                     catch ( final ParseException l_exception )
+                     catch ( final ParseProblemException l_exception )
                      {
                          // add label build by class path to the ignore list
                          l_ignoredlabel.add(
                              i.toAbsolutePath().toString()
-                             // remove path to class directory
+                              // remove path to class directory
                              .replace(
-                                FileSystems.getDefault()
-                                    .provider()
-                                    .getPath( SEARCHPATH )
-                                    .toAbsolutePath()
-                                    .toString(),
+                                 FileSystems.getDefault()
+                                            .provider()
+                                            .getPath( SEARCHPATH )
+                                            .toAbsolutePath()
+                                            .toString(),
                                 ""
                              )
                              // string starts with path separator
@@ -208,7 +222,7 @@ public final class TestCLanguageLabels
                          );
 
                          System.err.println( MessageFormat.format( "parsing error on file [{0}]:\n{1}", i, l_exception.getMessage() ) );
-                         return Stream.<String>empty();
+                         return Stream.empty();
                      }
                  } )
                  .collect( Collectors.toSet() )
@@ -221,53 +235,51 @@ public final class TestCLanguageLabels
         if ( l_ignoredlabel.size() > 0 )
             System.err.println( MessageFormat.format( "labels that starts with {0} are ignored, because parsing errors are occurred", l_ignoredlabel ) );
 
-        LANGUAGEPROPERY.entrySet()
-                       .forEach( i ->
-                       {
-                           try
-                           {
-                               final Properties l_property = new Properties();
-                               l_property.load( new FileInputStream( new File( i.getValue() ) ) );
+        LANGUAGEPROPERY.forEach( ( k, v ) -> {
+            try
+            {
+                final Properties l_property = new Properties();
+                l_property.load( new FileInputStream( new File( v ) ) );
 
-                               final Set<String> l_parseditems = new HashSet<>( l_label );
-                               final Set<String> l_propertyitems = l_property.keySet().parallelStream().map( Object::toString ).collect( Collectors.toSet() );
+                final Set<String> l_parseditems = new HashSet<>( l_label );
+                final Set<String> l_propertyitems = l_property.keySet().parallelStream().map( Object::toString ).collect( Collectors.toSet() );
 
-                               // --- check if all property items are within the parsed labels
-                               l_parseditems.removeAll( l_propertyitems );
-                               assertTrue(
-                                   MessageFormat.format(
-                                       "the following {1,choice,1#key|1<keys} in language [{0}] {1,choice,1#is|1<are} not existing within the language file:\n{2}",
-                                       i.getKey(),
-                                       l_parseditems.size(),
-                                       StringUtils.join( l_parseditems, ", " )
-                                   ),
-                                   l_parseditems.isEmpty()
-                               );
+                // --- check if all property items are within the parsed labels
+                l_parseditems.removeAll( l_propertyitems );
+                assertTrue(
+                    MessageFormat.format(
+                         "the following {1,choice,1#key|1<keys} in language [{0}] {1,choice,1#is|1<are} not existing within the language file:\n{2}",
+                         k,
+                         l_parseditems.size(),
+                         StringUtils.join( l_parseditems, ", " )
+                    ),
+                    l_parseditems.isEmpty()
+                );
 
 
-                               // --- check if all parsed labels within the property item and remove ignored labels
-                               l_propertyitems.removeAll( l_label );
-                               final Set<String> l_ignoredpropertyitems = l_propertyitems.parallelStream()
-                                                                                         .filter( j -> l_ignoredlabel.parallelStream()
-                                                                                                                     .map( j::startsWith )
-                                                                                                                     .allMatch( l -> false )
-                                                                                         )
-                                                                                         .collect( Collectors.toSet() );
-                               assertTrue(
-                                   MessageFormat.format(
-                                       "the following {1,choice,1#key|1<keys} in language [{0}] {1,choice,1#is|1<are} not existing within the source code:\n{2}",
-                                       i.getKey(),
-                                       l_ignoredpropertyitems.size(),
-                                       StringUtils.join( l_ignoredpropertyitems, ", " )
-                                   ),
-                                   l_ignoredpropertyitems.isEmpty()
-                               );
-                           }
-                           catch ( final IOException l_exception )
-                           {
-                               assertTrue( MessageFormat.format( "io exception: {0}", l_exception.getMessage() ), false );
-                           }
-                       } );
+                // --- check if all parsed labels within the property item and remove ignored labels
+                l_propertyitems.removeAll( l_label );
+                final Set<String> l_ignoredpropertyitems = l_propertyitems.parallelStream()
+                                                                          .filter( j -> l_ignoredlabel.parallelStream()
+                                                                                                      .map( j::startsWith )
+                                                                                                      .allMatch( l -> false )
+                                                                          )
+                                                                          .collect( Collectors.toSet() );
+                assertTrue(
+                    MessageFormat.format(
+                        "the following {1,choice,1#key|1<keys} in language [{0}] {1,choice,1#is|1<are} not existing within the source code:\n{2}",
+                        k,
+                        l_ignoredpropertyitems.size(),
+                        StringUtils.join( l_ignoredpropertyitems, ", " )
+                    ),
+                    l_ignoredpropertyitems.isEmpty()
+                );
+            }
+            catch ( final IOException l_exception )
+            {
+                assertTrue( MessageFormat.format( "io exception: {0}", l_exception.getMessage() ), false );
+            }
+        } );
     }
 
     /**
@@ -281,17 +293,6 @@ public final class TestCLanguageLabels
         final TestCLanguageLabels l_test = new TestCLanguageLabels();
         l_test.testTranslation();
         l_test.testResourceString();
-    }
-
-    /**
-     * method to build a package path
-     *
-     * @param p_names list of package parts
-     * @return full-qualified string
-     */
-    private static String packagepath( final String... p_names )
-    {
-        return StringUtils.join( p_names, ClassUtils.PACKAGE_SEPARATOR );
     }
 
 
@@ -309,7 +310,7 @@ public final class TestCLanguageLabels
         /**
          * reg expression to extract label data
          */
-        private static final Pattern LANGUAGEMETHODPATTERN = Pattern.compile( TRANSLATEMETHODNAME + ".+\\)" );
+        private static final Pattern LANGUAGEMETHODPATTERN = Pattern.compile( TRANSLATEMETHODNAME + ".+?\\)" );
         /**
          * inner class name *
          */
@@ -340,7 +341,7 @@ public final class TestCLanguageLabels
         @Override
         public void visit( final PackageDeclaration p_package, final Object p_arg )
         {
-            m_package = p_package.getName().toStringWithoutComments();
+            m_package = p_package.getName().toString();
             super.visit( p_package, p_arg );
         }
 
@@ -348,9 +349,9 @@ public final class TestCLanguageLabels
         public void visit( final ClassOrInterfaceDeclaration p_class, final Object p_arg )
         {
             if ( m_outerclass.isEmpty() )
-                m_outerclass = p_class.getName();
+                m_outerclass = p_class.getName().toString();
             else
-                m_innerclass = p_class.getName();
+                m_innerclass = p_class.getName().toString();
 
             super.visit( p_class, p_arg );
 
@@ -361,9 +362,9 @@ public final class TestCLanguageLabels
         public void visit( final EnumDeclaration p_enum, final Object p_arg )
         {
             if ( m_outerclass.isEmpty() )
-                m_outerclass = p_enum.getName();
+                m_outerclass = p_enum.getName().toString();
             else
-                m_innerclass = p_enum.getName();
+                m_innerclass = p_enum.getName().toString();
 
             super.visit( p_enum, p_arg );
 
@@ -373,7 +374,7 @@ public final class TestCLanguageLabels
         @Override
         public void visit( final MethodCallExpr p_methodcall, final Object p_arg )
         {
-            final String l_label = this.label( p_methodcall.toStringWithoutComments() );
+            final String l_label = this.label( p_methodcall.toString() );
             if ( !l_label.isEmpty() )
                 m_label.add( l_label );
 
@@ -398,13 +399,13 @@ public final class TestCLanguageLabels
             // class name
             l_return[0] = l_split[0].replace( TRANSLATEMETHODNAME, "" ).replace( "(", "" ).trim();
             // label name
-            l_return[1] = l_split[1].replace( ")", "" ).replace( "\"", "" ).split( ";" )[0].trim().toLowerCase();
+            l_return[1] = l_split[1].replace( ")", "" ).replace( "\"", "" ).split( ";" )[0].trim().toLowerCase( Locale.ROOT );
 
             return (
                 "this".equals( l_return[0] )
-                ? buildlabel( m_package, m_outerclass, m_innerclass, l_return[1] )
-                : buildlabel( m_package, l_return[0].replace( ".class", "" ).replace( m_package + CLASSSEPARATOR, "" ), "", l_return[1] )
-            ).trim().toLowerCase().replace( CCommon.PACKAGEROOT + CLASSSEPARATOR, "" );
+                ? buildlabel( m_package, m_outerclass, m_outerclass, m_innerclass, l_return[1] )
+                : buildlabel( m_package, m_outerclass, l_return[0].replace( ".class", "" ).replace( m_package + CLASSSEPARATOR, "" ), "", l_return[1] )
+            ).trim().toLowerCase( Locale.ROOT ).replace( CCommon.PACKAGEROOT + CLASSSEPARATOR, "" );
 
         }
 
@@ -413,17 +414,22 @@ public final class TestCLanguageLabels
          * (inner & outer class)
          *
          * @param p_package package name
-         * @param p_outerclass outer class
+         * @param p_outerclass1 outer class readed value
+         * @param p_outerclass2 outer class fixed value
          * @param p_innerclass inner class
          * @param p_label label (only firat element is used)
          * @return full-qualified class name
          */
-        private static String buildlabel( final String p_package, final String p_outerclass, final String p_innerclass, final String p_label )
+        private static String buildlabel( final String p_package, final String p_outerclass1, final String p_outerclass2, final String p_innerclass, final String p_label )
         {
+            final String l_outerclass = p_outerclass1.equals( p_outerclass2 )
+                                        ? p_outerclass1
+                                        : MessageFormat.format( "{0}{1}{2}", p_outerclass1, ClassUtils.PACKAGE_SEPARATOR, p_outerclass2 );
+
             return MessageFormat.format(
                 "{0}{1}{2}{3}{4}{5}",
                 p_package, ClassUtils.PACKAGE_SEPARATOR,
-                p_outerclass, p_innerclass.isEmpty() ? "" : ClassUtils.PACKAGE_SEPARATOR,
+                l_outerclass, p_innerclass.isEmpty() ? "" : ClassUtils.PACKAGE_SEPARATOR,
                 p_innerclass,
 
                 p_label.isEmpty()

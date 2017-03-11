@@ -40,6 +40,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -128,7 +129,7 @@ public final class CEngine
 
         return l_visitor.getGrammarImports().stream()
                         .map( i -> p_imports.get( i.get() ) )
-                        .filter( i -> i != null )
+                        .filter( Objects::nonNull )
                         .flatMap( i ->
                         {
                             try
