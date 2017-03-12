@@ -104,16 +104,13 @@ final class CHTML extends IBaseTemplate
                 // set grammar documentation
                 "%grammardocumentation%", m_grammar.documentation(),
 
-                // sets the showall text
-                "%ruletoggle%", MessageFormat.format( "<h5 id = \"ruletoggle\" >{0}</h5>", CCommon.languagestring( this, "htmlruletoggle" ) ),
-
                 // set menu with rule list
                 "%rulelist%", StringUtils.join(
                         m_rules.rowMap().entrySet().stream().sorted( ( n, m ) -> n.getKey().compareToIgnoreCase( m.getKey() ) )
                                .map( i -> MessageFormat.format(
                                        "<div class=\"rulelist\" id=\"list_{0}\">\n"
                                        + "<h5 data-ruleset=\"rules_{0}\" class=\"grammarlisthead\">{0}</h5>\n"
-                                       + "<ul>\n{1}</ul>\n"
+                                       + "<ul class=\"nav sidebar-nav\">\n{1}</ul>\n"
                                        + "</div>",
                                        i.getKey(),
                                        StringUtils.join(
