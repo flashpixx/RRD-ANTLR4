@@ -174,7 +174,7 @@ public abstract class IBaseTemplate implements ITemplate
      */
     protected static String removequotes( final String p_string )
     {
-        return ( p_string.startsWith( "'" ) ) && ( p_string.endsWith( "'" ) )
+        return ( p_string.startsWith( "'" ) ) && ( p_string.endsWith( "'" ) ) && ( p_string.length() >= 2 )
                ? p_string.substring( 1, p_string.length() - 1 )
                : p_string;
     }
