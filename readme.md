@@ -16,7 +16,7 @@ Inspired by the project [rrd-antlr4](https://github.com/bkiers/rrd-antlr4) this 
 * [Maven 3 or higher](http://maven.apache.org/)
 * [Doxygen](http://www.doxygen.org/) with [GraphViz](http://www.graphviz.org/)
 * [Source code documentation](http://flashpixx.github.io/RRD-ANTLR4/)
-* [Coveralls.io Statistic](https://coveralls.io/github/flashpixx/RRD-ANTLR4?branch=master)
+* [Coveralls.io Statistic](https://coveralls.io/github/flashpixx/RRD-ANTLR4)
 
 ## Binary Components
 

@@ -21,12 +21,18 @@
 
 -->
 <project xmlns="http://maven.apache.org/DECORATION/1.6.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/DECORATION/1.6.0 http://maven.apache.org/xsd/decoration-1.6.0.xsd">
+    <skin>
+        <groupId>org.apache.maven.skins</groupId>
+        <artifactId>maven-fluido-skin</artifactId>
+        <version>1.6</version>
+    </skin>
     <body>
-        <links>
-            <item name="Repository" href="http://github.com/flashpixx/RRD-ANTLR4" />
-            <item name="Source Documentation" href="sources/index.html"/>
-        </links>
         <menu ref="modules" />
         <menu ref="reports"/>
+        <menu name="Source Documentation">
+            <item name="Source Documentation" href="sources/index.html"/>
+            <item name="Repository" href="http://github.com/flashpixx/RRD-ANTLR4" />
+            <item name="Coveralls.io" href="https://coveralls.io/github/flashpixx/RRD-ANTLR4"/>
+        </menu>
     </body>
 </project>
