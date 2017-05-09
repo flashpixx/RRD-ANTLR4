@@ -76,7 +76,7 @@ deployment:
             - rm -Rf *
             - mv -f /tmp/*.jar .
             - echo "# Railroad Diagram Generator for ANTLR 4 - Standalone Binary" > readme.md
-            - echo -e 'general:\n    branches:\n        ignore:\n            - $CIRCLE_BRANCH\n' > circle.yml
+            - echo -e 'general:\n    branches:\n        ignore:\n            - /.*/\n' > circle.yml
             - echo -e '*.*\n!.gitignore\n!circle.yml\n!*.jar\n' > .gitignore
             - git add --all .
             - git commit -m "current executable"
