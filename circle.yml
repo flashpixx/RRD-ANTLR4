@@ -24,11 +24,21 @@ machine:
     java:
         version: oraclejdk8
 
+
 dependencies:
     pre:
         - sudo apt-get install graphviz npm
         - npm install -g bower
         - wget -O /tmp/doxygen.tar.gz http://ftp.stack.nl/pub/users/dimitri/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz && tar xf /tmp/doxygen.tar.gz -C /tmp
+
+
+checkout:
+    post:
+        - git clean -xdf
+        - git fetch -p
+        - git gc --prune=now
+        - mvn clean dependency:purge-local-repository -DreResolve=false -DactTransitively=true
+
 
 test:
     override:
@@ -47,7 +57,7 @@ deployment:
         branch: master
         commands:
             - mv -f target/site /tmp
-
+            - FILENAME=${cat target/classes/de/flashpixx/rrd_antlr4/configuration.properties | grep -i finalname | cut -d"=" -f2} && mv -f target/$FILENAME /tmp
             # documentation deployment to gh-pages
             - git push origin :gh-pages || true
             - git branch -D gh-pages || true
@@ -59,6 +69,20 @@ deployment:
             - git add --all .
             - git commit -m "current documentation"
             - git push origin gh-pages
-
-
-
+            # binary deployment to binary
+            - git push origin :binary-$CIRCLE_BRANCH || true
+            - git brach -D binary-$CIRCLE_BRANCH || true
+            - git checkout --orphan binary-$CIRCLE_BRANCH
+            - rm -Rf *
+            - mv -f /tmp/*.jar .
+            - mv -f /tmp/*.dmg .
+            - mv -f /tmp/*.exe .
+            - echo "# Railroad Diagram Generator for ANTLR 4 - Standalone Binary" > readme.md
+            - echo -e 'general:\n    branches:\n        ignore:\n            - ${CIRCLE_BRANCH}\n' > circle.yml
+            - echo -e '*.*\n!.gitignore\n!circle.yml\n!*.jar\n!*.dmg\n!*.exe\n' > .gitignore
+            - git add --all .
+            - git commit -m "current documentation"
+            - git push origin gh-pages
+            - git add --all .
+            - git commit -m "bindary"
+            - git push origin binary-$CIRCLE_BRANCH
