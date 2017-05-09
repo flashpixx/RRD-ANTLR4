@@ -75,8 +75,8 @@ deployment:
             - git checkout --orphan binary-$CIRCLE_BRANCH
             - rm -Rf *
             - mv -f /tmp/*.jar .
-            - mv -f /tmp/*.dmg .
-            - mv -f /tmp/*.exe .
+            - mv -f /tmp/*.dmg . || true
+            - mv -f /tmp/*.exe . || true
             - echo "# Railroad Diagram Generator for ANTLR 4 - Standalone Binary" > readme.md
             - echo -e 'general:\n    branches:\n        ignore:\n            - ${CIRCLE_BRANCH}\n' > circle.yml
             - echo -e '*.*\n!.gitignore\n!circle.yml\n!*.jar\n!*.dmg\n!*.exe\n' > .gitignore
