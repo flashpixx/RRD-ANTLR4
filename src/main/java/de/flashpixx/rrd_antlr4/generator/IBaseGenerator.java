@@ -1,10 +1,10 @@
-/**
+/*
  * @cond LICENSE
  * ######################################################################################
  * # LGPL License                                                                       #
  * #                                                                                    #
  * # This file is part of the RRD-AntLR4                                                #
- * # Copyright (c) 2016, Philipp Kraus (philipp.kraus@tu-clausthal.de)                  #
+ * # Copyright (c) 2016-17, Philipp Kraus (philipp.kraus@flashpixx.de)                  #
  * # This program is free software: you can redistribute it and/or modify               #
  * # it under the terms of the GNU Lesser General Public License as                     #
  * # published by the Free Software Foundation, either version 3 of the                 #

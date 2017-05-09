@@ -1,10 +1,10 @@
-/**
+/*
  * @cond LICENSE
  * ######################################################################################
  * # LGPL License                                                                       #
  * #                                                                                    #
  * # This file is part of the RRD-AntLR4                                                #
- * # Copyright (c) 2016, Philipp Kraus (philipp.kraus@tu-clausthal.de)                  #
+ * # Copyright (c) 2016-17, Philipp Kraus (philipp.kraus@flashpixx.de)                  #
  * # This program is free software: you can redistribute it and/or modify               #
  * # it under the terms of the GNU Lesser General Public License as                     #
  * # published by the Free Software Foundation, either version 3 of the                 #
@@ -22,7 +22,6 @@
  */
 
 package de.flashpixx.rrd_antlr4;
-
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseProblemException;
@@ -65,7 +64,7 @@ import static org.junit.Assume.assumeTrue;
 /**
  * test all resource strings
  */
-public final class TestCLanguageLabels
+public final class TestCLanguageLabels extends IBaseTest
 {
     private static final String CLASSSEPARATOR = ".";
     /**
@@ -200,13 +199,13 @@ public final class TestCLanguageLabels
                          // add label build by class path to the ignore list
                          l_ignoredlabel.add(
                              i.toAbsolutePath().toString()
-                              // remove path to class directory
+                             // remove path to class directory
                              .replace(
-                                 FileSystems.getDefault()
-                                            .provider()
-                                            .getPath( SEARCHPATH )
-                                            .toAbsolutePath()
-                                            .toString(),
+                                FileSystems.getDefault()
+                                           .provider()
+                                           .getPath( SEARCHPATH )
+                                           .toAbsolutePath()
+                                           .toString(),
                                 ""
                              )
                              // string starts with path separator
@@ -237,21 +236,25 @@ public final class TestCLanguageLabels
 
         LANGUAGEPROPERY.forEach( ( k, v ) -> {
             try
+                (
+                    final FileInputStream l_stream = new FileInputStream( new File( v ) )
+                )
             {
                 final Properties l_property = new Properties();
-                l_property.load( new FileInputStream( new File( v ) ) );
+                l_property.load( l_stream );
 
                 final Set<String> l_parseditems = new HashSet<>( l_label );
-                final Set<String> l_propertyitems = l_property.keySet().parallelStream().map( Object::toString ).collect( Collectors.toSet() );
+                final Set<String> l_propertyitems = l_property.keySet().parallelStream().map( Object::toString ).collect(
+                    Collectors.toSet() );
 
                 // --- check if all property items are within the parsed labels
                 l_parseditems.removeAll( l_propertyitems );
                 assertTrue(
                     MessageFormat.format(
-                         "the following {1,choice,1#key|1<keys} in language [{0}] {1,choice,1#is|1<are} not existing within the language file:\n{2}",
-                         k,
-                         l_parseditems.size(),
-                         StringUtils.join( l_parseditems, ", " )
+                        "the following {1,choice,1#key|1<keys} in language [{0}] {1,choice,1#is|1<are} not existing within the language file:\n{2}",
+                        k,
+                        l_parseditems.size(),
+                        StringUtils.join( l_parseditems, ", " )
                     ),
                     l_parseditems.isEmpty()
                 );
@@ -290,9 +293,7 @@ public final class TestCLanguageLabels
      */
     public static void main( final String[] p_args ) throws IOException
     {
-        final TestCLanguageLabels l_test = new TestCLanguageLabels();
-        l_test.testTranslation();
-        l_test.testResourceString();
+        new TestCLanguageLabels().invoketest();
     }
 
 

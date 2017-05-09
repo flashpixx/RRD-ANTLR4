@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
     ######################################################################################
@@ -21,14 +21,15 @@
     ######################################################################################
 
 -->
-<!DOCTYPE suppressions PUBLIC "-//Puppy Crawl//DTD Suppressions 1.1//EN" "http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
-
-<suppressions>
-    <suppress files="[/\\]target[/\\]" checks=".*"/>
-
-    <!-- used from the AntLR grammar definition -->
-    <suppress files="IAntLRv4LexerAdaptor\.java" checks=".*"/>
-
-    <!-- ignore main-class because of mixing Maven plugin structure -->
-    <suppress files="CMain\.java" checks=".*"/>
-</suppressions>
+<additionalHeaders>
+    <javadoc_style>
+        <firstLine>/*&#10; * @cond LICENSE</firstLine>
+        <beforeEachLine> * </beforeEachLine>
+        <endLine> * @endcond&#10; */&#10;</endLine>
+        <firstLineDetectionPattern>(\s|\t)*/\*.*$</firstLineDetectionPattern>
+        <lastLineDetectionPattern>.*\*/(\s|\t)*$</lastLineDetectionPattern>
+        <allowBlankLines>false</allowBlankLines>
+        <isMultiline>true</isMultiline>
+        <padLines>false</padLines>
+    </javadoc_style>
+</additionalHeaders>

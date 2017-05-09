@@ -1,3 +1,25 @@
+<!--
+
+    ######################################################################################
+    # LGPL License                                                                       #
+    #                                                                                    #
+    # This file is part of the RRD-AntLR4                                                #
+    # Copyright (c) 2016-17, Philipp Kraus (philipp.kraus@flashpixx.de)                  #
+    # This program is free software: you can redistribute it and/or modify               #
+    # it under the terms of the GNU Lesser General Public License as                     #
+    # published by the Free Software Foundation, either version 3 of the                 #
+    # License, or (at your option) any later version.                                    #
+    #                                                                                    #
+    # This program is distributed in the hope that it will be useful,                    #
+    # but WITHOUT ANY WARRANTY; without even the implied warranty of                     #
+    # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                      #
+    # GNU Lesser General Public License for more details.                                #
+    #                                                                                    #
+    # You should have received a copy of the GNU Lesser General Public License           #
+    # along with this program. If not, see http://www.gnu.org/licenses/                  #
+    ######################################################################################
+
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -71,6 +93,7 @@
         <!-- will be set outside (build parameter) -->
         <build.number />
         <build.commit />
+        <coverall.token></coverall.token>
     </properties>
 
 
@@ -80,7 +103,7 @@
         <dependency>
             <groupId>org.antlr</groupId>
             <artifactId>antlr4-runtime</artifactId>
-            <version>4.6</version>
+            <version>4.7</version>
         </dependency>
 
         <dependency>
@@ -125,7 +148,7 @@
         <dependency>
             <groupId>commons-cli</groupId>
             <artifactId>commons-cli</artifactId>
-            <version>1.3.1</version>
+            <version>1.4</version>
         </dependency>
 
         <!-- test -->
@@ -140,6 +163,13 @@
             <groupId>com.github.javaparser</groupId>
             <artifactId>javaparser-core</artifactId>
             <version>[2.1.0,)</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.tngtech.java</groupId>
+            <artifactId>junit-dataprovider</artifactId>
+            <version>[1.11.0,)</version>
             <scope>test</scope>
         </dependency>
 
@@ -240,7 +270,7 @@
     <!-- main build -->
     <build>
         <!-- default goal is set to package and checking dependency updates -->
-        <defaultGoal>versions:display-dependency-updates versions:display-plugin-updates</defaultGoal>
+        <defaultGoal>test versions:display-dependency-updates versions:display-plugin-updates</defaultGoal>
 
         <!-- include resource directory with replacing configuration variables -->
         <resources>
@@ -326,7 +356,7 @@
             <plugin>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4-maven-plugin</artifactId>
-                <version>4.6</version>
+                <version>4.7</version>
                 <configuration>
                     <visitor>true</visitor>
                     <listener>true</listener>
@@ -444,6 +474,35 @@
                 </configuration>
             </plugin>
 
+            <!-- License -->
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>3.0</version>
+                <configuration>
+                    <header>src/analysis/license/licensetemplate.txt</header>
+                    <useDefaultExcludes>true</useDefaultExcludes>
+                    <headerDefinitions>
+                        <headerDefinition>src/analysis/license/style.xml</headerDefinition>
+                    </headerDefinitions>
+                    <excludes>
+                        <exclude>.bowerrc</exclude>
+                        <exclude>**/*.tokens</exclude>
+                        <exclude>**/*.txt</exclude>
+                        <exclude>**/*.yml</exclude>
+                        <exclude>**/*.md</exclude>
+                        <exclude>**/*.htm</exclude>
+                        <exclude>**/*.doxyfile</exclude>
+                        <exclude>**/*.xslt</exclude>
+                        <exclude>target/**</exclude>
+                    </excludes>
+                    <mapping>
+                        <g4>javadoc_style</g4>
+                        <asl>javadoc_style</asl>
+                    </mapping>
+                </configuration>
+            </plugin>
+
             <!-- Checkstyle -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -464,6 +523,19 @@
                     <consoleOutput>true</consoleOutput>
                     <failsOnError>true</failsOnError>
                     <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                </configuration>
+            </plugin>
+
+            <!-- coversall report plugin -->
+            <plugin>
+                <groupId>org.eluder.coveralls</groupId>
+                <artifactId>coveralls-maven-plugin</artifactId>
+                <version>4.3.0</version>
+                <configuration>
+                    <repoToken>${coverall.token}</repoToken>
+                    <sourceDirectories>
+                        <directory>target/generated-sources/antlr4</directory>
+                    </sourceDirectories>
                 </configuration>
             </plugin>
 
